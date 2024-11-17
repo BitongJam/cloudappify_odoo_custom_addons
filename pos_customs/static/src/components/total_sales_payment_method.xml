@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="owl.TtalSPDashboard" owl="1">
+    
+   <div class="row">
+        <OwlCard name="state.quotations.name" value="state.quotations.value" />
+   </div>
+    <div class="row">
+        <!-- <h1><t t-esc="totalSalesValue"/></h1> -->
+    
+        <t t-foreach="state.totalpaymentgroup" t-as="payment" t-key="payment.method_id">
+            <OwlCard name="payment.method_name.en_US" value="payment.total_amount" currency_symbol="payment.currency_symbol"/>
+        </t>
+        
+        <!-- <OwlCard />
+        <OwlCard />
+        <OwlCard />
+        <OwlCard /> -->
+    </div>
+    </t>
+</templates>
