@@ -11,7 +11,7 @@
     'license': 'LGPL-3',
     'category': 'pos',
     'depends': [
-        'point_of_sale','board','base','web'
+        'point_of_sale','board','base','web','pos_sale'
     ],
     'data': [
         'views/pos_payment.xml'
@@ -24,5 +24,10 @@
             'pos_customs/static/src/components/**/*.xml',
             'pos_customs/static/src/components/**/*.scss',
         ],
+        'point_of_sale.assets': [
+            'pos_customs/static/src/pos/**/*.js',
+            'pos_customs/static/src/pos/**/*.xml',
+            'pos_customs/static/src/pos/**/*.scss',
+        ]
     },
 }
