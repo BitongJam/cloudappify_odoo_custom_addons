@@ -9,11 +9,13 @@ const PaymentScreenInherit = (payment_screen) => class extends payment_screen {
         console.log("Inherited Payment Screen")
     }
 
-    // addNewPaymentLine({ detail: paymentMethod }) {
-    //     const payment_line = super.addNewPaymentLine({ detail: paymentMethod })
-    //     console.log("Inherited add new payment line")
-    //     return payment_line
-    // }
+    addNewPaymentLine({ detail: paymentMethod }) {
+       
+        const payment_line = super.addNewPaymentLine({ detail: paymentMethod })
+        this.currentOrder.paymentlines[0].transaction_id = "This will be the Payment Reference"
+        console.log('current: ',this.currentOrder.paymentlines[0].transaction_id )
+        return payment_line
+    }
 
     async payment_ref(){
         console.log("You clicked next from payment assscreen.")
