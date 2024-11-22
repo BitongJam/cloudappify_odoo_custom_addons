@@ -10,14 +10,28 @@
 
             </t>
 
-            <!-- <t t-inherit="point_of_sale.PaymentScreen" t-inherit-mode="extension" owl="1">
-                <xpath expr="//div[hasclass('top-content-center')]" position="after">
-                    <div class="button back"
-                          t-on-click="() => this.go_next()">
-                        <span class="back_text">Next</span>
-                        <i class="fa fa-angle-double-right fa-fw"></i>
-                    </div>
+
+            <t  t-inherit="point_of_sale.PaymentScreenPaymentLines" t-inherit-mode="extension" owl="1">
+                <xpath expr="//t[@t-if='line.selected']/div/div[@class='payment-name']" position="after">
+
+            <!-- Add transaction_id to the summary display -->
+                        <div class="payment-transaction-id select">
+                            <t t-esc="line.transaction_id"/>
+                         </div>
+                   
                 </xpath>
-            </t> -->
+
+                <xpath expr="//t[@t-else='']/div/div[@class='payment-name']" position="after">
+
+            <!-- Add transaction_id to the summary display -->
+                            <div class="payment-transaction-id">
+                                <t t-esc="line.transaction_id"/>
+                             </div>
+               
+            </xpath>
+    
+                </t>
+
+
         
-</templates>
+</templates>    

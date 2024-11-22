@@ -14,7 +14,7 @@
         'point_of_sale','board','base','web','pos_sale'
     ],
     'data': [
-        'views/pos_payment.xml'
+        # 'views/pos_payment.xml'
     ],
     'auto_install': False,
     'application': False,

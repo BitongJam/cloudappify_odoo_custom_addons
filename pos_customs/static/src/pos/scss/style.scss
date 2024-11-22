@@ -1,0 +1,17 @@
+.paymentline .payment-transaction-id {
+    flex-grow: 1;
+    /* make the name of the payment line to be truncated with ellipsis */
+    white-space: nowrap;
+    text-overflow:ellipsis;
+    padding: map-get($spacers, 3);
+}
+
+.paymentmethod .payment-transaction-id {
+    flex-grow: 1;
+    padding: map-get($spacers, 3);
+}
+
+.payment-transaction-id.select{
+    font-weight: bold;
+    color: $primary;
+}
