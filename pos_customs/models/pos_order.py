@@ -5,23 +5,15 @@ from odoo import _, api, fields, models
 class PosOrder(models.Model):
     _inherit = 'pos.order'
 
-    # @api.model
-    # def create_from_ui(self, orders, draft=False):
-    #     # Call the original method to handle default behavior
-    #     # Accessing the first order in the list
-    #     order = orders[0]
-    #     raise UserWarning(order.get('data', {}).get('statement_ids', [])[0][2])
+    def action_pos_order_cancel(self):
+        pick = self.env['stock.picking'].search([('pos_order_id','=',self.id)])
+        for p in pick:
+            #cancel picking
+            p.action_cancel()
 
-    #     # Now you can access the 'data' attribute
-    #     statement = order.get('data', {}).get('statement_ids', [])[0][2]
-
-    #     # Set the transaction_id to a fixed value
-    #     #this will be the field we store the payment reference..
-
-    #     #TODO: FOR NOW IT IS SET AS FIXED FIND A WAY FROM THE POS INTERFACE THAT WILL SET ITS PAYMENT REFERENCE THEN WILL BE THROW HERE
-    #     statement['transaction_id'] = 'fixed_transaction_001'
-
+        for pay_line in self.payment_ids:
+            #remove payments
+            pay_line.unlink()
         
-    #     res = super(PosOrder, self).create_from_ui(orders)
-        
-    #     return res
+        res = super(PosOrder,self).action_pos_order_cancel()
+        return res
