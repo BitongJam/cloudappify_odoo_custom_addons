@@ -20,7 +20,7 @@
 			<xpath expr="//header" position="inside">
 				<button name="btn_reset_to_draft" type="object"
 					string="Reset to Draft" states="cancel"
-					groups="eq_stock_move_cancel.group_cancel_stock_move" />
+					/>
 			</xpath>
 		</field>
 	</record>

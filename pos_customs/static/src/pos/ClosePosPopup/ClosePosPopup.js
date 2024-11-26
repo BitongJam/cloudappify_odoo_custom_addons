@@ -7,9 +7,9 @@ const ClosePosPopupExtend = (ClosePosPopup) =>
     class extends ClosePosPopup {
         setup() {
             super.setup(); // Call the parent setup
-            this.rpc({
-                model :
-            });
+            // this.rpc({
+            //     model :
+            // });
             this.defaultCashDetails['closing_amount'] = '#######'
         }
     };

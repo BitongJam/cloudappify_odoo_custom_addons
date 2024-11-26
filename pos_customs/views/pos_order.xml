@@ -8,8 +8,16 @@
      <xpath expr="//header" position="inside">
         <button string="Cancel" states="paid,done,invoiced" name="action_pos_order_cancel" type="object" class="oe_highlight"/>
      </xpath>
+
+
+    <!-- Add field on Payments tab -->
+     <xpath expr="//page[@name='payments']/field[@name='payment_ids']/tree/field[@name='payment_method_id']" position="after">
+        <field name="transaction_id" />
+     </xpath>
     </field>
 </record>
     
+
+
 
 </odoo>
