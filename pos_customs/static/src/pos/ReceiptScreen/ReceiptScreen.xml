@@ -56,18 +56,18 @@
             <xpath expr="." position="replace">
                 <t t-name="OrderReceipt" owl="1">
                     <div class="pos-receipt">
-                        <t t-if="receipt.company.logo">
+                        <!-- <t t-if="receipt.company.logo">
                             <img class="pos-receipt-logo" t-att-src="receipt.company.logo" alt="Logo"/>
                             <br/>
-                        </t>
-                        <t t-if="!receipt.company.logo">
-                            <h2 class="pos-receipt-center-align">
+                        </t> -->
+                        <!-- <t t-if="!receipt.company.logo"> -->
+                            <h1 class="pos-receipt-center-align">
                                 <t t-esc="receipt.company.name" />
-                            </h2>
+                            </h1>
                             <br/>
-                        </t>
+                        <!-- </t> -->
                         <div class="pos-receipt-contact">
-                            <t t-if="receipt.company.contact_address">
+                            <!-- <t t-if="receipt.company.contact_address">
                                 <div><t t-esc="receipt.company.contact_address" /></div>
                             </t>
                             <t t-if="receipt.company.phone">
@@ -85,7 +85,7 @@
                             </t>
                             <t t-if="!receipt.header_html and receipt.header">
                                 <div style="white-space:pre-line"><t t-esc="receipt.header" /></div>
-                            </t>
+                            </t> -->
                             <t t-if="receipt.cashier">
                                 <div class="cashier">
                                     <div>--------------------------------</div>
@@ -117,7 +117,14 @@
             
                         <!-- Total -->
                         <div class="pos-receipt-right-align">--------</div>
+                           <br/>
+                           <!-- Total Items -->
+                         <div>
+                            Total Item(s) 
+                            <span t-esc="receipt.totat_qty" class="pos-receipt-right-align"/>
+                        </div>
                         <br/>
+                     
                         <div class="pos-receipt-amount">
                             TOTAL
                             <span t-esc="env.pos.format_currency(receipt.total_with_tax)" class="pos-receipt-right-align"/>

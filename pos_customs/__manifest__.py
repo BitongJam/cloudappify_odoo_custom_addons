@@ -17,7 +17,8 @@
         'security/ir.model.access.csv',
         'views/pos_order.xml',
         'views/stock.xml',
-        'views/pos_session.xml'
+        'views/pos_session.xml',
+        'views/pos_payment.xml'
     ],
     'auto_install': False,
     'application': False,
