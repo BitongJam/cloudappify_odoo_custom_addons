@@ -15,3 +15,22 @@
     font-weight: bold;
     color: $primary;
 }
+
+
+.pos .close-pos-popup .payment-starting-summary {
+    max-height: 320px;
+    overflow: auto;
+}
+
+.pos .close-pos-popup .payment-starting-summary table {
+    width: 100%;
+    text-align: left;
+}
+
+.pos .close-pos-popup .payment-starting-summary table tr {
+    height: 35px
+}
+
+.table-50{
+    width: 50%;
+}

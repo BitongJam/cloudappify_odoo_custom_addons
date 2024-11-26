@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_pos_session_form_inherit" model="ir.ui.view">
+        <field name="name">pos.session.view.form.inherit</field>
+        <field name="model">pos.session</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_session_form"/>
+        <field name="arch" type="xml">
+            <!-- <xpath expr="//sheet/group" position="replace">
+                <group  >
+                    <group>
+                        <field name="cash_control" invisible="1"/>
+                        <field name="user_id"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="config_id" readonly="1"/>
+                        <field name="move_id" readonly="1" groups="account.group_account_readonly"/>
+                        <field name="start_at" attrs="{'invisible' : [('state', '=', 'opening_control')]}"/>
+                        <field name="stop_at" attrs="{'invisible' : [('state', '!=', 'closed')]}"/>
+                        <field name="cash_register_balance_start"/>
+                        <field name="cash_register_balance_end_real" attrs="{'invisible': [('state', '!=', 'closed')]}"/>
+                        <field name="cash_register_difference" attrs="{'invisible': [('state', '!=', 'closed')]}"/>
+                    </group>
+                    <group>
+                        <field name="ttal_non_cash_payment" string="Total Non Cash Amount" />
+                    </group>
+                </group>
+            </xpath> -->
+          
+            <xpath expr="//field[@name='cash_register_balance_end_real']" position="after">
+                <field name="cash_register_balance_end" string="Expected Closing Amount" attrs="{'invisible': [('state', '!=', 'closed')]}"/>
+                <field name="cash_register_difference"
+                attrs="{'invisible': [('state', '!=', 'closed')]}"
+                decoration-success="cash_register_difference &gt;= 0"
+                decoration-danger="cash_register_difference &lt; 0"/>
+         
+                
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="cash_register_statement_view_tree" model="ir.ui.view">
+        <field name="name">cash.register.statement.view.tree</field>
+        <field name="model">account.bank.statement.line</field>
+        <field name="arch" type="xml">
+            <tree string="" create="0"> 
+                <field name="name" />
+                <field name="payment_ref" />
+                <field name="amount" />
+            </tree>
+        </field>
+    </record>
+
+</odoo>

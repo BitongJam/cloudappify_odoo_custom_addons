@@ -14,17 +14,19 @@
         'point_of_sale','board','base','web','pos_sale'
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/pos_order.xml',
-        'views/stock.xml'
+        'views/stock.xml',
+        'views/pos_session.xml'
     ],
     'auto_install': False,
     'application': False,
     'assets': {
-        'web.assets_backend': [
-            'pos_customs/static/src/components/**/*.js',
-            'pos_customs/static/src/components/**/*.xml',
-            'pos_customs/static/src/components/**/*.scss',
-        ],
+        # 'web.assets_backend': [
+        #     'pos_customs/static/src/components/**/*.js',
+        #     'pos_customs/static/src/components/**/*.xml',
+        #     'pos_customs/static/src/components/**/*.scss',
+        # ],
         'point_of_sale.assets': [
             'pos_customs/static/src/pos/**/*.js',
             'pos_customs/static/src/pos/**/*.xml',

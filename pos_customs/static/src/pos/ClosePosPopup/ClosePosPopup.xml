@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template"  xml:space="preserve">
+    <t t-name="pos_custom.ClosePosPopInherit" t-inherit="point_of_sale.ClosePosPopup" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('payment-methods-overview')]" position="before">
+            <div class="row">
+                <div class="col-6">
+                    <div class="payment-starting-summary">
+                        <table class="table-50">
+                            <tbody>
+                                <tr>
+                                    <th>
+                                        Starting Amount
+                                    </th>
+                                    <td><t t-esc="env.pos.format_currency(defaultCashDetails.opening)"/></td>
+                                    <th>
+                                        Closing Amount
+                                    </th>
+                                    <td>
+                                        <t t-esc="env.pos.format_currency(defaultCashDetails.amount)"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                           
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            
+        </xpath>
+    </t>
+</templates>
