@@ -38,20 +38,27 @@ class AccountMove(models.Model):
                     stock_loc = self.env["stock.location"].search(
                             [("usage", "=", "internal"), ("name", "ilike", "Stock")], limit=1
                         )
+                    
+                    product_track = rec.invoice_line_ids.filtered(lambda p:p.tracking in ('lot','serial'))
+
+                    if rec.auto_post_picking:
+                        if len(product_track) > 0:
+                            raise UserError("In Invoice Lines, there is a product track by serial/lot that needs to be manually validated. Uncheck the auto-picking post to proceed.")
+        
                     for line in rec.invoice_line_ids:
                         if line.product_id.type == 'product':
-                            # stock_move_lines.append((0,0,
-                            #         {
+                            stock_move_lines.append((0,0,
+                                    {
                                         
-                            #             "product_id": line.product_id.id,
-                            #             # "name": line.name,
-                            #             # "product_uom_qty": line.quantity,
-                            #             "qty_done": line.quantity,
-                            #             "product_uom_id": line.product_uom_id.id,
-                            #             "location_id": 4,
-                            #             "location_dest_id": picking_type_obj.default_location_dest_id.id
-                            #             or cust_loc.id,
-                            #         },))
+                                        "product_id": line.product_id.id,
+                                        # "name": line.name,
+                                        # "product_uom_qty": line.quantity,
+                                        "qty_done": line.quantity,
+                                        "product_uom_id": line.product_uom_id.id,
+                                        "location_id": 4,
+                                        "location_dest_id": picking_type_obj.default_location_dest_id.id
+                                        or cust_loc.id,
+                                    },))
                             
                             stock_move.append((0,0,{
                                 'product_id':line.product_id.id,
@@ -69,7 +76,7 @@ class AccountMove(models.Model):
                             "location_id": 4,
                             "location_dest_id": picking_type_obj.default_location_dest_id.id or cust_loc.id,
                             "move_ids_without_package": stock_move,
-                            # "move_line_ids_without_package": stock_move_lines,
+                            "move_line_ids_without_package": stock_move_lines,
                             'origin': rec.name,
                             'move_type': 'one',
                             'invoice_id': rec.id,
@@ -88,6 +95,8 @@ class AccountMove(models.Model):
                         if pick:
                             for lines in pick.move_ids_without_package:
                                 lines.update({'name': lines.product_id.name})
+
+                            
                             pick.button_validate()
         return res
     
@@ -114,4 +123,12 @@ class AccountMove(models.Model):
             'message_type': 'notification',  # Message type (can also be 'email')
             'subject': 'Log Message',
         })
+    
+
+
+
+class AccountMoveLine(models.Model):
+    _inherit = 'account.move.line'
+
+    tracking = fields.Selection(related='product_id.tracking',help="Related field form product tracking field content")
     
