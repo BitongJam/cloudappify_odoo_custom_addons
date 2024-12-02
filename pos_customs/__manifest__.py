@@ -18,7 +18,8 @@
         'views/pos_order.xml',
         'views/stock.xml',
         'views/pos_session.xml',
-        'views/pos_payment.xml'
+        'views/pos_payment.xml',
+        'reports/report_sale_details.xml'
     ],
     'auto_install': False,
     'application': False,
