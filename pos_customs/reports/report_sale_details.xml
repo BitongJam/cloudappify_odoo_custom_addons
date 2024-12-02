@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_saledetails_inherit" name="report_saledetails_inherit" inherit_id="point_of_sale.report_saledetails">
+        <xpath expr="//table[1]/tbody/tr/td[1]" position="replace">
+            <td><t t-esc="internal_reference"/><t t-esc="line['product_name']"/>-<t t-esc="line['product_variant_name']"/></td>
+        </xpath>
+    </template>
+
+</odoo>
