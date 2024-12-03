@@ -14,6 +14,11 @@ class PosSession(models.Model):
         store=False  # This makes it non-stored
     )
     
+    def unlink(self):
+        if self.state !='closed':
+            raise UserError("You can only delete a session that has been closed.")
+        res = super(PosSession, self).unlink()
+        return res
     
     # @api.depends('state', 'pos_payment_ids')  # Use relevant fields for dependencies
     def _compute_payment_lines_grouped(self):
