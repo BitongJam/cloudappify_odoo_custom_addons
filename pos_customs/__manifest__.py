@@ -31,6 +31,7 @@
         # ],
         'point_of_sale.assets': [
             'pos_customs/static/src/pos/**/*.js',
+            'pos_customs/static/src/pos/**/*.css',
             'pos_customs/static/src/pos/**/*.xml',
             'pos_customs/static/src/pos/**/*.scss',
         ]

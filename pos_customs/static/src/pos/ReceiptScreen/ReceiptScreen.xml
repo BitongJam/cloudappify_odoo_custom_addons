@@ -119,7 +119,7 @@
                         <div class="pos-receipt-right-align">--------</div>
                            <br/>
                            <!-- Total Items -->
-                         <div>
+                         <div class="pos-receipt-amount">
                             Total Item(s) 
                             <span t-esc="receipt.totat_qty" class="pos-receipt-right-align"/>
                         </div>
@@ -144,7 +144,7 @@
                         <!-- Payment Lines -->
             
                         <t t-foreach="receipt.paymentlines" t-as="line" t-key="line.cid">
-                            <div>
+                            <div class="pos-receipt-amount">
                                 <t t-esc="line.name" />
                                 <span t-esc="env.pos.format_currency_no_symbol(line.amount)" class="pos-receipt-right-align"/>
                             </div>
