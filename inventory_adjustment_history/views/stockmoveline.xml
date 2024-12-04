@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_move_line_form_inherit_stock" model="ir.ui.view">
+        <field name="name">stock.move.line.view.form.inherit</field>
+        <field name="model">stock.move.line</field>
+        <field name="inherit_id" ref="stock.view_move_line_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='create_uid']" position="after">
+                <field name="history_counted" readonly="1"  attrs="{'invisible':[('history_counted','=',False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
