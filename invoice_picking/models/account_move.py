@@ -16,7 +16,7 @@ class AccountMove(models.Model):
     def _check_invoice_with_picking_canceling(self):
         if self.state in ('cancel','draft'):
             if self.validate_picking:
-                done_pick = self.env['stock.picking'].search_count([('origin','=',self.name),('state','not in',('draft','cancel'))])
+                done_pick = self.env['stock.picking'].search_count([('origin','=',self.name),('state','!=','cancel')])
                 if done_pick > 0:
                     raise UserError("You cannot Cancel or Set to Draft This invoice. Cancel first its Delivery or set to draft.")
     
@@ -71,17 +71,16 @@ class AccountMove(models.Model):
                             }))
                     
                     picking_vals = {
-                            "partner_id": rec.partner_id.id,
-                            "picking_type_id": picking_type_obj.id,
-                            "location_id": 4,
-                            "location_dest_id": picking_type_obj.default_location_dest_id.id or cust_loc.id,
-                            "move_ids_without_package": stock_move,
-                            "move_line_ids_without_package": stock_move_lines,
-                            'origin': rec.name,
-                            'move_type': 'one',
-                            'invoice_id': rec.id,
-                            "show_validate": True,
-                        }
+                        "partner_id": rec.partner_id.id,
+                        "picking_type_id": picking_type_obj.id,
+                        "location_id": 4,
+                        "location_dest_id": picking_type_obj.default_location_dest_id.id or cust_loc.id,
+                        "move_ids_without_package": stock_move,  # Only move_ids defined
+                        'origin': rec.name,
+                        'move_type': 'one',
+                        'invoice_id': rec.id,
+                        "show_validate": True,
+                    }
                     
                     
                     pick = picking_obj.create(picking_vals)
@@ -92,12 +91,11 @@ class AccountMove(models.Model):
 
                     if rec.auto_post_picking:
                         pick.action_confirm()
-                        if pick:
-                            for lines in pick.move_ids_without_package:
-                                lines.update({'name': lines.product_id.name})
-
+                        pick.action_assign()  # Reserve the stock
+                        for move_line in pick.move_line_ids:
+                            move_line.qty_done = move_line.move_id.product_uom_qty  # Set quantity done
                             
-                            pick.button_validate()
+                        pick.button_validate()
         return res
     
     
@@ -124,7 +122,21 @@ class AccountMove(models.Model):
             'subject': 'Log Message',
         })
     
+    def button_draft(self):
+        res = super(AccountMove,self).button_draft()
+        picking = self.env['stock.picking'].search([('origin','=',self.name)])
+        if len(picking) > 0:
+            picking.unlink()
 
+        return res
+    
+    def button_cancel(self):
+        res = super(AccountMove,self).button_cancel()
+        picking = self.env['stock.picking'].search([('origin','=',self.name)])
+        if len(picking) > 0:
+            picking.unlink()
+        
+        return res
 
 
 class AccountMoveLine(models.Model):
