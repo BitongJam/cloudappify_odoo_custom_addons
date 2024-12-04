@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
 <t  t-inherit="point_of_sale.Orderline" t-inherit-mode="extension" owl="1">
-   <xpath expr="//ul[hasclass('info-list')][1]/t[2]" position="replace">
-        <!-- New content or modifications go here -->
+    <!-- Comment Discoun fix amount need to be new discount not overrided -->
+   <!-- <xpath expr="//ul[hasclass('info-list')][1]/t[2]" position="replace">
+
            <t t-if="props.line.get_discount_str() !== '0'">
                     <li class="info">
                         With a
@@ -12,5 +13,5 @@
                         Discount amount
                     </li>
                 </t>
-    </xpath>
+    </xpath> -->
 </t></templates>
