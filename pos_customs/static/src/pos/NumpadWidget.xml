@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
-<t  t-inherit="point_of_sale.NumpadWidget" t-inherit-mode="extension" owl="1">
+    <!-- Comment Discoun fix amount need to be new discount not overrided -->
+<!-- <t  t-inherit="point_of_sale.NumpadWidget" t-inherit-mode="extension" owl="1">
       <xpath expr="//button[contains(@class, 'mode-button') and contains(text(), '% Disc')]" position="replace">
         <button class="mode-button" t-att-class="{
             'selected-mode': props.activeMode === 'discount',
@@ -9,5 +10,5 @@
         t-att-disabled="!hasManualDiscount"
         t-on-click="() => this.changeMode('discount')">Disc</button>
     </xpath>
-</t>
+</t> -->
 </templates>
