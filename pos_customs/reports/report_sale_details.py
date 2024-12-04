@@ -29,6 +29,7 @@ class ReportSaleDetails(models.AbstractModel):
 
         if (session_ids):
             domain = AND([domain, [('session_id', 'in', session_ids)]])
+            session = self.env['pos.session'].search([('id','in',session_ids)])
         else:
             if date_start:
                 date_start = fields.Datetime.from_string(date_start)
@@ -103,6 +104,7 @@ class ReportSaleDetails(models.AbstractModel):
         else:
             payments = []
 
+
         return {
             'date_start': date_start,
             'date_stop': date_stop,
@@ -111,6 +113,10 @@ class ReportSaleDetails(models.AbstractModel):
             'payments': payments,
             'company_name': self.env.company.name,
             'taxes': list(taxes.values()),
+            'starting_balance':session.cash_register_balance_start if session else 0,
+            'ending_balance':session.cash_register_balance_end_real if session else 0,
+            'expected_ending_balance':session.cash_register_balance_end if session else 0,
+            'cash_register_diff': session.cash_register_difference if session else 0,
             'products': sorted([{
                 'product_id': product.id,
                 'product_name': product.name,
