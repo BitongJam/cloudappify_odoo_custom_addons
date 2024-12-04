@@ -13,7 +13,7 @@
             <t t-name="OrderLinesReceipt" owl="1">
                 <t t-foreach="receipt.orderlines" t-as="line" t-key="line.id">
                     <!-- <t t-if="isSimple(line)"> -->
-                        <div class="pos-receipt-left-align "><t t-esc="line.product_categ"/></div>
+                        <div style="font-weight:bold;"><t t-esc="line.product_categ"/></div>
                         <div class="responsive-price">
                             
                             <t t-esc="line.product_name" />
@@ -64,7 +64,6 @@
                             <h1 class="pos-receipt-center-align">
                                 <t t-esc="receipt.company.name" />
                             </h1>
-                            <br/>
                         <!-- </t> -->
                         <div class="pos-receipt-contact">
                             <!-- <t t-if="receipt.company.contact_address">
@@ -139,8 +138,6 @@
                              <span t-esc='env.pos.format_currency(receipt.total_rounded)' class="pos-receipt-right-align"/>
                           </div>
                         </t>
-                        <br/><br/>
-            
                         <!-- Payment Lines -->
             
                         <t t-foreach="receipt.paymentlines" t-as="line" t-key="line.cid">
@@ -149,22 +146,23 @@
                                 <span t-esc="env.pos.format_currency_no_symbol(line.amount)" class="pos-receipt-right-align"/>
                             </div>
                         </t>
-                        <br/>
             
                         <div class="pos-receipt-amount receipt-change">
                             CHANGE
                             <span t-esc="env.pos.format_currency(receipt.change)" class="pos-receipt-right-align"/>
                         </div>
-                        <br/>
+                 
             
                         <!-- Extra Payment Info -->
-            
-                        <t t-if="receipt.total_discount">
-                            <div>
+                        <!-- Hide its not a receipt -->
+                        <!-- <div t-if="receipt.total_discount">
+                            <div class="pos-receipt-amount clearfix" >
                                 Discounts
                                 <span t-esc="env.pos.format_currency(receipt.total_discount)" class="pos-receipt-right-align"/>
                             </div>
-                        </t>
+                            <br/>
+                        </div> -->
+                          <br/>
                         <!-- <t t-if="isTaxIncluded">
                             <t id="tax-details" t-foreach="receipt.tax_details" t-as="tax" t-key="tax.tax.id">
                                 <div>
