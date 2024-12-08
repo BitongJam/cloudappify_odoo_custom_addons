@@ -1,5 +1,5 @@
 from odoo import _, api, fields, models,tools
-from odoo.exceptions import UserError
+from odoo.exceptions import AccessError, UserError
 
 
 class PosSession(models.Model):
