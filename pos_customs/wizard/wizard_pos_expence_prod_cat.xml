@@ -1,0 +1,29 @@
+
+<odoo>
+    <record id="view_pos_expenses_wizard_form" model="ir.ui.view">
+        <field name="name">pos.expenses.wizard.form</field>
+        <field name="model">pos.expenses.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generate POS Expenses Report">
+                <group>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                </group>
+                <footer>
+                    <button string="Generate" type="object" name="action_generate_report" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pos_expenses_wizard" model="ir.actions.act_window">
+        <field name="name">Generate POS Expenses Report</field>
+        <field name="res_model">pos.expenses.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_pos_expenses_report" name="POS Expenses Report" parent="point_of_sale.menu_point_rep" sequence="10" action="action_pos_expenses_wizard"/>
+
+</odoo>

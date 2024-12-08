@@ -1,0 +1,35 @@
+<odoo>
+    <record id="pos_summary_discount_tip_report_wizard_form" model="ir.ui.view">
+        <field name="name">pos.summary.discount.tip.report.wizard.form</field>
+        <field name="model">pos.summary.discount.tip.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="POS Suammary Discount and Tips">
+                <group>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="pos_session_id"/>
+            </group>
+            <footer>
+                <button string="Generate Report" type="object" name="action_generate_report" class="btn-primary"/>
+                <button string="Cancel" type="object" class="btn-secondary" special="cancel"/>
+            </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <odoo>
+    <!-- Action to open the wizard -->
+    <record id="action_pos_summary_discount_tip_report_wizard" model="ir.actions.act_window">
+        <field name="name">POS Suammary Discount and Tips</field>
+        <field name="res_model">pos.summary.discount.tip.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Menu item to trigger the wizard -->
+    <menuitem id="menu_pos_summary_discount_tip_report_wizard" name="POS Summary Discount and Tips Report" parent="point_of_sale.menu_point_rep"
+              action="action_pos_summary_discount_tip_report_wizard"/>
+</odoo>
+
+</odoo>
