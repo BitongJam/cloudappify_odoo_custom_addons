@@ -6,7 +6,7 @@
 ##############################################################################
 
 from odoo import models, fields
-
+from odoo.exceptions import UserError
 
 class Stock_Move(models.Model):
     _inherit = 'stock.move'
@@ -65,12 +65,19 @@ class Stock_Scrap(models.Model):
                 scrap.move_id._action_cancel()
 
 
-class stock_picking(models.Model):
+class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     def btn_reset_to_draft(self):
         for picking in self:
             move_raw_ids = picking.move_lines.filtered(lambda x: x.state == 'cancel').sudo()
             move_raw_ids.write({'state':'draft'})
+
+    def unlink(self):
+        if self.state not in ('draft','cancel'):
+            raise UserError("Picking cannot be deleted it must be cancel or draft state")
+        
+        res = super(StockPicking,self).unlink()
+        return res
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
