@@ -40,6 +40,10 @@ class PosSession(models.Model):
 
     # Override
     def show_cash_register(self):
+        EXCLUDED_REFS = [
+                    'Cash difference observed during the counting (Loss) - opening',
+                    'Cash difference observed during the counting (Profit) - opening'
+                ]
         return {
             'name': _('Cash register'),
             'type': 'ir.actions.act_window',
@@ -48,10 +52,6 @@ class PosSession(models.Model):
             'view_ids': [
                 (0, 0, {'view_mode': 'tree', 'view_id': self.env.ref('pos_customs.cash_register_statement_view_tree').id}),
             ],
-            'domain': [('id', 'in', self.statement_line_ids.ids)],
-        }
-
-
             'domain': [('id', 'in', self.statement_line_ids.ids),('payment_ref','not in',EXCLUDED_REFS)],
         }
 
