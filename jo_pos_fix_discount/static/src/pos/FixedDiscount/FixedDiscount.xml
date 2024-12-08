@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Template for the order button in the pos session-->
+<templates id="template" xml:space="preserve">
+    <t t-name="FixedDiscountButton" owl="1">
+        <span class="control-button" t-att-class="addedClasses"
+              t-on-click="onClick">
+            <i class="fa-arrow-circle-down"/>
+            <span>Fix Discount</span>
+        </span>
+    </t>
+
+    <t t-name="OrderlineFix" t-inherit="point_of_sale.Orderline" t-inherit-mode="extension" owl="1">
+        <xpath expr="//ul[hasclass('info-list')]" position="inside">
+                <t t-if="props.line.discountFix > 0">
+                <li class="info">
+                    Fix Discount
+                            <span t-esc="props.line.discountFix" />                 
+                </li>
+                </t>
+                
+      
+        </xpath>
+    </t>
+</templates>
