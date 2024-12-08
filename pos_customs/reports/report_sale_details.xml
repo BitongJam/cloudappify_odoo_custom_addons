@@ -1,5 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+      <template id="session_cash_report" name="session_cash_report">
+      <div id="session_section" t-if="cash_register_trans">
+               <div class="text-center">
+            <h2>Session Cash Report</h2>
+        </div>
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                      
+                            <td>Reference</td>
+                            <td>Label</td>
+                            <td>Amount</td>
+                      
+                    </tr>
+                   
+
+                </thead>
+                <tbody> <tr t-foreach="cash_register_trans" t-as="cr">
+                        <td>
+                            <t t-esc="cr['name']"/>
+                        </td>
+                        <td>
+                            <t t-esc="cr['payment_ref']"/>
+                        </td>
+                        <td>
+                         <t t-esc="cr['amount']" t-options="{'widget': 'float', 'precision': currency_precision}"/>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+      </div>
+
+    </template>
 
     <template id="report_saledetails_inherit" name="report_saledetails_inherit" inherit_id="point_of_sale.report_saledetails">
         <xpath expr="//table[1]/tbody/tr/td[1]" position="replace">
@@ -7,7 +43,8 @@
         </xpath>
 
         <xpath expr="//div[hasclass('page')]/strong" position="after">
-            <div>
+        <t t-call="pos_customs.session_cash_report" />
+            <div t-if="cash_register_trans">
                 <strong>Starting balance: <t t-esc="starting_balance"/></strong><br/>
                 <strong>Actual Ending Balance: <t t-esc="ending_balance"/></strong><br/>
                 <strong>Expected Ending Balance: <t t-esc="expected_ending_balance"/></strong><br/>
@@ -15,5 +52,7 @@
             </div>
         </xpath>
     </template>
+
+  
 
 </odoo>

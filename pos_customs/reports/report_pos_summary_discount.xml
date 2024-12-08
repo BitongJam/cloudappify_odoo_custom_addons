@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="pos_customs.pos_discount_tips" name="POS Income Report">
+    <t t-call="web.basic_layout">
+            <div class="page">
+            <h2>POS Summary Discount Report</h2>
+              
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Date</th>
+                            <th>Total Discount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                         <t t-foreach="report_data" t-as="data">
+                            <tr>
+                                <td><span t-esc="data['order'].name"/></td>
+                                <td><span t-esc="data['order'].date_order"/></td>
+                                <td><span t-esc="data['total_discount']"/></td>
+                                <!-- <td><span t-esc="data['amount_total']"/></td> -->
+                            </tr>
+                            </t>
+                    </tbody>
+                </table>
+            </div>
+     
+            </t>
+        
+    </template>
+
+    <report
+        id="pos_discount_tips_action"
+        model="pos.summary.discount.tip.report.wizard"
+        string="POS Income Report"
+        report_type="qweb-html"
+        name="pos_customs.pos_discount_tips"
+        file="pos_customs.pos_discount_tips"
+        print_report_name="'POS Income Report from %s to %s' % (data['date_from'], data['date_to'])"
+    />
+</odoo>

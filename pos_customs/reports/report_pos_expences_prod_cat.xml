@@ -1,0 +1,38 @@
+
+<odoo>
+    <template id="report_pos_expenses_by_category">
+        <t t-call="web.html_container">
+            <t t-call="web.basic_layout">
+                <div class="page">
+                    <h2>Product Category Expenses</h2>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Total Expenses</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="data_categories" t-as="category">
+                                <tr>
+                                    <td><t t-esc="category['name']"/></td>
+                                    <td><t t-esc="category['expenses']"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
+     <report 
+        id="action_report_pos_expenses_by_category"
+        model="pos.expenses.wizard"
+        string="POS Expenses by Category"
+        report_type="qweb-html"
+        name="pos_customs.report_pos_expenses_by_category"
+        file="pos_customs.report_pos_expenses_by_category"
+        print_report_name="'POS Expenses - ' + object.name"
+    />
+</odoo>

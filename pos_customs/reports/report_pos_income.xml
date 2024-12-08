@@ -1,0 +1,37 @@
+<odoo>
+    <template id="pos_income_report_template">
+        <t t-call="web.basic_layout">
+            <div class="page">
+                <h2>POS Income Report</h2>
+                <p>Date From: <t t-esc="date_from"/></p>
+                <p>Date To: <t t-esc="date_to"/></p>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Payment Method</th>
+                            <th>Income</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="grouped_income" t-as="line">
+                            <tr>
+                                <td><t t-esc="line['payment_method']"/></td>
+                                <td><t t-esc="line['income']"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+      <report
+        id="pos_income_report_action"
+        model="pos.income.report.wizard"
+        string="POS Income Report"
+        report_type="qweb-html"
+        name="pos_customs.pos_income_report_template"
+        file="pos_customs.pos_income_report_template"
+        print_report_name="'POS Income Report from %s to %s' % (data['date_from'], data['date_to'])"
+    />
+</odoo>

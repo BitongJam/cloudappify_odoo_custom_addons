@@ -26,7 +26,7 @@ class ReportSaleDetails(models.AbstractModel):
         :returns: dict -- Serialised sales.
         """
         domain = [('state', 'in', ['paid','invoiced','done'])]
-
+        session = False
         if (session_ids):
             domain = AND([domain, [('session_id', 'in', session_ids)]])
             session = self.env['pos.session'].search([('id','in',session_ids)])
@@ -117,6 +117,7 @@ class ReportSaleDetails(models.AbstractModel):
             'ending_balance':session.cash_register_balance_end_real if session else 0,
             'expected_ending_balance':session.cash_register_balance_end if session else 0,
             'cash_register_diff': session.cash_register_difference if session else 0,
+            'cash_register_trans':self._get_cash_register_transaction(session.id) if session else False,
             'products': sorted([{
                 'product_id': product.id,
                 'product_name': product.name,
@@ -128,3 +129,15 @@ class ReportSaleDetails(models.AbstractModel):
                 'uom': product.uom_id.name
             } for (product, price_unit, discount), qty in products_sold.items()], key=lambda l: l['product_name'])
         }
+
+    def _get_cash_register_transaction(self,session_id):
+        res = []
+        cash_register = self.env['account.bank.statement.line'].search([('pos_session_id','=',session_id),('payment_ref','!=','Cash difference observed during the counting (Loss) - opening')],order='name asc')
+
+        for cr in cash_register:
+            res.append({
+                'name':cr.name,
+                'payment_ref':cr.payment_ref,
+                'amount':cr.amount
+            })
+        return res
