@@ -14,6 +14,10 @@
      <xpath expr="//page[@name='payments']/field[@name='payment_ids']/tree/field[@name='payment_method_id']" position="after">
         <field name="transaction_id" />
      </xpath>
+
+     <field name="price_unit" position="after">
+            <field name="discount_amount"/>
+        </field>
     </field>
 </record>
     
