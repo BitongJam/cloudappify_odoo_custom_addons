@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_pos_session_payments_group,access.pos.session.payments.grou,model_pos_session_payments_group,,1,0,0,0
+access_pos_income_report_wizard,access.pos.income.report.wizard,model_pos_income_report_wizard,,1,1,1,1
+access_pos_summary_discount_tip_report_wizard,access.pos.summary.discount.tip.report.wizard,model_pos_summary_discount_tip_report_wizard,,1,1,1,1
+access_pos_expenses_wizard,access.pos.expenses.wizard,model_pos_expenses_wizard,,1,1,1,1
