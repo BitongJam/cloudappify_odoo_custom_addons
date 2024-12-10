@@ -73,11 +73,6 @@ class StockPicking(models.Model):
             move_raw_ids = picking.move_lines.filtered(lambda x: x.state == 'cancel').sudo()
             move_raw_ids.write({'state':'draft'})
 
-    def unlink(self):
-        if self.state not in ('draft','cancel'):
-            raise UserError("Picking cannot be deleted it must be cancel or draft state")
-        
-        res = super(StockPicking,self).unlink()
-        return res
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
