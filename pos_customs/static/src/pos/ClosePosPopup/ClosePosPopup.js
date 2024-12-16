@@ -25,7 +25,7 @@ const ClosePosPopupExtend = (ClosePosPopup) =>
 
                 // Example: Set starting cash details based on session data
                 if (sessionData && sessionData.length > 0) {
-                    this.defaultCashDetails['starting'] = sessionData[0].cash_register_balance_start || 'No starting balance set';
+                    this.defaultCashDetails['starting'] = sessionData[0].cash_register_balance_start || 0;
                 } else {
                     this.defaultCashDetails['starting'] = 'Session not found';
                 }
