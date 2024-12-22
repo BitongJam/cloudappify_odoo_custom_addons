@@ -16,7 +16,7 @@
                         <div style="font-weight:bold;"><t t-esc="line.product_categ"/></div>
                         <div class="responsive-price">
                             
-                            <t t-esc="line.product_name" />
+                            <t t-esc="line.display_name_w_tag" />
                             <div class="pos-receipt-right-align">
                                 <span t-esc="line.quantity" />x
                             </div>

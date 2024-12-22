@@ -1,6 +1,6 @@
 from odoo import _, api, fields, models,tools
 from odoo.exceptions import AccessError, UserError
-
+from odoo.osv.expression import AND, OR
 
 class PosSession(models.Model):
     _inherit = 'pos.session'
@@ -36,7 +36,12 @@ class PosSession(models.Model):
 
         self.ttal_non_cash_payment = ttal
         
-
+    # Extended function from point_of_sale
+    def _loader_params_product_product(self):
+        ret = super(PosSession,self)._loader_params_product_product()
+        ret['search_params']['fields'].append('name')
+        ret['search_params']['fields'].append('display_name_w_tag')
+        return ret
 
     # Override
     def show_cash_register(self):

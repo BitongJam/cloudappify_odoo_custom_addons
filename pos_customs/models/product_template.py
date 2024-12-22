@@ -5,6 +5,24 @@ from odoo import _, api, fields, models
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
+    display_name_w_tag = fields.Char(compute="_compute_display_name_w_tag")
+    
+
+    def _compute_display_name_w_tag(self):
+        for rec in self:
+            product_name = rec.name
+
+            # Initialize prod_tags as an empty string
+            prod_tags = ""
+            for t in rec.product_tag_ids:
+                prod_tags += t.name + ' '
+
+            # Remove the trailing space and update product_name if prod_tags is not empty
+            if prod_tags.strip():
+                product_name += '[%s]' % prod_tags.strip()
+
+            rec.display_name_w_tag = product_name
+
     # overrided
     def _compute_show_qty_status_button(self):
         super()._compute_show_qty_status_button()
