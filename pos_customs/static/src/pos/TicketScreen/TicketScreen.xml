@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="TicketScreenCustom"  t-inherit="point_of_sale.TicketScreen" t-inherit-mode="extension" owl="1">
+        <!-- FILTER ORDERS BASED ON THE CASHIER AND RESPONSIBLE CASHIER -->
+        <xpath expr="//div[hasclass('orders')]/t[2]/t[@t-foreach='_filteredOrderList']" position="replace">
+   <t t-foreach="_filteredOrderList" t-as="order" t-key="order.cid">
+        <t t-if="order.cashier.id == order.user_id">
+              <div class="order-row" t-att-class="{ highlight: isHighlighted(order) }" t-on-click="() => this.trigger('click-order', order)">
+                                    <div class="col wide">
+                                        <div t-if="env.isMobile">Date</div>
+                                        <div><t t-esc="getDate(order)"></t></div>
+                                    </div>
+                                    <div class="col wide">
+                                        <div t-if="env.isMobile">Receipt Number</div>
+                                        <div><t t-esc="order.name"></t></div>
+                                    </div>
+                                    <div class="col">
+                                        <div t-if="env.isMobile">Customer</div>
+                                        <div><t t-esc="getPartner(order)"></t></div>
+                                    </div>
+                                    <div t-if="showCardholderName()" class="col">
+                                        <div t-if="env.isMobile">Cardholder Name</div>
+                                        <div><t t-esc="getCardholderName(order)"></t></div>
+                                    </div>
+                                    <div class="col">
+                                        <div t-if="env.isMobile">Cashier</div>
+                                        <div><t t-esc="getCashier(order)"></t></div>
+                                    </div>
+                                    <div class="col end">
+                                        <div t-if="env.isMobile">Total</div>
+                                        <div><t t-esc="getTotal(order)"></t></div>
+                                    </div>
+                                    <div class="col narrow">
+                                        <div t-if="env.isMobile">Status</div>
+                                        <div><t t-esc="getStatus(order)"></t></div>
+                                    </div>
+                                    <div t-if="!shouldHideDeleteButton(order)" class="col very-narrow delete-button" name="delete" t-on-click.stop="() => this.trigger('delete-order', order)">
+                                        <i class="fa fa-trash" aria-hidden="true"/><t t-if="env.isMobile"> Delete</t>
+                                    </div>
+                                    <div t-else="" class="col very-narrow"></div>
+                                </div>
+        </t>
+                              
+                            </t>
+        </xpath>
+    </t>
+    </templates>
