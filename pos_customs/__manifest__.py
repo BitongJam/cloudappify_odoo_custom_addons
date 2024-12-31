@@ -22,6 +22,7 @@
          'wizard/wizard_pos_summary_discount_tips.xml',
         'wizard/wizart_pos_income.xml',
         'wizard/wizard_pos_expence_prod_cat.xml',
+        'reports/paper_format.xml',
         'reports/report_pos_income.xml',    
         'reports/report_sale_details.xml',
         'reports/report_pos_summary_discount.xml',
