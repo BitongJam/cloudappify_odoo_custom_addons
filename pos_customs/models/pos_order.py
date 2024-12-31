@@ -19,7 +19,7 @@ class PosOrder(models.Model):
         return res
     
     # Computed field for total discount
-    total_discount = fields.Float(string='Total Discount', compute='_compute_total_discount', store=True)
+    total_discount = fields.Float(string='Total Discount', compute='_compute_total_discount', store=True,readonly=True)
 
     @api.depends('lines.discount_amount')
     def _compute_total_discount(self):

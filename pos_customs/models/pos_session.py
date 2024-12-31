@@ -14,6 +14,16 @@ class PosSession(models.Model):
         store=False  # This makes it non-stored
     )
     
+    total_discount = fields.Float(help="Computed of total discount from orders.",compute="_compute_total_discount",store=True,readonly=True)
+    
+    @api.depends('order_ids.total_discount')
+    def _compute_total_discount(self):
+        ttal = 0
+        for sesison in self:
+            ttal = ttal + sum(order.total_discount for order in sesison.order_ids)
+        
+            sesison.total_discount = ttal
+    
     def unlink(self):
         if self.state !='closed':
             raise UserError("You can only delete a session that has been closed.")

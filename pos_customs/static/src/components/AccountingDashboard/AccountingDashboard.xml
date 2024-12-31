@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="pos_customs.owl_accounting_dashboard_template" owl="1">
+        <Layout display="display" >
+                <div class="row p-3">
+                    <div class="col-lg-6 p-5">
+                        <div class="m-3">
+                            <div class="text-center">
+                                <h3>Overall Expences per Product Category</h3>
+                            </div>
+
+                            <table class="table table-striped table-sm m-3">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Prdouct Category</th>
+                                        <th class="text-center">Amount</th>
+                                    </tr>
+
+                                </thead>
+                                <tbody>
+
+                                    <tr t-foreach="state.overallExpenseProductCategory" t-as="ls"
+                                        t-key="ls.name">
+                                        <td class="text-center">
+                                            <span t-esc="ls.name" />
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="ls.expenses" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="m-3 p-5">
+                            <div class="text-center ">
+                                <h3>Net Income Per Payment Method</h3>
+                            </div>
+
+                            <!-- <t t-foreach="state.overallPosIncome"  t-as="l">
+                    <span t-esc="l"/>
+                </t> -->
+
+                            <table class="table table-striped  table-sm m-3">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Payment Method</th>
+                                        <th class="text-center">Income</th>
+                                        <th class="text-center">Expense</th>
+                                        <th class="text-center">Net Income</th>
+                                    </tr>
+
+                                </thead>
+                                <!-- <tbody>
+
+                                    <tr t-foreach="state.overallPosIncome" t-as="ls"
+                                        t-key="ls.payment_method">
+                                        <td class="text-center">
+                                            <span t-esc="ls.payment_method" />
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="ls.income" />
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="ls.income" />
+                                        </td>
+                                    </tr>
+                                </tbody> -->
+                                <t t-foreach="state.bankCashJournal" t-as="i" t-key="i.payment_method">
+                                    <tr>
+                                    <td class="text-center">
+                                            <span t-esc="i. payment_method" />
+                                        </td>
+                                        <td class="text-center">
+                                <span t-esc="i.income" />
+                                        </td>
+                                        <td class="text-center">
+                                         <span t-esc="i.expense" />
+                                        </td>
+                                        <td class="text-center">
+                                         <span t-esc="i.total" />
+                                        </td>
+                                    </tr>
+                                </t>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="m-3 p-5">
+                            <div class="text-center ">
+                                <h3>Top PoS Session Discounts</h3>
+                            </div>
+
+                            <!-- <t t-foreach="state.overallPosIncome"  t-as="l">
+                    <span t-esc="l"/>
+                </t> -->
+
+                            <table class="table table-striped  table-sm m-3">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Session</th>
+                                        <th class="text-center">Discount Amount</th>
+                                    </tr>
+
+                                </thead>
+                                <tbody>
+
+                                    <tr t-foreach="state.topSessionDiscount" t-as="ls"
+                                        t-key="ls.session">
+                                        <td class="text-center">
+                                            <span t-esc="ls.session" />
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="ls.total_discount" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+        </Layout>
+
+    </t>
+</templates>

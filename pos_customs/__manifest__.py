@@ -19,6 +19,7 @@
         'views/stock.xml',
         'views/pos_session.xml',
         'views/pos_payment.xml',
+        'views/account.xml',
          'wizard/wizard_pos_summary_discount_tips.xml',
         'wizard/wizart_pos_income.xml',
         'wizard/wizard_pos_expence_prod_cat.xml',
@@ -31,11 +32,13 @@
     'auto_install': False,
     'application': False,
     'assets': {
-        # 'web.assets_backend': [
-        #     'pos_customs/static/src/components/**/*.js',
-        #     'pos_customs/static/src/components/**/*.xml',
-        #     'pos_customs/static/src/components/**/*.scss',
-        # ],
+        'web.assets_backend': [
+            'pos_customs/static/src/components/**/*.js',
+            'pos_customs/static/src/components/**/*.xml',
+            'pos_customs/static/src/components/**/*.scss',
+            'pos_customs/static/src/css/*.css',
+
+        ],
         'point_of_sale.assets': [
             'pos_customs/static/src/pos/**/*.js',
             'pos_customs/static/src/pos/**/*.css',
