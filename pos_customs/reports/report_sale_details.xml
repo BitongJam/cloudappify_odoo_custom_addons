@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
       <template id="session_cash_report" name="session_cash_report">
-      <div id="session_section" t-if="cash_register_trans">
+      <div id="session_section" >
                <div class="text-center">
             <h2>Session Cash Report</h2>
         </div>
@@ -48,7 +48,7 @@
 
         <xpath expr="//div[hasclass('page')]/strong" position="after">
         <t t-call="pos_customs.session_cash_report" />
-            <div t-if="cash_register_trans">
+            <div>
                 <strong>Starting balance: <t t-esc="starting_balance"/></strong><br/>
                 <strong>Actual Ending Balance: <t t-esc="ending_balance"/></strong><br/>
                 <strong>Expected Ending Balance: <t t-esc="expected_ending_balance"/></strong><br/>
