@@ -11,6 +11,7 @@
             name="Dashboard"
             action="action_invoicing_dashboard"
             parent="point_of_sale.menu_point_root"
+            groups="point_of_sale.group_pos_manager"
             sequence="0" />
 
         <!-- overrided -->
