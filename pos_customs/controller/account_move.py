@@ -47,7 +47,6 @@ class SaleReport(http.Controller):
     def get_report_dashboard_pos_income(self):
 
 
-        # Fetch POS payments based on the date range
         pos_payments = http.request.env['pos.payment'].search([])
         currency = http.request.env.user.company_id.currency_id
         currency_symbol = currency.symbol
@@ -82,36 +81,47 @@ class SaleReport(http.Controller):
         ret = []
         val = http.request.env['account.journal'].search([('type','in',('cash','bank'))])
 
-        
+        ttal_net_ttal = 0
         for j in val:
             #get income base on journal
             account_id = j.default_account_id
-            income = http.request.env["account.move.line"].search([('journal_id','=',j.id),('account_id','=',account_id.id),('move_id.state','=','posted')])
+            income = http.request.env["account.move.line"].search([('journal_id','=',j.id),('account_id.account_type','=','asset_receivable'),('move_id.state','=','posted'),('reconciled','=',True)])
             income = sum(i.credit for i in income)
 
-            expense = http.request.env["account.move.line"].search([('journal_id','=',j.id),('account_id.account_type','=','liability_payable'),('move_id.state','=','posted')])
+            expense = http.request.env["account.move.line"].search([('journal_id','=',j.id),('account_id.account_type','=','liability_payable'),('move_id.state','=','posted'),('reconciled','=',True)])
             expense= sum(e.debit for e in expense)
             total = income-expense
-
+            ttal_net_ttal = ttal_net_ttal + total
             formatted_income = "{:,.2f}".format(income)
             formatted_expense = "{:,.2f}".format(expense)
             formatted_total = "{:,.2f}".format(total)
+            formatted_ttal_net_ttal = "{:,.2f}".format(ttal_net_ttal)
             currency_id = j.currency_id if j.currency_id else  http.request.env.user.company_id.currency_id
 
             if currency_id.position == 'before':
                 formatted_income =  f"{currency_id.symbol} {formatted_income}"
                 formatted_expense =  f"{currency_id.symbol} {formatted_expense}"
                 formatted_total =  f"{currency_id.symbol} {formatted_total}"
+                formatted_ttal_net_ttal =  f"{currency_id.symbol} {formatted_ttal_net_ttal}"
             else:
                 formatted_income =  f"{formatted_income} {currency_id.symbol}"
                 formatted_expense =  f"{formatted_expense} {currency_id.symbol}"
                 formatted_total =  f"{formatted_total} {currency_id.symbol}"
+                formatted_ttal_net_ttal =  f"{formatted_ttal_net_ttal} {currency_id.symbol}"
 
+            
             ret.append({
                 'payment_method': j.name,
                 'income': formatted_income,
                 'expense':formatted_expense,
                 'total':formatted_total
+
+            })
+        ret.append({
+                'payment_method': 'Total: ',
+                'income': False,
+                'expense':False,
+                'total':formatted_ttal_net_ttal
 
             })
         return ret

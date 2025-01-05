@@ -74,13 +74,13 @@
                                             <span t-esc="i. payment_method" />
                                         </td>
                                         <td class="text-center">
-                                <span t-esc="i.income" />
+                                <span t-esc="i.income" t-if="i.income"/>
                                         </td>
                                         <td class="text-center">
-                                         <span t-esc="i.expense" />
+                                         <span t-esc="i.expense" t-if="i.expense"/>
                                         </td>
                                         <td class="text-center">
-                                         <span t-esc="i.total" />
+                                         <span t-esc="i.total"/>
                                         </td>
                                     </tr>
                                 </t>
