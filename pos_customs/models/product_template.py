@@ -14,12 +14,17 @@ class ProductTemplate(models.Model):
 
             # Initialize prod_tags as an empty string
             prod_tags = ""
-            for t in rec.product_tag_ids:
-                prod_tags += t.name + ' '
+            if rec.product_tag_ids:
+                for t in rec.product_tag_ids:
+                    prod_tags += t.name + ' '
+                    # Remove the trailing space and update product_name if prod_tags is not empty
+            
+                if prod_tags.strip():
+                    product_name += '[%s]' % prod_tags.strip()
+            else:
+                product_name='no_tag'
 
-            # Remove the trailing space and update product_name if prod_tags is not empty
-            if prod_tags.strip():
-                product_name += '[%s]' % prod_tags.strip()
+            
 
             rec.display_name_w_tag = product_name
 

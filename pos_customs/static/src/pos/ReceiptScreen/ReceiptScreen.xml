@@ -15,8 +15,13 @@
                     <!-- <t t-if="isSimple(line)"> -->
                         <div style="font-weight:bold;"><t t-esc="line.product_categ"/></div>
                         <div class="responsive-price">
-                            
+                            <t t-if="line.display_name_w_tag == 'no_tag'">
+                                <div t-esc="line.product_name" />
+                            </t>
+                            <t t-else="">
                             <t t-esc="line.display_name_w_tag" />
+                            </t>
+                            
                             <div class="pos-receipt-right-align">
                                 <span t-esc="line.quantity" />x
                             </div>

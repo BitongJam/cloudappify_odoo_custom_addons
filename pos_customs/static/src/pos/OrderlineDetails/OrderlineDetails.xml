@@ -3,9 +3,18 @@
 
     <t t-name="OrderlineDetailsJarlwing" t-inherit="point_of_sale.OrderlineDetails" t-inherit-mode='extension' owl="1">
         <xpath expr="//span[hasclass('product-name')]" position="replace">
-            <span class="product-name">
-                <t t-esc="productNameWTag" />
-            </span>
+            <t t-if="productNameWTag == 'no_tag'">
+                <span class="product-name">
+                    <t t-esc="productName" />
+                </span>
+
+            </t>
+            <t t-else="">
+                <span class="product-name">
+                    <t t-esc="productNameWTag" />
+                </span>
+            </t>
+        
         </xpath>
     </t>
     </templates>
