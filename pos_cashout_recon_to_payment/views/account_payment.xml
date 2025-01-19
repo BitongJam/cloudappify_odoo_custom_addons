@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="account_payment_inherit_pos_cashout_recon_to_payment" model="ir.ui.view">
+        <field name="name">account.payment.view.form.pos.cashout.recon.to.payment</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="cashout_account_bank_statement_line_id" attrs="{'invisible':[('payment_type','!=','outbound')],'readonly':[('state','!=','draft')]}"/>
+                <field name="cashout_payment_recon_journal" attrs="{'invisible':[('cashout_account_bank_statement_line_id','=',False)],'required':[('cashout_account_bank_statement_line_id','!=',False)],'readonly':[('state','!=','draft')]}"/>
+                <field name="move_id_cash_out_payment_recon" attrs="{'invisible':[('move_id_cash_out_payment_recon','=',False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
