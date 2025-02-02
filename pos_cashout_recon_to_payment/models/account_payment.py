@@ -36,7 +36,7 @@ class AccountPayment(models.Model):
             self.cashout_payment_recon_journal = False
             return
         if self.cashout_account_bank_statement_line_id:
-            self.write({'amount':self.cashout_account_bank_statement_line_id.amount_residual})
+            self.amount = self.cashout_account_bank_statement_line_id.amount_residual
 
     @api.onchange('payment_type')
     def _onchange_payment_type(self):
