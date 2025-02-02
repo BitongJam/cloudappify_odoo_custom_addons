@@ -11,6 +11,10 @@
                 <field name="cashout_payment_recon_journal" attrs="{'invisible':[('cashout_account_bank_statement_line_id','=',False)],'required':[('cashout_account_bank_statement_line_id','!=',False)],'readonly':[('state','!=','draft')]}"/>
                 <field name="move_id_cash_out_payment_recon" attrs="{'invisible':[('move_id_cash_out_payment_recon','=',False)]}"/>
             </xpath>
+            <xpath expr="//field[@name='amount']" position="attributes">
+                <attribute name="attrs">{'readonly': ['|',('state', '!=', 'draft'),('cashout_account_bank_statement_line_id','=',True)]}</attribute>
+                <attribute name="force_save">1</attribute>
+            </xpath>
         </field>
     </record>
 
