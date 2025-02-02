@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="PosReferenceButton" owl="1">
+        <div class="button" t-on-click="() => this.posOrReferenceButton()">
+            <div>Official Receipt Reference</div>
+            <div class='pos-official-receipt-btn'><t t-esc="this.currentOrder.official_receipt_reference"/></div>
+        </div>
+
+    </t>
+
+    <t t-inherit="point_of_sale.PaymentScreen" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('payment-buttons')]" position="inside">
+            <t t-call="PosReferenceButton"/>
+        </xpath>
+    </t>
+</templates>

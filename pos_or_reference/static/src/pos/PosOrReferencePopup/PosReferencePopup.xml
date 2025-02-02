@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="PosReferencePopup" owl="1">
+        <div class="popup">
+            <div class="popup-title">
+                <h1>Pos Official Receipt</h1>
+            </div>
+            <div class="body">
+                <label for="official_receipt">Input Official Receipt</label>
+                <input type="text" t-model="state.official_receipt" name="official_receipt"/>
+            </div>
+            <div class="footer">
+                <div class="button cancel highlight" t-on-click="cancel">Cancel</div>
+                <div class="button confirm" t-on-click="confirm">Confirm</div>
+            </div>
+        </div>
+    </t>
+</templates>
