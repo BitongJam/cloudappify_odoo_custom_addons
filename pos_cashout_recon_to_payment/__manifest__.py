@@ -11,7 +11,8 @@
         'account','point_of_sale'
     ],
     'data': [
-        'views/account_payment.xml'
+        'views/account_payment.xml',
+        'views/account_payment_register.xml'
     ],
     'auto_install': False,
     'application': False
