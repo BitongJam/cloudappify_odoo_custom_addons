@@ -2,6 +2,7 @@
 
 import { registry } from "@web/core/registry";
 import { rpc } from '@web/core/network/rpc_service';
+import { useService } from "@web/core/utils/hooks";
 import { Layout } from "@web/search/layout"
 import { getDefaultConfig } from "@web/views/view"
 import { ChartRender } from "../chartRender/chartRender";
@@ -13,6 +14,7 @@ const { Component,useSubEnv,useState,onWillStart } = owl;
 export class OwlAccountingDashboard extends Component {
     setup() {
         // Your setup logic here
+        this.orm = useService("orm")
         this.display = {
             controlPanel: {"top-right": false, "bottom-right": false}
         };
@@ -28,7 +30,8 @@ export class OwlAccountingDashboard extends Component {
             overallExpenseProductCategory :[],
             overallPosIncome:[],
             bankCashJournal:[],
-            topSessionDiscount:[]
+            topSessionDiscount:[],
+            posTerminal:[]
         });
 
         onWillStart(async ()=>{
@@ -36,10 +39,26 @@ export class OwlAccountingDashboard extends Component {
             await this.overallPosIncome()
             await this.getBankAndCashJournal();
             await this.getTopSessionDiscount()
+            await this.getPosTerminals();
         });
         
         // sample
         this.rows = Array.from({ length: 10 }, (_, i) => i); 
+    }
+
+    async getPosTerminals(){
+        try{
+            const rec = await this.orm.call(
+                "pos.config",
+                "get_pos_config_total_sale",[],{}
+            )
+            
+
+            this.state.posTerminal = rec
+
+        } catch (error) {
+            console.error("Error fetching records:", error);
+        }
     }
 
     async overallExpensePerProductCategory(){

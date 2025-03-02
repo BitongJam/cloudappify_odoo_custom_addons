@@ -42,20 +42,24 @@
 
             <div class="row">
                 <div class="col-lg-3">
+                    <div><h1 class="text-primary fw-bold border-bottom border-dark">Sales Summary</h1></div>
                     <div class="row">
                         <div class="col">
-                            <div class="mb-2">
-                                <h1 class="text-primary fw-bold">Branch 1</h1>
-                                <h2 class="text-info">Sales</h2>
+                            <t t-foreach="state.posTerminal" t-as="i" t-key="i.config_id">
+                             <div class="mb-2">
+                                <h2 class="text-primary fw-bold"><span t-esc="i.config_name"/></h2>
+                                <h2 class="text-info"><span t-esc='i.total_sales' /></h2>
                             </div>
-                            <div class="mb-2">
+                            </t>
+                           
+                            <!-- <div class="mb-2">
                                 <h1 class="text-primary fw-bold">Branch 2</h1>
                                 <h2 class="text-info">Sales</h2>
                             </div>
                             <div class="mb-2">
                                 <h1 class="text-primary fw-bold">Branch 3</h1>
                                 <h2 class="text-info">Sales</h2>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="col">
                             <div style="height:300px">
