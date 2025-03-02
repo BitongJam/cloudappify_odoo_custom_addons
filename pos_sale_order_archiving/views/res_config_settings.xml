@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_pos_sale_order_archiving" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.pos.sale.order.archiving</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='pos_technical_section']" position="inside">
+                <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane">
+                                    <!-- <field name="pos_limited_products_loading"/> -->
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <div>
+                                        PoS Order Archiving Min to Max limit Settings
+                                    </div>
+                                     <div class="content-group mt16">
+                                        <div class="row ">
+                                            <label for="pos_max_amount" string="Max Amount"/>
+                                            <field name="pos_max_amount" class="oe_inline"/>
+                                        </div>
+                                        <div class="row">
+                                          <label for="pos_min_amount" string="Minimum Amount"/>
+                                            <field name="pos_min_amount" class="oe_inline"/>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
