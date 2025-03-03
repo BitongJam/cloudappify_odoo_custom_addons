@@ -8,7 +8,7 @@ class PosConfig(models.Model):
     @api.model
     def get_pos_config_total_sale(self):
         group_data = self.env['report.pos.order'].read_group(
-            domain=[],  # No filters
+            domain=[('state','not in',('draft','cancel'))],  # No filters
             fields=['config_id', 'price_total:sum'],  # Correct field names
             groupby=['config_id'],  # ✅ Corrected from `group_by` to `groupby`
             lazy=False  # To return all groups at once

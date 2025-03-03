@@ -5,7 +5,7 @@ import { rpc } from '@web/core/network/rpc_service';
 import { useService } from "@web/core/utils/hooks";
 import { Layout } from "@web/search/layout"
 import { getDefaultConfig } from "@web/views/view"
-import { ChartRender } from "../chartRender/chartRender";
+import { ChartRender } from "../chartRender/saleSummarychartRender";
 import { PaymentMethodChartRender } from "../chartRender/paymentMethodChartRender";
 import { KpiCard} from "../kpiCard/kpiCard"
 
@@ -31,7 +31,8 @@ export class OwlAccountingDashboard extends Component {
             overallPosIncome:[],
             bankCashJournal:[],
             topSessionDiscount:[],
-            posTerminal:[]
+            posTerminal:[],
+            countPosOrder:0
         });
 
         onWillStart(async ()=>{
@@ -40,10 +41,22 @@ export class OwlAccountingDashboard extends Component {
             await this.getBankAndCashJournal();
             await this.getTopSessionDiscount()
             await this.getPosTerminals();
+            await this.fetchPosOrderCount();
         });
         
         // sample
         this.rows = Array.from({ length: 10 }, (_, i) => i); 
+    }
+
+    async fetchPosOrderCount(){
+        try{
+            // const rec = await this.orm.searchRead("pos.order",[['state','not in',('cancel','draft')]],{})
+            // this.state.countPosOrder = rec
+            const data = await this.orm.searchCount("pos.order", [['state', 'not in', ['cancel', 'draft']]]);
+            this.state.countPosOrder = data
+        } catch (error){
+            console.error("Error Fetch Records getCountPosOrder Function: ",error)
+        }
     }
 
     async getPosTerminals(){

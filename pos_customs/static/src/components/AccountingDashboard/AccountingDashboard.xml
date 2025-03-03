@@ -72,7 +72,7 @@
                 </div>
                 <div class="col-lg-9">
                     <div class="row p-2">
-                        <KpiCard name="'Orders'" value="0" percentage="100" />
+                        <KpiCard name="'Orders'" value="state.countPosOrder" percentage="100" />
                         <KpiCard name="'Revenues'" value="0" percentage="100" />
                         <KpiCard name="'Average Order'" value="0" percentage="100" />
                         <KpiCard name="'Cash Out'" value="0" percentage="100" />
