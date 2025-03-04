@@ -81,7 +81,53 @@
             </div>
 
             <div class="row">
+                <div class="col-lg-4">
+                       <div class="border-bottom border-dark">
+                        <h1 class="text-primary fw-bold">Sales by Payment Method</h1>
+                    </div>
+                    <div style="height:250px; width:100%">
+                        <PaymentMethodChartRender type="'bar'" title="'Payment Method'" />
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="border-bottom border-dark">
+                        <h1 class="text-primary fw-bold">Sales by Hour</h1>
+                    </div>
+                     <div style="height:250px; width:100%">
+                        <SalesByHourChartRender title="'Sales by Hour'" />
+                    </div>
+                </div>
                 <div class="col-lg-3">
+                    <div class="border-bottom border-dark">
+                        <h1 class="text-primary fw-bold">Tips &amp; Discount</h1>
+                    </div>
+      
+                        <div class="row">
+                            <div class="col">
+                                <div style="height:300px">
+                                    <TipsDiscountChartRender title="'Tips &amp; Discount'" />
+                                </div>
+                            </div>
+                            <div class="col p-3">
+                                <div class="mb-2">
+                                    <h2 class="text-primary fw-bold">Discount</h2>
+                                    <h2 class="text-info">0</h2>
+                                </div>
+                                <div class="mb-2">
+                                    <h2 class="text-primary fw-bold">Tips</h2>
+                                    <h2 class="text-info">0</h2>
+                                </div>
+                            </div>
+                        </div>
+
+
+                  
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4">
                     <div class="border-bottom border-dark">
                         <h1 class="text-primary">Top Salesperson</h1>
                     </div>
@@ -106,15 +152,55 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="col-lg-4"></div>
-                <div class="col-lg-5">
+                <div class="col-lg-4">
                     <div class="border-bottom border-dark">
-                        <h1 class="text-primary">Payment Method</h1>
-                    </div>
-                    <div style="height:250px; width:100%">
-                        <PaymentMethodChartRender type="'bar'" title="'Payment Method'" />
+                        <h1 class="text-primary">Top Product</h1>
                     </div>
 
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Orders</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Generate exactly 10 empty rows -->
+                            <t t-foreach="rows" t-as="i" t-key="i">
+                                <tr>
+                                    <td> </td>
+                                    <td> </td>
+                                    <td> </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-4">
+                    <div class="border-bottom border-dark">
+                        <h1 class="text-primary">Expenses by Product Category</h1>
+                    </div>
+
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Orders</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Generate exactly 10 empty rows -->
+                            <t t-foreach="rows" t-as="i" t-key="i">
+                                <tr>
+                                    <td> </td>
+                                    <td> </td>
+                                    <td> </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

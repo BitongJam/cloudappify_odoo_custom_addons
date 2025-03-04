@@ -8,6 +8,8 @@ import { getDefaultConfig } from "@web/views/view"
 import { ChartRender } from "../chartRender/saleSummarychartRender";
 import { PaymentMethodChartRender } from "../chartRender/paymentMethodChartRender";
 import { KpiCard} from "../kpiCard/kpiCard"
+import { SalesByHourChartRender } from "../chartRender/salesByHourChartRender";
+import { TipsDiscountChartRender } from "../chartRender/tipDiscountChartRender";
 
 const { Component,useSubEnv,useState,onWillStart } = owl;
 
@@ -131,6 +133,6 @@ export class OwlAccountingDashboard extends Component {
 
 // Define the template for the component
 OwlAccountingDashboard.template = "pos_customs.owl_accounting_dashboard_template";
-OwlAccountingDashboard.components = { Layout,ChartRender,KpiCard,PaymentMethodChartRender }
+OwlAccountingDashboard.components = { Layout,ChartRender,KpiCard,PaymentMethodChartRender,SalesByHourChartRender ,TipsDiscountChartRender}
 // Register the component in the "actions" category
 registry.category("actions").add("pos_customs.owlAccountingDashboard", OwlAccountingDashboard);
