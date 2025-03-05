@@ -34,7 +34,8 @@ export class OwlAccountingDashboard extends Component {
             bankCashJournal:[],
             topSessionDiscount:[],
             posTerminal:[],
-            countPosOrder:0
+            countPosOrder:0,
+            totalRevenue:0
         });
 
         onWillStart(async ()=>{
@@ -44,6 +45,7 @@ export class OwlAccountingDashboard extends Component {
             await this.getTopSessionDiscount()
             await this.getPosTerminals();
             await this.fetchPosOrderCount();
+            await this.getTotaRevenues();
         });
         
         // sample
@@ -59,6 +61,23 @@ export class OwlAccountingDashboard extends Component {
             this.state.countPosOrder = data
         } catch (error){
             console.error("Error Fetch Records getCountPosOrder Function: ",error)
+        }
+    }
+
+    async getTotaRevenues(){
+        try{
+            const data = await this.orm.readGroup("pos.order",[['state', 'not in', ['cancel', 'draft']]],["amount_total:sum"],[]);
+            console.log('getTotalRevenues test: ',data)
+            let amount = data[0].amount_total
+
+            // this function toLocaleString it will format numbers has commay then decimal will be 2
+            this.state.totalRevenue = amount.toLocaleString("en-US",{
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            })
+
+        }catch (error){
+            console.error("Error Fetch Records getTotaRevenues Function: ",error)
         }
     }
 
