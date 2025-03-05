@@ -51,6 +51,7 @@ export class OwlAccountingDashboard extends Component {
     }
 
     async fetchPosOrderCount(){
+        // TODO: You neeed to recompute number of Pos Order Count do not inclue Pos Order that does not have pos.order.line
         try{
             // const rec = await this.orm.searchRead("pos.order",[['state','not in',('cancel','draft')]],{})
             // this.state.countPosOrder = rec
