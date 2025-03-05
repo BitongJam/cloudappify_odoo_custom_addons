@@ -73,9 +73,9 @@
                 <div class="col-lg-9">
                     <div class="row p-2">
                         <KpiCard name="'Orders'" value="state.countPosOrder" percentage="N/A" />
-                        <KpiCard name="'Revenues'" value="state.totalRevenue" percentage="N/A" />
-                        <KpiCard name="'Average Order'" value="0" percentage="N/A" />
-                        <KpiCard name="'Cash Out'" value="0" percentage="N/A" />
+                        <KpiCard name="'Revenues'" value="state.strTotalRevenue" percentage="N/A" />
+                        <KpiCard name="'Average Order'" value="state.averageRevenue" percentage="N/A" />
+                        <KpiCard name="'Cash Out'" value="N/A" percentage="N/A" />
                     </div>
                 </div>
             </div>

@@ -35,7 +35,9 @@ export class OwlAccountingDashboard extends Component {
             topSessionDiscount:[],
             posTerminal:[],
             countPosOrder:0,
-            totalRevenue:0
+            totalRevenue:0,
+            strTotalRevenue:0,
+            averageRevenue:0
         });
 
         onWillStart(async ()=>{
@@ -46,6 +48,7 @@ export class OwlAccountingDashboard extends Component {
             await this.getPosTerminals();
             await this.fetchPosOrderCount();
             await this.getTotaRevenues();
+            await this.getAverageRevenue();
         });
         
         // sample
@@ -57,7 +60,7 @@ export class OwlAccountingDashboard extends Component {
         try{
             // const rec = await this.orm.searchRead("pos.order",[['state','not in',('cancel','draft')]],{})
             // this.state.countPosOrder = rec
-            const data = await this.orm.searchCount("pos.order", [['state', 'not in', ['cancel', 'draft']]]);
+            const data = await this.orm.searchCount("pos.order", [['state', 'not in', ['cancel', 'draft']],['lines','!=',false]]);
             this.state.countPosOrder = data
         } catch (error){
             console.error("Error Fetch Records getCountPosOrder Function: ",error)
@@ -71,7 +74,8 @@ export class OwlAccountingDashboard extends Component {
             let amount = data[0].amount_total
 
             // this function toLocaleString it will format numbers has commay then decimal will be 2
-            this.state.totalRevenue = amount.toLocaleString("en-US",{
+            this.state.totalRevenue = amount
+            this.state.strTotalRevenue = amount.toLocaleString("en-US",{
                 minimumFractionDigits:2,
                 maximumFractionDigits:2
             })
@@ -79,6 +83,17 @@ export class OwlAccountingDashboard extends Component {
         }catch (error){
             console.error("Error Fetch Records getTotaRevenues Function: ",error)
         }
+    }
+
+    async getAverageRevenue(){
+        try{
+            const averrev = this.state.totalRevenue/this.state.countPosOrder
+            this.state.averageRevenue  = averrev
+            console.log("test getAverageRevenue: ",averrev)
+        }catch (error){
+            console.error("Error Fetch Records getAverageRevenue Function: ",error)
+        }
+
     }
 
     async getPosTerminals(){
