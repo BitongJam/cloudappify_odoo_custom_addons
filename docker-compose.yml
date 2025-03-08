@@ -1,0 +1,28 @@
+version: '3.1'
+services:
+  web:
+    image: odoo:16.0
+    depends_on:
+      - mydb
+    ports:
+      - "8010:8069"
+    volumes:
+      - odoo16-web-data:/var/lib/odoo
+      - ./dockerodoo.conf:/etc/odoo/odoo.conf
+      - ../addons/:/mnt/extra-addons
+      - ../custom_pos_project:/mnt/custom_addons
+      - ./tmp:/tmp
+
+  mydb:
+    image: postgres:12
+    restart: always
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=myodoo
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data  # Persist database data
+
+volumes:
+  odoo16-web-data:
+  odoo-db-data:
