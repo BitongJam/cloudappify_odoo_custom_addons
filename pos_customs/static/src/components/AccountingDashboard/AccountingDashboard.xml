@@ -72,10 +72,10 @@
                 </div>
                 <div class="col-lg-9">
                     <div class="row p-2">
-                        <KpiCard name="'Orders'" value="state.countPosOrder" percentage="N/A" />
+                        <KpiCard name="'Orders'" value="state.strcountPosOrder" percentage="N/A" />
                         <KpiCard name="'Revenues'" value="state.strTotalRevenue" percentage="N/A" />
-                        <KpiCard name="'Average Order'" value="state.averageRevenue" percentage="N/A" />
-                        <KpiCard name="'Cash Out'" value="N/A" percentage="N/A" />
+                        <KpiCard name="'Average Order'" value="state.averageOrder" percentage="N/A" />
+                        <KpiCard name="'Cash Out'" value="state.ttalCashOutAmount" percentage="N/A" />
                     </div>
                 </div>
             </div>
@@ -142,11 +142,11 @@
                         </thead>
                         <tbody>
                             <!-- Generate exactly 10 empty rows -->
-                            <t t-foreach="rows" t-as="i" t-key="i">
+                            <t t-foreach="state.getPosTopSalesCashier" t-as="i" t-key="i">
                                 <tr>
-                                    <td> </td>
-                                    <td> </td>
-                                    <td> </td>
+                                    <td><span t-esc="i[2]"/></td>
+                                    <td><span t-esc="i[1]"/></td>
+                                    <td><span t-esc="i[0]"/></td>
                                 </tr>
                             </t>
                         </tbody>

@@ -35,9 +35,12 @@ export class OwlAccountingDashboard extends Component {
             topSessionDiscount:[],
             posTerminal:[],
             countPosOrder:0,
+            strcountPosOrder:0,
             totalRevenue:0,
             strTotalRevenue:0,
-            averageRevenue:0
+            averageOrder:0,
+            ttalCashOutAmount:0,
+            getPosTopSalesCashier:[]
         });
 
         onWillStart(async ()=>{
@@ -48,11 +51,32 @@ export class OwlAccountingDashboard extends Component {
             await this.getPosTerminals();
             await this.fetchPosOrderCount();
             await this.getTotaRevenues();
-            await this.getAverageRevenue();
+            await this.getaverageOrder();
+            await this.fetchCashOutAmount();
+            await this.getPosTopSaleCashier();
         });
         
         // sample
         this.rows = Array.from({ length: 10 }, (_, i) => i); 
+    }
+
+    async fetchCashOutAmount(){
+        try{
+            const data = await this.orm.readGroup(
+                'account.bank.statement.line',
+                [['payment_ref','ilike','-out-']],
+                ['amount:sum'],[]
+            );
+            console.log('test fetchCashOutAmount: ',data)
+            if (data != false){
+                let amount = Math.abs(data[0].amount);
+                let strAmount = amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                this.state.ttalCashOutAmount = strAmount
+            }
+
+        }catch(error){
+            console.error("Error Fetch Records fetchCashOutAmount Function: ",error)
+        }
     }
 
     async fetchPosOrderCount(){
@@ -61,7 +85,9 @@ export class OwlAccountingDashboard extends Component {
             // const rec = await this.orm.searchRead("pos.order",[['state','not in',('cancel','draft')]],{})
             // this.state.countPosOrder = rec
             const data = await this.orm.searchCount("pos.order", [['state', 'not in', ['cancel', 'draft']],['lines','!=',false]]);
+            
             this.state.countPosOrder = data
+            this.state.strcountPosOrder = data.toLocaleString('en-US', {  maximumFractionDigits: 0 });
         } catch (error){
             console.error("Error Fetch Records getCountPosOrder Function: ",error)
         }
@@ -85,15 +111,28 @@ export class OwlAccountingDashboard extends Component {
         }
     }
 
-    async getAverageRevenue(){
+    async getaverageOrder(){
         try{
             const averrev = this.state.totalRevenue/this.state.countPosOrder
-            this.state.averageRevenue  = averrev
-            console.log("test getAverageRevenue: ",averrev)
+            this.state.averageOrder  = averrev.toFixed(2)
+            console.log("test getaverageOrder: ",averrev.toFixed(2))
         }catch (error){
-            console.error("Error Fetch Records getAverageRevenue Function: ",error)
+            console.error("Error Fetch Records getaverageOrder Function: ",error)
         }
 
+    }
+
+    async getPosTopSaleCashier(){
+
+        try{
+            const rpc = this.env.services.rpc
+            const data = await rpc("/report/get_top_pos_sales_cashier", {})
+
+            console.log("getPosTopSaleCashier test: ",data)
+            this.state.getPosTopSalesCashier = data
+        }catch(error){
+            console.error('Error fetching getPosTopSaleCashier data:', error);
+        }
     }
 
     async getPosTerminals(){
