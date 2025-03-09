@@ -1,5 +1,6 @@
 from odoo import http,tools
 from collections import defaultdict
+from odoo.http import request
 
 
 class SaleReport(http.Controller):
@@ -158,4 +159,23 @@ class SaleReport(http.Controller):
 
 
 
- 
+    @http.route('/report/get_product_category_expenses', type='json', auth='user')
+    def get_product_category_expenses(self):
+        query = """
+            SELECT pc.name,SUM(aml.debit) as total_expense, TO_CHAR(SUM(aml.debit),'FM999,999,999.00') AS str_total_expense,count(*) as order
+            FROM account_move_line aml
+            JOIN product_product pp ON pp.id = aml.product_id
+            JOIN product_template pt ON pt.id = pp.product_tmpl_id
+            JOIN product_category pc ON pc.id = pt.categ_id
+            JOIN account_move am ON am.id = aml.move_id
+            WHERE am.move_type = 'in_invoice' -- Only vendor bills
+            GROUP BY pc.name
+            ORDER BY total_expense DESC;
+        """
+        request.cr.execute(query)
+        result = request.cr.fetchall()
+
+        # Return data with unique IDs
+        category_expenses = [{'id': index + 1, 'category': row[0], 'str_total_expense': row[2],'order':row[3]} for index, row in enumerate(result)]
+        
+        return category_expenses

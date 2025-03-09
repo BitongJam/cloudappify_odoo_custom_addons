@@ -6,7 +6,7 @@ class PosDashboardController(http.Controller):
     def get_top_pos_sales_cashier(self):
         query = '''
             SELECT 
-                SUM(rpo.price_total) AS amount, count(*) as order,
+                TO_CHAR(SUM(rpo.price_total),'FM999,999,999.00') AS amount, count(*) as order,
                 rp.name AS name 
             FROM report_pos_order rpo
             JOIN res_users ru ON ru.id = rpo.user_id 
@@ -25,7 +25,7 @@ class PosDashboardController(http.Controller):
     @http.route('/report/get_top_product_pos_sales', type='json', auth='user') 
     def get_top_product_pos_sales(self):
         query = """
-            select pt.name, sum(rpo.price_total) as price_total
+            select pt.name, TO_CHAR(sum(rpo.price_total),'FM999,999,999.00') as price_total,count(*) as order
             from report_pos_order rpo 
             join product_product pp on pp.id = rpo.product_id
             inner join product_template pt on pt.id = pp.product_tmpl_id
@@ -39,9 +39,9 @@ class PosDashboardController(http.Controller):
         result = request.cr.fetchall()
 
         # Ensure a unique ID is added
-        product_sales = [{'id': index + 1, 'name': row[0], 'price_total': row[1]} for index, row in enumerate(result)]
+        # product_sales = [{'id': index + 1, 'name': row[0], 'price_total': row[1]} for index, row in enumerate(result)]
 
-        return product_sales  # Ensure it returns a list of dictionaries with 'id'
+        return result  # Ensure it returns a list of dictionaries with 'id'
     
     @http.route('/report/get_total_sales_per_hour_pos', type='json', auth='user')
     def get_total_sales_per_hour_pos(self):

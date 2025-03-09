@@ -40,7 +40,11 @@ export class OwlAccountingDashboard extends Component {
             strTotalRevenue:0,
             averageOrder:0,
             ttalCashOutAmount:0,
-            getPosTopSalesCashier:[]
+            getPosTopSalesCashier:[],
+            getTopProductPosSales:[],
+            getProductCategoryExpenses:[],
+            getTtotalSalesPerHourPos:[],
+            filterPeriodStateValue:0
         });
 
         onWillStart(async ()=>{
@@ -49,15 +53,24 @@ export class OwlAccountingDashboard extends Component {
             await this.getBankAndCashJournal();
             await this.getTopSessionDiscount()
             await this.getPosTerminals();
-            await this.fetchPosOrderCount();
+            await this.fetchPosOrderCount(false);
             await this.getTotaRevenues();
             await this.getaverageOrder();
             await this.fetchCashOutAmount();
             await this.getPosTopSaleCashier();
+            await this.getTopProductPosSales();
+            await this.getProductCategoryExpenses();
         });
         
         // sample
         this.rows = Array.from({ length: 10 }, (_, i) => i); 
+    }
+
+    onFilterChange(event){
+        const selectedValue = parseInt(event.target.value, 10);
+        console.log('test onFilterChange: ',event.target.value)
+        this.state.filterPeriodStateValue = selectedValue
+        this.fetchPosOrderCount(this.state.filterPeriodStateValue)
     }
 
     async fetchCashOutAmount(){
@@ -139,27 +152,14 @@ export class OwlAccountingDashboard extends Component {
             const data = await rpc("/report/get_product_category_expenses", {})
 
             console.log("getProductCategoryExpenses test: ",data)
-            this.state.getTopProductPosSales = data
+            this.state.getProductCategoryExpenses = data
 
         }catch(error){
-            console.error("Error Fetch Records getTopProductPosSales Function: ",error)
+            console.error("Error Fetch Records getProductCategoryExpenses Function: ",error)
 
         }
     }
 
-    async fetchPosOrderCount(){
-        // TODO: You neeed to recompute number of Pos Order Count do not inclue Pos Order that does not have pos.order.line
-        try{
-            // const rec = await this.orm.searchRead("pos.order",[['state','not in',('cancel','draft')]],{})
-            // this.state.countPosOrder = rec
-            const data = await this.orm.searchCount("pos.order", [['state', 'not in', ['cancel', 'draft']],['lines','!=',false]]);
-            
-            this.state.countPosOrder = data
-            this.state.strcountPosOrder = data.toLocaleString('en-US', {  maximumFractionDigits: 0 });
-        } catch (error){
-            console.error("Error Fetch Records getCountPosOrder Function: ",error)
-        }
-    }
 
     async getTotaRevenues(){
         try{
@@ -271,6 +271,8 @@ export class OwlAccountingDashboard extends Component {
             return {};
         }
     }
+
+    
 }
 
 // Define the template for the component

@@ -186,18 +186,16 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Product</th>
-                                <th>Orders</th>
-                                <th>Revenue</th>
+                                <th>Discription</th>
+                                <th>Amount</th>
                             </tr>
                         </thead>
                         <tbody>
                             <!-- Generate exactly 10 empty rows -->
-                            <t t-foreach="rows" t-as="i" t-key="i">
+                            <t t-foreach="state.getProductCategoryExpenses" t-as="i" t-key="i.id">
                                 <tr>
-                                    <td> </td>
-                                    <td> </td>
-                                    <td> </td>
+                                    <td><span t-esc="i.category"/></td>
+                                    <td> <span t-esc="i.str_total_expense"/></td>
                                 </tr>
                             </t>
                         </tbody>
