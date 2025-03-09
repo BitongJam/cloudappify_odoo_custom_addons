@@ -167,11 +167,11 @@
                         </thead>
                         <tbody>
                             <!-- Generate exactly 10 empty rows -->
-                            <t t-foreach="rows" t-as="i" t-key="i">
+                            <t t-foreach="state.getTopProductPosSales" t-as="i" t-key="i.id">
                                 <tr>
-                                    <td> </td>
-                                    <td> </td>
-                                    <td> </td>
+                                    <td><span t-esc="i.name.en_US"/></td>
+                                    <td><span t-esc="i.price_total"/></td>
+                                    <td></td>
                                 </tr>
                             </t>
                         </tbody>

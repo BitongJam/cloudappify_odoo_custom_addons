@@ -21,3 +21,31 @@ class PosDashboardController(http.Controller):
         result = request.cr.fetchall()
         
         return result
+    
+    @http.route('/report/get_top_product_pos_sales', type='json', auth='user') 
+    def get_top_product_pos_sales(self):
+        query = """
+            select pt.name, sum(rpo.price_total) as price_total
+            from report_pos_order rpo 
+            join product_product pp on pp.id = rpo.product_id
+            inner join product_template pt on pt.id = pp.product_tmpl_id
+            where state in ('paid','done','invoiced') 
+            group by pt.name 
+            order by price_total desc
+            limit 10;
+        """
+
+        request.cr.execute(query)
+        result = request.cr.fetchall()
+
+        # Ensure a unique ID is added
+        product_sales = [{'id': index + 1, 'name': row[0], 'price_total': row[1]} for index, row in enumerate(result)]
+
+        return product_sales  # Ensure it returns a list of dictionaries with 'id'
+    
+
+ 
+
+
+    
+    

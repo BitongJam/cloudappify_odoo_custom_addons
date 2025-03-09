@@ -79,6 +79,34 @@ export class OwlAccountingDashboard extends Component {
         }
     }
 
+    async getTopProductPosSales(){
+        try{
+            const rpc = this.env.services.rpc
+            const data = await rpc("/report/get_top_product_pos_sales", {})
+
+            console.log("getTopProductPosSales test: ",data)
+            this.state.getTopProductPosSales = data
+
+        }catch(error){
+            console.error("Error Fetch Records getTopProductPosSales Function: ",error)
+
+        }
+    }
+
+    async getProductCategoryExpenses(){
+        try{
+            const rpc = this.env.services.rpc
+            const data = await rpc("/report/get_product_category_expenses", {})
+
+            console.log("getProductCategoryExpenses test: ",data)
+            this.state.getTopProductPosSales = data
+
+        }catch(error){
+            console.error("Error Fetch Records getTopProductPosSales Function: ",error)
+
+        }
+    }
+
     async fetchPosOrderCount(){
         // TODO: You neeed to recompute number of Pos Order Count do not inclue Pos Order that does not have pos.order.line
         try{
