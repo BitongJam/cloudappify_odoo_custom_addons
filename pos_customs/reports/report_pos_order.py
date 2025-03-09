@@ -10,7 +10,7 @@ class PosOrderReport(models.Model):
     
     def _select(self):
         res = super(PosOrderReport,self)._select()
-        res +=",l.discount_amount as discount_amount",
+        res +=",l.discount_amount as discount_amount"
 
         return res
     
