@@ -8,12 +8,13 @@
                 </div>
                 <div class="col-9">
                     <div class="d-flex">
-                        <select class="date_filter_values o_input me-3">
+                        <select class="date_filter_values o_input me-3" t-on-change="onFilterChange">
                             <option value="0">Select Period</option>
-                            <option value="7">Last 7 Days</option>
-                            <option value="30">Last 30 Days</option>
-                            <option value="90">Last 90 Days</option>
-                            <option value="365">Last 365 Days</option>
+                            <option value="1">Today</option>
+                            <option value="7_days">Last 7 Days</option>
+                            <option value="30_days">Last 30 Days</option>
+                            <option value="90_days">Last 90 Days</option>
+                            <option value="365_days">Last 365 Days</option>
                         </select>
 
                         <select class="date_filter_values o_input me-3">

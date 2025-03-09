@@ -79,6 +79,46 @@ export class OwlAccountingDashboard extends Component {
         }
     }
 
+    async fetchPosOrderCount(period) {
+        try {
+            // Define the date range filter
+            let dateFilter = [];
+            if (period) {
+                const today = new Date();
+                console.log('test today: ',today)
+                let fromDate = new Date(today);
+    
+                if (period === 1) {
+                    fromDate = today;
+                } else if (period === 7) {
+                    fromDate.setDate(today.getDate() - 7);
+                } else if (period === 30) {
+                    fromDate.setDate(today.getDate() - 30);
+                } else if (period === 90) {
+                    fromDate.setDate(today.getDate() - 90);
+                } else if (period === 365) {
+                    fromDate.setDate(today.getDate() - 365);
+                }
+
+                dateFilter = [['date_order', '>', fromDate.toISOString().split('T')[0]],['date_order','<=',today.toISOString().split('T')[0]]];
+            }
+    
+            // Fetch the count with dynamic filters
+            const data = await this.orm.searchCount("pos.order", [
+                ['state', 'not in', ['cancel', 'draft']],
+                ['lines', '!=', false],
+                ...dateFilter,  // Add the date filter dynamically
+            ]);
+  
+    
+            this.state.countPosOrder = data;
+            console.log('test fetchPosOrderCount: ',data)
+            this.state.strcountPosOrder = data.toLocaleString('en-US', { maximumFractionDigits: 0 });
+        } catch (error) {
+            console.error("Error Fetch Records fetchPosOrderCount Function: ", error);
+        }
+    }
+
     async getTopProductPosSales(){
         try{
             const rpc = this.env.services.rpc
