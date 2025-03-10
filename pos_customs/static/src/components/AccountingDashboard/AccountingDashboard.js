@@ -54,9 +54,9 @@ export class OwlAccountingDashboard extends Component {
             await this.getTopSessionDiscount()
             await this.getPosTerminals();
             await this.fetchPosOrderCount(false);
-            await this.getTotaRevenues();
-            await this.getaverageOrder();
-            await this.fetchCashOutAmount();
+            await this.getTotaRevenues(false);
+            await this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder);
+            await this.fetchCashOutAmount(false);
             await this.getPosTopSaleCashier();
             await this.getTopProductPosSales();
             await this.getProductCategoryExpenses();
@@ -71,14 +71,37 @@ export class OwlAccountingDashboard extends Component {
         console.log('test onFilterChange: ',event.target.value)
         this.state.filterPeriodStateValue = selectedValue
         this.fetchPosOrderCount(this.state.filterPeriodStateValue)
+        this.getTotaRevenues(this.state.filterPeriodStateValue)
+        this.fetchCashOutAmount(this.state.filterPeriodStateValue)        
     }
 
-    async fetchCashOutAmount(){
+    async fetchCashOutAmount(period){
         try{
+            let dateFilter = []
+            if (period) {
+                const today = new Date();
+                console.log('test today: ',today)
+                let fromDate = new Date(today);
+    
+                if (period === 1) {
+                    fromDate = today;
+                } else if (period === 7) {
+                    fromDate.setDate(today.getDate() - 7);
+                } else if (period === 30) {
+                    fromDate.setDate(today.getDate() - 30);
+                } else if (period === 90) {
+                    fromDate.setDate(today.getDate() - 90);
+                } else if (period === 365) {
+                    fromDate.setDate(today.getDate() - 365);
+                }
+
+                dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
+            
+            }
             const data = await this.orm.readGroup(
                 'account.bank.statement.line',
-                [['payment_ref','ilike','-out-']],
-                ['amount:sum'],[]
+                [['payment_ref','ilike','-out-'],...dateFilter],
+                ['amount:sum'],[],
             );
             console.log('test fetchCashOutAmount: ',data)
             if (data != false){
@@ -127,6 +150,7 @@ export class OwlAccountingDashboard extends Component {
             this.state.countPosOrder = data;
             console.log('test fetchPosOrderCount: ',data)
             this.state.strcountPosOrder = data.toLocaleString('en-US', { maximumFractionDigits: 0 });
+            this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder)
         } catch (error) {
             console.error("Error Fetch Records fetchPosOrderCount Function: ", error);
         }
@@ -161,27 +185,61 @@ export class OwlAccountingDashboard extends Component {
     }
 
 
-    async getTotaRevenues(){
+    async getTotaRevenues(period){
         try{
-            const data = await this.orm.readGroup("pos.order",[['state', 'not in', ['cancel', 'draft']]],["amount_total:sum"],[]);
+            let domain = [['state', 'not in', ['cancel', 'draft']]]
+            if (period) {
+                const today = new Date();
+                console.log('test today: ',today)
+                let fromDate = new Date(today);
+    
+                if (period === 1) {
+                    fromDate = today;
+                } else if (period === 7) {
+                    fromDate.setDate(today.getDate() - 7);
+                } else if (period === 30) {
+                    fromDate.setDate(today.getDate() - 30);
+                } else if (period === 90) {
+                    fromDate.setDate(today.getDate() - 90);
+                } else if (period === 365) {
+                    fromDate.setDate(today.getDate() - 365);
+                }
+
+                let date_from = ['date_order', '>', fromDate.toISOString().split('T')[0]];
+                domain.push(date_from)
+                let date_to = ['date_order','<=',today.toISOString().split('T')[0]]
+                domain.push(date_to)
+            }
+
+            console.log('test datefilter: ',domain)
+
+            const data = await this.orm.readGroup("pos.order",domain,["amount_total:sum"],[]);
             console.log('getTotalRevenues test: ',data)
             let amount = data[0].amount_total
 
             // this function toLocaleString it will format numbers has commay then decimal will be 2
+            if (amount === null){
+                amount = 0
+            }
             this.state.totalRevenue = amount
+            console.log('test amount: ',amount)
             this.state.strTotalRevenue = amount.toLocaleString("en-US",{
                 minimumFractionDigits:2,
                 maximumFractionDigits:2
             })
+
+            this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder)
 
         }catch (error){
             console.error("Error Fetch Records getTotaRevenues Function: ",error)
         }
     }
 
-    async getaverageOrder(){
+    async getaverageOrder(totalRevenue,countPosOrder){
         try{
-            const averrev = this.state.totalRevenue/this.state.countPosOrder
+            console.log("test totalRevenue: ",totalRevenue);
+            console.log("test countPosOrder: ",countPosOrder);
+            const averrev = totalRevenue/countPosOrder
             this.state.averageOrder  = averrev.toFixed(2)
             console.log("test getaverageOrder: ",averrev.toFixed(2))
         }catch (error){
