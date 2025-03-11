@@ -64,7 +64,7 @@
                         </div>
                         <div class="col">
                             <div style="height:300px">
-                                <ChartRender type="'doughnut'" title="'Top Products Report'" />
+                                <ChartRender type="'doughnut'" labels="state.salesSumaryLabels" values="state.salesSummaryData" title="'Top Products Report'" />
                             </div>
                         </div>
                     </div>

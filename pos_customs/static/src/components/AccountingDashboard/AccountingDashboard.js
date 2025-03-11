@@ -44,7 +44,9 @@ export class OwlAccountingDashboard extends Component {
             getTopProductPosSales:[],
             getProductCategoryExpenses:[],
             getTtotalSalesPerHourPos:[],
-            filterPeriodStateValue:0
+            filterPeriodStateValue:0,
+            salesSumaryLabels:[],
+            salesSummaryData:[]
         });
 
         onWillStart(async ()=>{
@@ -52,7 +54,6 @@ export class OwlAccountingDashboard extends Component {
             await this.overallPosIncome()
             await this.getBankAndCashJournal();
             await this.getTopSessionDiscount()
-            await this.getPosTerminals();
             await this.fetchPosOrderCount(false);
             await this.getTotaRevenues(false);
             await this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder);
@@ -60,6 +61,7 @@ export class OwlAccountingDashboard extends Component {
             await this.getPosTopSaleCashier();
             await this.getTopProductPosSales();
             await this.getProductCategoryExpenses();
+            await this.fetchChartDateSalesSummary(false)
         });
         
         // sample
@@ -72,9 +74,52 @@ export class OwlAccountingDashboard extends Component {
         this.state.filterPeriodStateValue = selectedValue
         this.fetchPosOrderCount(this.state.filterPeriodStateValue)
         this.getTotaRevenues(this.state.filterPeriodStateValue)
-        this.fetchCashOutAmount(this.state.filterPeriodStateValue)        
+        this.fetchCashOutAmount(this.state.filterPeriodStateValue)    
+        this.fetchChartDateSalesSummary(this.state.filterPeriodStateValue)    
     }
 
+    async fetchChartDateSalesSummary(period){
+        try {
+            let dateFilter = []
+            if (period) {
+                const today = new Date();
+                let fromDate = new Date(today);
+    
+                if (period === 1) {
+                    fromDate = today;
+                } else if (period === 7) {
+                    fromDate.setDate(today.getDate() - 7);
+                } else if (period === 30) {
+                    fromDate.setDate(today.getDate() - 30);
+                } else if (period === 90) {
+                    fromDate.setDate(today.getDate() - 90);
+                } else if (period === 365) {
+                    fromDate.setDate(today.getDate() - 365);
+                }
+
+                dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
+            
+            }
+
+            const rec = await this.orm.call(
+              "pos.config",
+              "get_pos_config_total_sale", [period], {}
+            )
+            // const rec = await this.or
+            this.state.posTerminal = rec
+            if (rec && Array.isArray(rec)) {
+              this.state.salesSumaryLabels = rec.map(item => item.config_name);
+              this.state.salesSummaryData = rec.map(item => Number(item.total_sales.replace(/,/g, '')));
+      
+              console.log("charDAta labels",this.state.salesSumaryLabels);
+              console.log("charDAta datasets",this.state.salesSummaryData);
+            }
+        
+      
+          } catch (error) {
+            console.error("Error fetching records:", error);
+          }
+    }
     async fetchCashOutAmount(period){
         try{
             let dateFilter = []
@@ -261,20 +306,7 @@ export class OwlAccountingDashboard extends Component {
         }
     }
 
-    async getPosTerminals(){
-        try{
-            const rec = await this.orm.call(
-                "pos.config",
-                "get_pos_config_total_sale",[],{}
-            )
-            
 
-            this.state.posTerminal = rec
-
-        } catch (error) {
-            console.error("Error fetching records:", error);
-        }
-    }
 
     async overallExpensePerProductCategory(){
         try {
