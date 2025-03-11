@@ -6,9 +6,30 @@ class PosConfig(models.Model):
     _inherit = 'pos.config'
 
     @api.model
-    def get_pos_config_total_sale(self):
+    def get_pos_config_total_sale(self,period):
+        domain = [('state','not in',('draft','cancel'))]
+        if period:
+            today = datetime.now().date()
+            print('test today: ', today)
+            from_date = today
+
+            if period == 1:
+                from_date = today
+            elif period == 7:
+                from_date = today - timedelta(days=7)
+            elif period == 30:
+                from_date = today - timedelta(days=30)
+            elif period == 90:
+                from_date = today - timedelta(days=90)
+            elif period == 365:
+                from_date = today - timedelta(days=365)
+
+            domain.append(('date', '>', from_date))
+            domain.append( ('date', '<=', today))
+    
+
         group_data = self.env['report.pos.order'].read_group(
-            domain=[('state','not in',('draft','cancel'))],  # No filters
+            domain=domain,  # No filters
             fields=['config_id', 'price_total:sum'],  # Correct field names
             groupby=['config_id'],  # ✅ Corrected from `group_by` to `groupby`
             lazy=False  # To return all groups at once
