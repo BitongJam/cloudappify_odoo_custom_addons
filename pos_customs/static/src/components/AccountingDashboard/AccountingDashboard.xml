@@ -95,7 +95,7 @@
                         <h1 class="text-primary fw-bold">Sales by Hour</h1>
                     </div>
                      <div style="height:250px; width:100%">
-                        <SalesByHourChartRender title="'Sales by Hour'" />
+                        <SalesByHourChartRender title="'Sales by Hour'" dataValues="state.fetchChartTotalSalesPerHourData" />
                     </div>
                 </div>
                 <div class="col-lg-3">

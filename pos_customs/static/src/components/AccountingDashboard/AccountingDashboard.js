@@ -48,7 +48,8 @@ export class OwlAccountingDashboard extends Component {
             salesSumaryLabels:[],
             salesSummaryData:[],
             salesByPaymentMethodLabels:[],
-            salesByPaymentMethodData:[]
+            salesByPaymentMethodData:[],
+            fetchChartTotalSalesPerHourData:[]
         });
 
         onWillStart(async ()=>{
@@ -65,6 +66,7 @@ export class OwlAccountingDashboard extends Component {
             await this.getProductCategoryExpenses();
             await this.fetchChartDateSalesSummary(false)
             await this.fetchChartSaleByPayment(false);
+            await this.fetchChartTotalSalesPerHour(false);
         });
         
         // sample
@@ -79,7 +81,8 @@ export class OwlAccountingDashboard extends Component {
         this.getTotaRevenues(this.state.filterPeriodStateValue)
         this.fetchCashOutAmount(this.state.filterPeriodStateValue)    
         this.fetchChartDateSalesSummary(this.state.filterPeriodStateValue)    
-        this.fetchChartSaleByPayment(this.state.filterPeriodStateValue)
+        this.fetchChartSaleByPayment(this.state.filterPeriodStateValue);
+        this.fetchChartTotalSalesPerHour(this.state.filterPeriodStateValue)
     }
 
     async fetchChartDateSalesSummary(period){
@@ -162,6 +165,43 @@ export class OwlAccountingDashboard extends Component {
 
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
+            return {};
+        }
+    }
+
+    async fetchChartTotalSalesPerHour(period){
+        try {
+            let dateFilter = []
+            let fromDate = false
+            if (period) {
+                const today = new Date();
+                console.log('test today: ',today)
+                fromDate = new Date(today);
+    
+                if (period === 1) {
+                    fromDate = today;
+                } else if (period === 7) {
+                    fromDate.setDate(today.getDate() - 7);
+                } else if (period === 30) {
+                    fromDate.setDate(today.getDate() - 30);
+                } else if (period === 90) {
+                    fromDate.setDate(today.getDate() - 90);
+                } else if (period === 365) {
+                    fromDate.setDate(today.getDate() - 365);
+                }
+
+                dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
+                fromDate = fromDate.toISOString().split('T')[0]
+            }
+
+            const rpc = this.env.services.rpc
+            const data = await rpc("/report/get_total_sales_per_hour_pos", {end_date: fromDate})
+            
+            const filter_even = data.filter(item => item.sale_hour % 2 === 0)
+            this.state.fetchChartTotalSalesPerHourData = filter_even.map(item => item.total_sales)
+            console.log('fetchChartTotalSalesPerHourData: ',this.state.fetchChartTotalSalesPerHourData)
+        } catch (error) {
+            console.error('Error fetching getTtotalSalesPerHourPos data:', error);
             return {};
         }
     }

@@ -2,7 +2,7 @@
 
 import { registry } from "@web/core/registry"
 import { loadJS } from "@web/core/assets"
-const { Component, onWillStart, useRef, onMounted } = owl
+const { Component, onWillStart, useRef, onMounted,onPatched } = owl
 
 export class SalesByHourChartRender extends Component {
     setup() {
@@ -10,25 +10,27 @@ export class SalesByHourChartRender extends Component {
         this.dataSet = []
         onWillStart(async () => {
             await loadJS("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js")
-            await this.getTtotalSalesPerHourPos()
+            // await this.getTtotalSalesPerHourPos()
         })
 
         onMounted(() => this.renderChart()) // Call renderChart after mounting
+        onPatched(() => {
+            console.log("Props updated! Updating chart...");
+            this.updateChart();
+          });
     }
 
-    async getTtotalSalesPerHourPos(){
-        try {
-            const rpc = this.env.services.rpc
-            const data = await rpc("/report/get_total_sales_per_hour_pos", {})
-            
-           
-            const filter_even = data.filter(item => item.sale_hour % 2 === 0)
-            this.dataSet = filter_even.map(item => item.total_sales)
-        } catch (error) {
-            console.error('Error fetching getTtotalSalesPerHourPos data:', error);
-            return {};
+
+    updateChart() {
+        if (this.chartInstance) {
+          // 🔄 Update chart data dynamically
+        //   this.chartInstance.data.labels = labels;
+          this.chartInstance.data.datasets[0].data = this.props.dataValues;
+          this.chartInstance.update();  
+        } else {
+          this.renderChart();  // If chart is not initialized, render it
         }
-    }
+      }
 
 
     renderChart = () => { // ✅ Convert to arrow function to keep `this` context
@@ -55,12 +57,17 @@ export class SalesByHourChartRender extends Component {
                     label: 'Filled',
                     backgroundColor: CHART_COLORS.blue,
                     borderColor:CHART_COLORS.blue,
-                    data: this.dataSet,
+                    data: this.props.dataValues,
                     fill: true,
                 }
             ]
         };
-        new Chart(this.chartRef.el, {
+
+        if (this.chartInstance) {
+            this.chartInstance.destroy();
+        }
+
+        this.chartInstance = new Chart(this.chartRef.el, {
             type: 'line',
             data: data,
             options: {

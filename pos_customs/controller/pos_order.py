@@ -44,16 +44,24 @@ class PosDashboardController(http.Controller):
         return result  # Ensure it returns a list of dictionaries with 'id'
     
     @http.route('/report/get_total_sales_per_hour_pos', type='json', auth='user')
-    def get_total_sales_per_hour_pos(self):
-        query="""
-            select TO_CHAR(rpo.date, 'HH24') AS sale_hour,sum(rpo.price_total) AS total_sales 
-                from report_pos_order rpo 
-                where rpo.state IN ('paid', 'done', 'invoiced') 
-                GROUP  by sale_hour
-                ORDER by sale_hour;
-        """
+    def get_total_sales_per_hour_pos(self,end_date):
+        query = """
+                SELECT TO_CHAR(rpo.date, 'HH24') AS sale_hour, SUM(rpo.price_total) AS total_sales 
+                FROM report_pos_order rpo 
+                WHERE rpo.state IN ('paid', 'done', 'invoiced')
+            """
+            
+        params = []
+        if end_date:  # If end_date exists, add the condition
+            query += """
+                AND rpo.date::DATE > %s  -- Greater than from_date
+                AND rpo.date::DATE <= CURRENT_DATE -- Less than or equal to to_date
+            """
+            params.append(end_date)
+
+        query += " GROUP BY sale_hour ORDER BY sale_hour"
     
-        request.cr.execute(query)
+        request.cr.execute(query ,(end_date,))
         result = request.cr.fetchall()
 
         format = [{'id':index + 1, 'sale_hour':row[0],'total_sales':row[1]} for index,row in enumerate(result)]
