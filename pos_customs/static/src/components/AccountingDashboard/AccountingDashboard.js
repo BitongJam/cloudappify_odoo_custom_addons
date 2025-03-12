@@ -61,7 +61,7 @@ export class OwlAccountingDashboard extends Component {
             await this.getTotaRevenues(false);
             await this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder);
             await this.fetchCashOutAmount(false);
-            await this.getPosTopSaleCashier();
+            await this.getPosTopSaleCashier(false);
             await this.getTopProductPosSales();
             await this.getProductCategoryExpenses();
             await this.fetchChartDateSalesSummary(false)
@@ -83,6 +83,7 @@ export class OwlAccountingDashboard extends Component {
         this.fetchChartDateSalesSummary(this.state.filterPeriodStateValue)    
         this.fetchChartSaleByPayment(this.state.filterPeriodStateValue);
         this.fetchChartTotalSalesPerHour(this.state.filterPeriodStateValue)
+        this.getPosTopSaleCashier(this.state.filterPeriodStateValue)
     }
 
     async fetchChartDateSalesSummary(period){
@@ -379,11 +380,34 @@ export class OwlAccountingDashboard extends Component {
 
     }
 
-    async getPosTopSaleCashier(){
+    async getPosTopSaleCashier(period){
 
         try{
+            let dateFilter = []
+            let fromDate = false
+            if (period) {
+                const today = new Date();
+                console.log('test today: ',today)
+                fromDate = new Date(today);
+    
+                if (period === 1) {
+                    fromDate = today;
+                } else if (period === 7) {
+                    fromDate.setDate(today.getDate() - 7);
+                } else if (period === 30) {
+                    fromDate.setDate(today.getDate() - 30);
+                } else if (period === 90) {
+                    fromDate.setDate(today.getDate() - 90);
+                } else if (period === 365) {
+                    fromDate.setDate(today.getDate() - 365);
+                }
+
+                dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
+                fromDate = fromDate.toISOString().split('T')[0]
+            }
+
             const rpc = this.env.services.rpc
-            const data = await rpc("/report/get_top_pos_sales_cashier", {})
+            const data = await rpc("/report/get_top_pos_sales_cashier", {end_date:fromDate})
 
             console.log("getPosTopSaleCashier test: ",data)
             this.state.getPosTopSalesCashier = data

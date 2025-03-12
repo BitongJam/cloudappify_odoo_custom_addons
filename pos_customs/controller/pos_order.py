@@ -1,9 +1,10 @@
 from odoo import http
 from odoo.http import request
+from datetime import datetime,timedelta
 
 class PosDashboardController(http.Controller):
     @http.route('/report/get_top_pos_sales_cashier', type='json', auth='user')
-    def get_top_pos_sales_cashier(self):
+    def get_top_pos_sales_cashier(self,end_date):
         query = '''
             SELECT 
                 TO_CHAR(SUM(rpo.price_total),'FM999,999,999.00') AS amount, count(*) as order,
@@ -12,12 +13,21 @@ class PosDashboardController(http.Controller):
             JOIN res_users ru ON ru.id = rpo.user_id 
             JOIN res_partner rp ON rp.id = ru.partner_id
             WHERE rpo.state IN ('paid', 'done', 'invoiced')
-            GROUP BY rp.name
-            order by amount desc ;
-
         '''
 
-        request.cr.execute(query)
+        params=[]
+        if end_date:  # If end_date exists, add the condition
+            query += """
+                AND rpo.date::DATE > %s  -- Greater than from_date
+                AND rpo.date::DATE <= CURRENT_DATE -- Less than or equal to to_date
+            """
+            params.append(end_date)
+
+        query+="""
+                GROUP BY rp.name
+            order by amount desc ;
+            """
+        request.cr.execute(query, tuple(params))
         result = request.cr.fetchall()
         
         return result
