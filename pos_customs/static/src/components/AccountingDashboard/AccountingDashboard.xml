@@ -87,7 +87,7 @@
                         <h1 class="text-primary fw-bold">Sales by Payment Method</h1>
                     </div>
                     <div style="height:250px; width:100%">
-                        <PaymentMethodChartRender type="'bar'" title="'Payment Method'" />
+                        <PaymentMethodChartRender type="'bar'" dataValues="state.salesByPaymentMethodData" labels="state.salesByPaymentMethodLabels" title="'Payment Method'" />
                     </div>
                 </div>
                 <div class="col-lg-5">

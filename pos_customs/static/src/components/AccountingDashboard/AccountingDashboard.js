@@ -46,7 +46,9 @@ export class OwlAccountingDashboard extends Component {
             getTtotalSalesPerHourPos:[],
             filterPeriodStateValue:0,
             salesSumaryLabels:[],
-            salesSummaryData:[]
+            salesSummaryData:[],
+            salesByPaymentMethodLabels:[],
+            salesByPaymentMethodData:[]
         });
 
         onWillStart(async ()=>{
@@ -62,6 +64,7 @@ export class OwlAccountingDashboard extends Component {
             await this.getTopProductPosSales();
             await this.getProductCategoryExpenses();
             await this.fetchChartDateSalesSummary(false)
+            await this.fetchChartSaleByPayment(false);
         });
         
         // sample
@@ -76,6 +79,7 @@ export class OwlAccountingDashboard extends Component {
         this.getTotaRevenues(this.state.filterPeriodStateValue)
         this.fetchCashOutAmount(this.state.filterPeriodStateValue)    
         this.fetchChartDateSalesSummary(this.state.filterPeriodStateValue)    
+        this.fetchChartSaleByPayment(this.state.filterPeriodStateValue)
     }
 
     async fetchChartDateSalesSummary(period){
@@ -120,6 +124,48 @@ export class OwlAccountingDashboard extends Component {
             console.error("Error fetching records:", error);
           }
     }
+
+    async fetchChartSaleByPayment(period) {
+        let dateFilter = []
+            if (period) {
+                const today = new Date();
+                let fromDate = new Date(today);
+    
+                if (period === 1) {
+                    fromDate = today;
+                } else if (period === 7) {
+                    fromDate.setDate(today.getDate() - 7);
+                } else if (period === 30) {
+                    fromDate.setDate(today.getDate() - 30);
+                } else if (period === 90) {
+                    fromDate.setDate(today.getDate() - 90);
+                } else if (period === 365) {
+                    fromDate.setDate(today.getDate() - 365);
+                }
+
+                dateFilter = [['payment_date', '>', fromDate.toISOString().split('T')[0]],['payment_date','<=',today.toISOString().split('T')[0]]];
+            
+            }
+
+        try {
+            const data = await this.orm.readGroup("pos.payment", dateFilter, ['payment_method_id.name', "amount:sum"], ['payment_method_id']);
+            console.log('test getPosPayment: ',data)
+            this.state.salesByPaymentMethodLabels = (data || []).map(item => 
+                Array.isArray(item.payment_method_id) && item.payment_method_id.length > 1 
+                    ? item.payment_method_id[1]  // ✅ Extracts the payment method name
+                    : "Unknown"
+            );
+            
+            this.state.salesByPaymentMethodData = (data || []).map(item => item["amount"] || 0);
+
+            
+
+        } catch (error) {
+            console.error('Error fetching dashboard data:', error);
+            return {};
+        }
+    }
+
     async fetchCashOutAmount(period){
         try{
             let dateFilter = []
