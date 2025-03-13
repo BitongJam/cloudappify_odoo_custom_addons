@@ -17,13 +17,19 @@
                             <option value="365_days">Last 365 Days</option>
                         </select>
 
-                        <select class="date_filter_values o_input me-3">
+                        <select class="o_field_many2many_selection o_input me-3">
                             <option value="0">Session</option>
+                            <t t-foreach="state.dataPosSession" t-as="i" t-key="i.id">
+                                 <option value="i.id"><t t-esc="i.name"/></option>
+                            </t>
 
                         </select>
 
                         <select class="date_filter_values o_input me-3">
                             <option value="0">Point of Sale</option>
+                            <t t-foreach="state.dataPointOfSaleList" t-as="i" t-key="i.id">
+                                 <option value="i.id"><t t-esc="i.name"/></option>
+                            </t>
 
                         </select>
 

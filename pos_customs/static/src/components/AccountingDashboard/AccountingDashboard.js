@@ -49,7 +49,11 @@ export class OwlAccountingDashboard extends Component {
             salesSummaryData:[],
             salesByPaymentMethodLabels:[],
             salesByPaymentMethodData:[],
-            fetchChartTotalSalesPerHourData:[]
+            fetchChartTotalSalesPerHourData:[],
+
+
+            dataPointOfSaleList:[],
+            dataPosSession:[]
         });
 
         onWillStart(async ()=>{
@@ -68,6 +72,8 @@ export class OwlAccountingDashboard extends Component {
             await this.fetchChartSaleByPayment(false);
             await this.fetchChartTotalSalesPerHour(false);
             await this.getTopProductPosSales(false);
+            await this.getDataListPointOfSale();
+            await this.getDataListSession();
         });
         
         // sample
@@ -86,6 +92,17 @@ export class OwlAccountingDashboard extends Component {
         this.fetchChartTotalSalesPerHour(this.state.filterPeriodStateValue)
         this.getPosTopSaleCashier(this.state.filterPeriodStateValue)
         this.getTopProductPosSales(this.state.filterPeriodStateValue)
+    }
+
+    async getDataListPointOfSale(){
+       const data =  await this.orm.searchRead("pos.config",[],['id','name'])
+       this.state.dataPointOfSaleList = data
+       console.log('getDataListPointOfSale: ',data)
+    }
+
+    async getDataListSession(){
+        const data =  await this.orm.searchRead("pos.session",[],['id','name'])
+        this.state.dataPosSession = data
     }
 
     async fetchChartDateSalesSummary(period){
