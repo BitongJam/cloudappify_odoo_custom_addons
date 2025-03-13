@@ -33,19 +33,29 @@ class PosDashboardController(http.Controller):
         return result
     
     @http.route('/report/get_top_product_pos_sales', type='json', auth='user') 
-    def get_top_product_pos_sales(self):
+    def get_top_product_pos_sales(self,end_date):
         query = """
-            select pt.name, TO_CHAR(sum(rpo.price_total),'FM999,999,999.00') as price_total,count(*) as order
+            select ROW_NUMBER() OVER () AS id,pt.name,sum(rpo.price_total) as price_total, TO_CHAR(sum(rpo.price_total),'FM999,999,999.00') as str_price_total,count(*) as order
             from report_pos_order rpo 
             join product_product pp on pp.id = rpo.product_id
             inner join product_template pt on pt.id = pp.product_tmpl_id
             where state in ('paid','done','invoiced') 
-            group by pt.name 
+
+        """
+
+        params = []
+        if end_date:  # If end_date exists, add the condition
+            query += """
+                AND rpo.date::DATE > %s AND rpo.date::DATE <= CURRENT_DATE
+            """
+            params.append(end_date)
+
+        query += """
+            group by pt.name
             order by price_total desc
             limit 10;
         """
-
-        request.cr.execute(query)
+        request.cr.execute(query,(end_date,))
         result = request.cr.fetchall()
 
         # Ensure a unique ID is added

@@ -168,11 +168,11 @@
                         </thead>
                         <tbody>
                             <!-- Generate exactly 10 empty rows -->
-                            <t t-foreach="state.getTopProductPosSales" t-as="i" t-key="i">
+                            <t t-foreach="state.getTopProductPosSales" t-as="i" t-key="i[0]">
                                 <tr>
-                                    <td><span t-esc="i[0].en_US"/></td>
-                                    <td><span t-esc="i[2]"/></td>
-                                    <td><span t-esc="i[1]"/></td>
+                                    <td><span t-esc="i[1].en_US"/></td>
+                                    <td><span t-esc="i[4]"/></td>
+                                    <td><span t-esc="i[3]"/></td>
                                 </tr>
                             </t>
                         </tbody>
