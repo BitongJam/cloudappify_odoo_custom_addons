@@ -37,8 +37,8 @@ export class SalesByHourChartRender extends Component {
         const DATA_COUNT = 7;
         const NUMBER_CFG = { count: DATA_COUNT, min: -100, max: 100 };
 
-        const labels =  ["12am","2am", "4am", "6am", "8am", "12am", "2pm",
-            "4pm", "6pm", "8pm", "10pm", "12pm"];
+        const labels =  ["12am","2am", "4am", "6am", "8am", "10am", "12pm",
+            "2pm", "4pm", "6pm", "8pm", "10pm"];
 
         const CHART_COLORS = {
                 red: 'rgb(255, 99, 132)',
