@@ -8,9 +8,9 @@
 
         <menuitem
             id="invoicing_dashboard_menu"
-            name="Dashboard"
+            name="Point of Sale"
             action="action_invoicing_dashboard"
-            parent="point_of_sale.menu_point_root"
+            parent="spreadsheet_dashboard.spreadsheet_dashboard_menu_root"
             groups="point_of_sale.group_pos_manager"
             sequence="0" />
 
