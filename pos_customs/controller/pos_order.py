@@ -64,14 +64,21 @@ class PosDashboardController(http.Controller):
         return result  # Ensure it returns a list of dictionaries with 'id'
     
     @http.route('/report/get_total_sales_per_hour_pos', type='json', auth='user')
-    def get_total_sales_per_hour_pos(self,end_date):
+    def get_total_sales_per_hour_pos(self, end_date):
+        # Get the logged-in user's timezone
+        user_tz = request.env.user.tz or 'UTC'  # Default to UTC if not set
+
         query = """
-                SELECT TO_CHAR(rpo.date, 'HH24') AS sale_hour, SUM(rpo.price_total) AS total_sales 
-                FROM report_pos_order rpo 
-                WHERE rpo.state IN ('paid', 'done', 'invoiced')
-            """
-            
-        params = []
+            SELECT TO_CHAR(
+                (rpo.date AT TIME ZONE 'UTC' AT TIME ZONE %s), 'HH24'
+            ) AS sale_hour, 
+            SUM(rpo.price_total) AS total_sales
+            FROM report_pos_order rpo
+            WHERE rpo.state IN ('paid', 'done', 'invoiced')
+        """
+
+        params = [user_tz]  # Store the user's timezone as a query parameter
+
         if end_date:  # If end_date exists, add the condition
             query += """
                 AND rpo.date::DATE > %s  -- Greater than from_date
@@ -80,12 +87,13 @@ class PosDashboardController(http.Controller):
             params.append(end_date)
 
         query += " GROUP BY sale_hour ORDER BY sale_hour"
-    
-        request.cr.execute(query ,(end_date,))
-        result = request.cr.fetchall()
 
-        format = [{'id':index + 1, 'sale_hour':row[0],'total_sales':row[1]} for index,row in enumerate(result)]
+        request.env.cr.execute(query, params)  # Execute query with parameters
+        result = request.env.cr.fetchall()
+
+        format = [{'id': index + 1, 'sale_hour': row[0], 'total_sales': row[1]} for index, row in enumerate(result)]
         return format
+
 
 
     
