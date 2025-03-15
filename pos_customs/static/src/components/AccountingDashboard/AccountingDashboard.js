@@ -45,6 +45,9 @@ export class OwlAccountingDashboard extends Component {
             getProductCategoryExpenses:[],
             getTtotalSalesPerHourPos:[],
             filterPeriodStateValue:0,
+            filterSessionStateValue:false,
+            filterPosStateValue:false,
+            filterResponsibleSateValue: false,
             salesSumaryLabels:[],
             salesSummaryData:[],
             salesByPaymentMethodLabels:[],
@@ -53,7 +56,8 @@ export class OwlAccountingDashboard extends Component {
 
 
             dataPointOfSaleList:[],
-            dataPosSession:[]
+            dataPosSession:[],
+            dataResponsible:[],
         });
 
         onWillStart(async ()=>{
@@ -61,7 +65,7 @@ export class OwlAccountingDashboard extends Component {
             await this.overallPosIncome()
             await this.getBankAndCashJournal();
             await this.getTopSessionDiscount()
-            await this.fetchPosOrderCount(false);
+            await this.fetchPosOrderCount();
             await this.getTotaRevenues(false);
             await this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder);
             await this.fetchCashOutAmount(false);
@@ -74,31 +78,67 @@ export class OwlAccountingDashboard extends Component {
             await this.getTopProductPosSales(false);
             await this.getDataListPointOfSale();
             await this.getDataListSession();
+            await this.getDataResponsible();
         });
         
         // sample
         this.rows = Array.from({ length: 10 }, (_, i) => i); 
     }
 
-    onFilterChange(event){
+    responsibleFilterChange(event){
+        const selectedValue = parseInt(event.target.value);
+        this.state.filterResponsibleSateValue = selectedValue;
+
+        this.upgradeChartData();
+    }
+
+    periodFilterChange(event){
         const selectedValue = parseInt(event.target.value, 10);
-        console.log('test onFilterChange: ',event.target.value)
-        this.state.filterPeriodStateValue = selectedValue
-        this.fetchPosOrderCount(this.state.filterPeriodStateValue)
-        this.getTotaRevenues(this.state.filterPeriodStateValue)
-        this.fetchCashOutAmount(this.state.filterPeriodStateValue)    
-        this.fetchChartDateSalesSummary(this.state.filterPeriodStateValue)    
-        this.fetchChartSaleByPayment(this.state.filterPeriodStateValue);
-        this.fetchChartTotalSalesPerHour(this.state.filterPeriodStateValue)
-        this.getPosTopSaleCashier(this.state.filterPeriodStateValue)
-        this.getTopProductPosSales(this.state.filterPeriodStateValue)
-        this.getProductCategoryExpenses(this.state.filterPeriodStateValue);
+        this.state.filterPeriodStateValue = selectedValue;
+
+        this.upgradeChartData();
+    }
+
+    sessionFilterChange(event){
+        const selectedValue = parseInt(event.target.value)
+        this.state.filterSessionStateValue = selectedValue;
+        this.upgradeChartData();
+    }
+
+    posFilterChange(event){
+        const selectedValue = parseInt(event.target.value)
+        this.state.filterPosStateValue = selectedValue;
+        this.upgradeChartData();
+
+    }
+    upgradeChartData(){      
+        let period = this.state.filterPeriodStateValue
+        let session = this.state.filterSessionStateValue
+        let pos = this.state.filterPosStateValue
+        let responsible = this.state.filterResponsibleSateValue
+        this.fetchPosOrderCount(period,session,pos,responsible)
+        this.getTotaRevenues(period)
+        this.fetchCashOutAmount(period)    
+        this.fetchChartDateSalesSummary(period)    
+        this.fetchChartSaleByPayment(period);
+        this.fetchChartTotalSalesPerHour(period)
+        this.getPosTopSaleCashier(period)
+        this.getTopProductPosSales(period)
+        this.getProductCategoryExpenses(period);
     }
 
     async getDataListPointOfSale(){
        const data =  await this.orm.searchRead("pos.config",[],['id','name'])
        this.state.dataPointOfSaleList = data
        console.log('getDataListPointOfSale: ',data)
+    }
+
+
+    async getDataResponsible(){
+        const data = await this.orm.searchRead("res.users", [['share', '=', false]], ['id', 'name']);
+    
+        this.state.dataResponsible = data
+        console.log('getDataResponsible: ',data)
     }
 
     async getDataListSession(){
@@ -267,10 +307,11 @@ export class OwlAccountingDashboard extends Component {
         }
     }
 
-    async fetchPosOrderCount(period) {
+    async fetchPosOrderCount(period=false,session=false,pos=false,responsible=false,product=false) {
         try {
             // Define the date range filter
-            let dateFilter = [];
+            let domain = [];
+            //period
             if (period) {
                 const today = new Date();
                 console.log('test today: ',today)
@@ -288,14 +329,31 @@ export class OwlAccountingDashboard extends Component {
                     fromDate.setDate(today.getDate() - 365);
                 }
 
-                dateFilter = [['date_order', '>', fromDate.toISOString().split('T')[0]],['date_order','<=',today.toISOString().split('T')[0]]];
+                domain = [['date_order', '>', fromDate.toISOString().split('T')[0]],['date_order','<=',today.toISOString().split('T')[0]]];
+            }
+
+            if (session){
+                domain.push(['session_id','=',session])
+                //fucntion
+            }
+
+            if (pos){
+                domain.push(['config_id','=',pos])
+            }
+
+            if (responsible){
+                domain.push(['user_id','=',responsible])
+            }
+
+            if (product){
+                
             }
     
             // Fetch the count with dynamic filters
             const data = await this.orm.searchCount("pos.order", [
                 ['state', 'not in', ['cancel', 'draft']],
                 ['lines', '!=', false],
-                ...dateFilter,  // Add the date filter dynamically
+                ...domain,  // Add the date filter dynamically
             ]);
   
     
