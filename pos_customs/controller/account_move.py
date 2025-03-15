@@ -160,7 +160,7 @@ class SaleReport(http.Controller):
 
 
     @http.route('/report/get_product_category_expenses', type='json', auth='user')
-    def get_product_category_expenses(self):
+    def get_product_category_expenses(self,end_date):
         query = """
             SELECT pc.name,SUM(aml.debit) as total_expense, TO_CHAR(SUM(aml.debit),'FM999,999,999.00') AS str_total_expense,count(*) as order
             FROM account_move_line aml
@@ -169,10 +169,21 @@ class SaleReport(http.Controller):
             JOIN product_category pc ON pc.id = pt.categ_id
             JOIN account_move am ON am.id = aml.move_id
             WHERE am.move_type = 'in_invoice' -- Only vendor bills
+            
+        """
+        params=[]
+        if end_date:  # If end_date exists, add the condition
+            query += """
+                AND am.date::DATE > %s  -- Greater than from_date
+                AND am.date::DATE <= CURRENT_DATE -- Less than or equal to to_date
+            """
+            params.append(end_date)
+        
+        query +="""
             GROUP BY pc.name
             ORDER BY total_expense DESC;
         """
-        request.cr.execute(query)
+        request.cr.execute(query,tuple(params))
         result = request.cr.fetchall()
 
         # Return data with unique IDs
