@@ -34,7 +34,7 @@
                         </select>
 
                         <select class="date_filter_values o_input me-3" t-on-change="responsibleFilterChange">
-                            <option t-att-valuevalue="0">--Respondsible--</option>
+                            <option t-att-valuevalue="0">--Responsible--</option>
                             <t t-foreach="state.dataResponsible" t-as="responsible" t-key="responsible.id">
                                 <option t-att-value="responsible.id"><t t-esc="responsible.name"/></option>
                             </t>
