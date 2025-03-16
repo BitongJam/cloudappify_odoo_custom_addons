@@ -16,6 +16,7 @@ const { Component,useSubEnv,useState,onWillStart } = owl;
 export class OwlAccountingDashboard extends Component {
     setup() {
         // Your setup logic here
+        this.rpc = useService('rpc');
         this.orm = useService("orm")
         this.display = {
             controlPanel: {"top-right": false, "bottom-right": false}
@@ -48,6 +49,7 @@ export class OwlAccountingDashboard extends Component {
             filterSessionStateValue:false,
             filterPosStateValue:false,
             filterResponsibleSateValue: false,
+            filterProductStateValue:false,
             salesSumaryLabels:[],
             salesSummaryData:[],
             salesByPaymentMethodLabels:[],
@@ -58,6 +60,7 @@ export class OwlAccountingDashboard extends Component {
             dataPointOfSaleList:[],
             dataPosSession:[],
             dataResponsible:[],
+            dataListProduct:[]
         });
 
         onWillStart(async ()=>{
@@ -66,9 +69,9 @@ export class OwlAccountingDashboard extends Component {
             await this.getBankAndCashJournal();
             await this.getTopSessionDiscount()
             await this.fetchPosOrderCount();
-            await this.getTotaRevenues(false);
+            await this.getTotaRevenues();
             await this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder);
-            await this.fetchCashOutAmount(false);
+            await this.fetchCashOutAmount();
             await this.getPosTopSaleCashier(false);
             await this.getTopProductPosSales();
             await this.getProductCategoryExpenses(false);
@@ -79,6 +82,7 @@ export class OwlAccountingDashboard extends Component {
             await this.getDataListPointOfSale();
             await this.getDataListSession();
             await this.getDataResponsible();
+            await this.getDataListProduct();
         });
         
         // sample
@@ -111,14 +115,22 @@ export class OwlAccountingDashboard extends Component {
         this.upgradeChartData();
 
     }
+
+    productFilterChange(event){
+        const selectedValue = parseInt(event.target.value)
+        console.log("productFilterChange: ",selectedValue)
+        this.state.filterProductStateValue = selectedValue
+        this.upgradeChartData();
+    }
     upgradeChartData(){      
         let period = this.state.filterPeriodStateValue
         let session = this.state.filterSessionStateValue
         let pos = this.state.filterPosStateValue
         let responsible = this.state.filterResponsibleSateValue
-        this.fetchPosOrderCount(period,session,pos,responsible)
-        this.getTotaRevenues(period)
-        this.fetchCashOutAmount(period)    
+        let product = this.state.filterProductStateValue
+        this.fetchPosOrderCount(period,session,pos,responsible,product)
+        this.getTotaRevenues(period,session,pos,responsible,product)
+        this.fetchCashOutAmount(period,session,pos,responsible)    
         this.fetchChartDateSalesSummary(period)    
         this.fetchChartSaleByPayment(period);
         this.fetchChartTotalSalesPerHour(period)
@@ -144,6 +156,11 @@ export class OwlAccountingDashboard extends Component {
     async getDataListSession(){
         const data =  await this.orm.searchRead("pos.session",[],['id','name'])
         this.state.dataPosSession = data
+    }
+
+    async getDataListProduct(){
+        const data = await this.rpc("/report/get_pos_product_list",{})
+        this.state.dataListProduct = data
     }
 
     async fetchChartDateSalesSummary(period){
@@ -267,9 +284,9 @@ export class OwlAccountingDashboard extends Component {
         }
     }
 
-    async fetchCashOutAmount(period){
+    async fetchCashOutAmount(period=false,session=false,pos=false,responsible=false){
         try{
-            let dateFilter = []
+            let domain = []
             if (period) {
                 const today = new Date();
                 console.log('test today: ',today)
@@ -287,12 +304,23 @@ export class OwlAccountingDashboard extends Component {
                     fromDate.setDate(today.getDate() - 365);
                 }
 
-                dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
+                domain = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
             
+            }
+
+            if (session){
+                domain.push(['pos_session_id','=',session])
+            }
+
+            if (pos){
+                domain.push(['pos_session_id.config_id','=',pos])
+            }
+            if (responsible){
+                domain.push(['user_id','=',responsible])
             }
             const data = await this.orm.readGroup(
                 'account.bank.statement.line',
-                [['payment_ref','ilike','-out-'],...dateFilter],
+                [['payment_ref','ilike','-out-'],...domain],
                 ['amount:sum'],[],
             );
             console.log('test fetchCashOutAmount: ',data)
@@ -346,7 +374,7 @@ export class OwlAccountingDashboard extends Component {
             }
 
             if (product){
-                
+                domain.push(['lines.product_id.id','=',product])
             }
     
             // Fetch the count with dynamic filters
@@ -443,7 +471,7 @@ export class OwlAccountingDashboard extends Component {
     }
 
 
-    async getTotaRevenues(period){
+    async getTotaRevenues(period=false,session=false,pos=false,responsible=false,product=false){
         try{
             let domain = [['state', 'not in', ['cancel', 'draft']]]
             if (period) {
@@ -468,6 +496,24 @@ export class OwlAccountingDashboard extends Component {
                 let date_to = ['date_order','<=',today.toISOString().split('T')[0]]
                 domain.push(date_to)
             }
+
+            if (session){
+                domain.push(['session_id','=',session])
+                //fucntion
+            }
+
+            if (pos){
+                domain.push(['config_id','=',pos])
+            }
+
+            if (responsible){
+                domain.push(['user_id','=',responsible])
+            }
+
+            if (product){
+                domain.push(['lines.product_id.id','=',product])
+            }
+    
 
             console.log('test datefilter: ',domain)
 

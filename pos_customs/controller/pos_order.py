@@ -94,6 +94,18 @@ class PosDashboardController(http.Controller):
         format = [{'id': index + 1, 'sale_hour': row[0], 'total_sales': row[1]} for index, row in enumerate(result)]
         return format
 
+    @http.route('/report/get_pos_product_list', type='json', auth='user')
+    def get_pos_product_list(self):
+        query = """
+            select pp.id as product_id,pt.name as product_name from product_product pp 
+            join product_template pt on pt.id = pp.product_tmpl_id 
+            where pt.available_in_pos = true 
+        """
+
+        request.env.cr.execute(query)
+        result = request.env.cr.fetchall()
+        format = [{'id':row[0],'name':row[1]} for row in result]
+        return format
 
 
     

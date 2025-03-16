@@ -18,7 +18,7 @@
                         </select>
 
                         <select class="o_field_many2many_selection o_input me-3" t-on-change="sessionFilterChange">
-                            <option value="false">Session</option>
+                            <option value="false">--Session--</option>
                             <t t-foreach="state.dataPosSession" t-as="i" t-key="i.id">
                                  <option t-att-value="i.id"><t t-esc="i.name"/></option>
                             </t>
@@ -26,7 +26,7 @@
                         </select>
 
                         <select class="date_filter_values o_input me-3" t-on-change="posFilterChange">
-                            <option value="0">Point of Sale</option>
+                            <option value="0">--Point of Sale--</option>
                             <t t-foreach="state.dataPointOfSaleList" t-as="i" t-key="i.id">
                                  <option t-att-value="i.id"><t t-esc="i.name"/></option>
                             </t>
@@ -34,16 +34,19 @@
                         </select>
 
                         <select class="date_filter_values o_input me-3" t-on-change="responsibleFilterChange">
-                            <option t-att-valuevalue="0">Respondsible</option>
+                            <option t-att-valuevalue="0">--Respondsible--</option>
                             <t t-foreach="state.dataResponsible" t-as="responsible" t-key="responsible.id">
                                 <option t-att-value="responsible.id"><t t-esc="responsible.name"/></option>
                             </t>
 
                         </select>
 
-                        <select class="date_filter_values o_input me-3">
-                            <option value="0">Product</option>
+                        <select class="date_filter_values o_input me-3" t-on-change="productFilterChange">
+                            <option value="0">--Product--</option>
+                            <t t-foreach="state.dataListProduct" t-as="product" t-key="product.id" >
+                                <option t-att-value="product.id"><t t-esc="product.name.en_US"/></option>
 
+                            </t>
                         </select>
                     </div>
 
