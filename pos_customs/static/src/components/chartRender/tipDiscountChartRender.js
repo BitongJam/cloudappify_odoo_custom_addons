@@ -2,7 +2,7 @@
 
 import { registry } from "@web/core/registry"
 import { loadJS } from "@web/core/assets"
-const { Component, onWillStart, useRef, onMounted } = owl
+const { Component, onWillStart, useRef, onMounted, onPatched } = owl
 
 export class TipsDiscountChartRender extends Component {
     setup() {
@@ -12,11 +12,31 @@ export class TipsDiscountChartRender extends Component {
         })
 
         onMounted(() => this.renderChart()) // Call renderChart after mounting
+        onPatched(() => {
+            this.updateChart();
+        })
     }
 
+    updateChart() {
+        if (this.chartInstance) {
+            // 🔄 Update chart data dynamically
+            let data_vals =  this.props.values
+            this.chartInstance.data.datasets[0].data =  [data_vals.disc_amnt, data_vals.tips_amnt];
+            this.chartInstance.update();
+        } else {
+            this.renderChart();  // If chart is not initialized, render it
+        }
+    }
 
     renderChart = () => { // ✅ Convert to arrow function to keep `this` context
-    
+        console.log("tips and discount: ", this.props.values)
+        if (!this.props.values) {
+            console.error("Missing labels or values in props:", this.props);
+            return;
+        }
+
+        let data_vals = this.props.values
+        console.log('tips_amnt: ', data_vals.tips_amnt, ' discount: ', data_vals.disc_amnt)
         const CHART_COLORS = {
             red: 'rgb(255, 99, 132)',
             blue: 'rgb(54, 162, 235)',
@@ -30,13 +50,18 @@ export class TipsDiscountChartRender extends Component {
         const data = {
             labels: ['Discount', 'Tips'],
             datasets: [
-              {
-                label: 'Dataset 1',
-                data: [1000,500],
-              }
+                {
+                    label: 'Dataset 1',
+                    data: [data_vals.disc_amnt, data_vals.tips_amnt],
+                }
             ]
-          };
-        new Chart(this.chartRef.el, {
+        };
+
+        if (this.chartInstance) {
+            this.chartInstance.destroy();
+        }
+
+        this.chartInstance = new Chart(this.chartRef.el, {
             type: 'pie',
             data: data,
             options: {

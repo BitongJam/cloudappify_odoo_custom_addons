@@ -6,7 +6,7 @@ class PosConfig(models.Model):
     _inherit = 'pos.config'
 
     @api.model
-    def get_pos_config_total_sale(self,period):
+    def get_pos_config_total_sale(self,period=False,session=False,pos=False,responsible=False,product=False):
         domain = [('state','not in',('draft','cancel'))]
         if period:
             today = datetime.now().date()
@@ -27,6 +27,17 @@ class PosConfig(models.Model):
             domain.append(('date', '>', from_date))
             domain.append( ('date', '<=', today))
     
+        if session:
+           domain.append(('session_id','=',session))
+
+        if pos:
+           domain.append(('config_id','=',pos))
+
+        if responsible:
+            domain.append(('user_id','=',responsible))
+
+        if product:
+            domain.append(('product_id','=',product))
 
         group_data = self.env['report.pos.order'].read_group(
             domain=domain,  # No filters

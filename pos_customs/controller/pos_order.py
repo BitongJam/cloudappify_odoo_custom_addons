@@ -3,8 +3,48 @@ from odoo.http import request
 from datetime import datetime,timedelta
 
 class PosDashboardController(http.Controller):
+    @http.route('/report/get_discount_tips_data', type='json', auth='user')
+    def get_discount_tips_data(self,period=False,session=False,pos=False,responsible=False,product=False):
+        domain = []
+        if period:
+
+            today = datetime.now().date()
+            print('test today: ', today)
+            from_date = today
+
+            if period == 1:
+                from_date = today
+            elif period == 7:
+                from_date = today - timedelta(days=7)
+            elif period == 30:
+                from_date = today - timedelta(days=30)
+            elif period == 90:
+                from_date = today - timedelta(days=90)
+            elif period == 365:
+                from_date = today - timedelta(days=365)
+
+            domain.append(('order_id.date_order', '>', from_date))
+            domain.append(('order_id.date_order', '<=', today))
+
+        if session:
+            domain.append(('order_id.session_id','=',session))
+
+        if pos:
+            domain.append(('order_id.config_id','=',pos))
+
+        if responsible:
+            domain.append(('order_id.user_id','=',responsible))
+
+        if product:
+            domain.append(('product_id','=',product))
+
+        disc = request.env['pos.order.line'].read_group(domain,['discount_amount'],[])
+        tips = 0
+        val = {'disc_amount':disc[0].get('discount_amount', 0),'tips_amount':tips}
+        return val
+
     @http.route('/report/get_top_pos_sales_cashier', type='json', auth='user')
-    def get_top_pos_sales_cashier(self,end_date):
+    def get_top_pos_sales_cashier(self,end_date = False,session=False,pos=False,responsible=False,product=False):
         query = '''
             SELECT 
                 TO_CHAR(SUM(rpo.price_total),'FM999,999,999.00') AS amount, count(*) as order,
@@ -23,17 +63,41 @@ class PosDashboardController(http.Controller):
             """
             params.append(end_date)
 
+        if session:
+            query +="""
+                AND rpo.session_id = %s
+            """
+            params.append(session)
+
+        if pos:
+            query +="""
+                AND rpo.config_id = %s
+            """
+            params.append(pos)
+
+        if responsible:
+            query +="""
+                AND rpo.user_id = %s
+            """
+            params.append(responsible)
+
+        if product:
+            query +="""
+                AND rpo.product_id = %s
+            """
+            params.append(product)
+
         query+="""
                 GROUP BY rp.name
             order by amount desc ;
             """
-        request.cr.execute(query, tuple(params))
+        request.cr.execute(query, params)
         result = request.cr.fetchall()
         
         return result
     
     @http.route('/report/get_top_product_pos_sales', type='json', auth='user') 
-    def get_top_product_pos_sales(self,end_date):
+    def get_top_product_pos_sales(self,end_date = False,session=False,pos=False,responsible=False,product=False):
         query = """
             select ROW_NUMBER() OVER () AS id,pt.name,sum(rpo.price_total) as price_total, TO_CHAR(sum(rpo.price_total),'FM999,999,999.00') as str_price_total,count(*) as order
             from report_pos_order rpo 
@@ -50,12 +114,36 @@ class PosDashboardController(http.Controller):
             """
             params.append(end_date)
 
+        if session:
+            query +="""
+                AND rpo.session_id = %s
+            """
+            params.append(session)
+
+        if pos:
+            query +="""
+                AND rpo.config_id = %s
+            """
+            params.append(pos)
+
+        if responsible:
+            query +="""
+                AND rpo.user_id = %s
+            """
+            params.append(responsible)
+
+        if product:
+            query +="""
+                AND rpo.product_id = %s
+            """
+            params.append(product)
+
         query += """
             group by pt.name
             order by price_total desc
             limit 10;
         """
-        request.cr.execute(query,(end_date,))
+        request.cr.execute(query,params)
         result = request.cr.fetchall()
 
         # Ensure a unique ID is added
@@ -64,7 +152,7 @@ class PosDashboardController(http.Controller):
         return result  # Ensure it returns a list of dictionaries with 'id'
     
     @http.route('/report/get_total_sales_per_hour_pos', type='json', auth='user')
-    def get_total_sales_per_hour_pos(self, end_date):
+    def get_total_sales_per_hour_pos(self, end_date = False,session=False,pos=False,responsible=False,product=False):
         # Get the logged-in user's timezone
         user_tz = request.env.user.tz or 'UTC'  # Default to UTC if not set
 
@@ -85,6 +173,31 @@ class PosDashboardController(http.Controller):
                 AND rpo.date::DATE <= CURRENT_DATE -- Less than or equal to to_date
             """
             params.append(end_date)
+
+        if session:
+            query +="""
+                AND rpo.session_id = %s
+            """
+            params.append(session)
+
+        if pos:
+            query +="""
+                AND rpo.config_id = %s
+            """
+            params.append(pos)
+
+        if responsible:
+            query +="""
+                AND rpo.user_id = %s
+            """
+            params.append(responsible)
+
+        if product:
+            query +="""
+                AND rpo.product_id = %s
+            """
+            params.append(product)
+
 
         query += " GROUP BY sale_hour ORDER BY sale_hour"
 

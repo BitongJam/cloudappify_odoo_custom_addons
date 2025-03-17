@@ -56,7 +56,7 @@ export class OwlAccountingDashboard extends Component {
             salesByPaymentMethodData:[],
             fetchChartTotalSalesPerHourData:[],
 
-
+            dataTipsDiscount:{'tips_amnt':0,'disc_amnt':0},
             dataPointOfSaleList:[],
             dataPosSession:[],
             dataResponsible:[],
@@ -72,17 +72,18 @@ export class OwlAccountingDashboard extends Component {
             await this.getTotaRevenues();
             await this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder);
             await this.fetchCashOutAmount();
-            await this.getPosTopSaleCashier(false);
+            await this.getPosTopSaleCashier();
             await this.getTopProductPosSales();
             await this.getProductCategoryExpenses(false);
             await this.fetchChartDateSalesSummary(false)
             await this.fetchChartSaleByPayment();
-            await this.fetchChartTotalSalesPerHour(false);
-            await this.getTopProductPosSales(false);
+            await this.fetchChartTotalSalesPerHour();
+            await this.getTopProductPosSales();
             await this.getDataListPointOfSale();
             await this.getDataListSession();
             await this.getDataResponsible();
             await this.getDataListProduct();
+            await this.getTipsDiscountAmount();
         });
         
         // sample
@@ -131,14 +132,21 @@ export class OwlAccountingDashboard extends Component {
         this.fetchPosOrderCount(period,session,pos,responsible,product)
         this.getTotaRevenues(period,session,pos,responsible,product)
         this.fetchCashOutAmount(period,session,pos,responsible)    
-        this.fetchChartDateSalesSummary(period)    
+        this.fetchChartDateSalesSummary(period,session,pos,responsible,product)    
         this.fetchChartSaleByPayment(period,session,pos,responsible,product);
-        this.fetchChartTotalSalesPerHour(period)
-        this.getPosTopSaleCashier(period)
-        this.getTopProductPosSales(period)
+        this.fetchChartTotalSalesPerHour(period,session,pos,responsible,product)
+        this.getPosTopSaleCashier(period,session,pos,responsible,product)
+        this.getTopProductPosSales(period,session,pos,responsible,product)
         this.getProductCategoryExpenses(period);
+        this.getTipsDiscountAmount(period,session,pos,responsible,product)
     }
 
+    async getTipsDiscountAmount(period =false,session=false,pos=false,responsible=false,product=false){
+        const data = await this.rpc("/report/get_discount_tips_data",{period:period,session:session,pos:pos,responsible:responsible,product:product});
+        this.state.dataTipsDiscount.disc_amnt = data.disc_amount
+        this.state.dataTipsDiscount.tips_amnt = data.tips_amount
+        console.log("getTipsDiscountAmount: ",data)
+    }
     async getDataListPointOfSale(){
        const data =  await this.orm.searchRead("pos.config",[],['id','name'])
        this.state.dataPointOfSaleList = data
@@ -163,32 +171,32 @@ export class OwlAccountingDashboard extends Component {
         this.state.dataListProduct = data
     }
 
-    async fetchChartDateSalesSummary(period){
+    async fetchChartDateSalesSummary(period=false,session=false,pos=false,responsible=false,product=false){
         try {
-            let dateFilter = []
-            if (period) {
-                const today = new Date();
-                let fromDate = new Date(today);
+            // let dateFilter = []
+            // if (period) {
+            //     const today = new Date();
+            //     let fromDate = new Date(today);
     
-                if (period === 1) {
-                    fromDate = today;
-                } else if (period === 7) {
-                    fromDate.setDate(today.getDate() - 7);
-                } else if (period === 30) {
-                    fromDate.setDate(today.getDate() - 30);
-                } else if (period === 90) {
-                    fromDate.setDate(today.getDate() - 90);
-                } else if (period === 365) {
-                    fromDate.setDate(today.getDate() - 365);
-                }
+            //     if (period === 1) {
+            //         fromDate = today;
+            //     } else if (period === 7) {
+            //         fromDate.setDate(today.getDate() - 7);
+            //     } else if (period === 30) {
+            //         fromDate.setDate(today.getDate() - 30);
+            //     } else if (period === 90) {
+            //         fromDate.setDate(today.getDate() - 90);
+            //     } else if (period === 365) {
+            //         fromDate.setDate(today.getDate() - 365);
+            //     }
 
-                dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
+            //     dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
             
-            }
+            // }
 
             const rec = await this.orm.call(
               "pos.config",
-              "get_pos_config_total_sale", [period], {}
+              "get_pos_config_total_sale", [period,session,pos,responsible,product], {}
             )
             // const rec = await this.or
             this.state.posTerminal = rec
@@ -264,8 +272,9 @@ export class OwlAccountingDashboard extends Component {
         }
     }
 
-    async fetchChartTotalSalesPerHour(period){
+    async fetchChartTotalSalesPerHour(period=false,session=false,pos=false,responsible=false,product=false){
         try {
+            let domain ={}
             let dateFilter = []
             let fromDate = false
             if (period) {
@@ -287,10 +296,27 @@ export class OwlAccountingDashboard extends Component {
 
                 dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
                 fromDate = fromDate.toISOString().split('T')[0]
+                domain.end_date = fromDate
+            }
+
+            if (session){
+                domain.session = session
+            }
+
+            if (pos){
+                domain.pos=pos
+            }
+
+            if (responsible){
+                domain.responsible = responsible
+            }
+
+            if (product){
+                domain.product = product
             }
 
             const rpc = this.env.services.rpc
-            const data = await rpc("/report/get_total_sales_per_hour_pos", {end_date: fromDate})
+            const data = await rpc("/report/get_total_sales_per_hour_pos", domain)
             
             const filter_even = data.filter(item => item.sale_hour % 2 === 0)
             this.state.fetchChartTotalSalesPerHourData = filter_even.map(item => item.total_sales)
@@ -411,8 +437,9 @@ export class OwlAccountingDashboard extends Component {
         }
     }
 
-    async getTopProductPosSales(period){
+    async getTopProductPosSales(period=false,session=false,pos=false,responsible=false,product=false){
         try{
+            let domain = {}
             let dateFilter = []
             let fromDate = false
             if (period) {
@@ -434,11 +461,27 @@ export class OwlAccountingDashboard extends Component {
 
                 dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
                 fromDate = fromDate.toISOString().split('T')[0]
+                domain.end_date = fromDate
             }
 
+            if (session){
+                domain.session = session
+            }
+
+            if (pos){
+                domain.pos = pos
+            }
+
+            if (responsible){
+                domain.responsible = responsible
+            }
+
+            if (product){
+                domain.product = product
+            }
             
             const rpc = this.env.services.rpc
-            const data = await rpc("/report/get_top_product_pos_sales", {end_date:fromDate})
+            const data = await rpc("/report/get_top_product_pos_sales", domain)
 
             console.log("getTopProductPosSales test: ",data)
             this.state.getTopProductPosSales = data
@@ -569,9 +612,10 @@ export class OwlAccountingDashboard extends Component {
 
     }
 
-    async getPosTopSaleCashier(period){
+    async getPosTopSaleCashier(period = false,session=false,pos=false,responsible=false,product=false){
 
         try{
+            let domain = {}
             let dateFilter = []
             let fromDate = false
             if (period) {
@@ -593,12 +637,29 @@ export class OwlAccountingDashboard extends Component {
 
                 dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
                 fromDate = fromDate.toISOString().split('T')[0]
+                domain.end_date = fromDate
+            }
+            console.log('session: ',session,' pos: ',pos,'responsible: ',responsible,' product: ',product)
+            if (session){
+                domain.session = session
             }
 
-            const rpc = this.env.services.rpc
-            const data = await rpc("/report/get_top_pos_sales_cashier", {end_date:fromDate})
+            if (pos){
+                domain.pos = pos
+            }
 
-            console.log("getPosTopSaleCashier test: ",data)
+            if (responsible){
+                domain.responsible = responsible
+            }
+
+            if (product){
+                domain.product = product
+            }
+            
+            const rpc = this.env.services.rpc
+            const data = await rpc("/report/get_top_pos_sales_cashier", domain)
+
+            console.log("getPosTopSaleCashier test: ",domain)
             this.state.getPosTopSalesCashier = data
         }catch(error){
             console.error('Error fetching getPosTopSaleCashier data:', error);
