@@ -76,7 +76,7 @@ export class OwlAccountingDashboard extends Component {
             await this.getTopProductPosSales();
             await this.getProductCategoryExpenses(false);
             await this.fetchChartDateSalesSummary(false)
-            await this.fetchChartSaleByPayment(false);
+            await this.fetchChartSaleByPayment();
             await this.fetchChartTotalSalesPerHour(false);
             await this.getTopProductPosSales(false);
             await this.getDataListPointOfSale();
@@ -132,7 +132,7 @@ export class OwlAccountingDashboard extends Component {
         this.getTotaRevenues(period,session,pos,responsible,product)
         this.fetchCashOutAmount(period,session,pos,responsible)    
         this.fetchChartDateSalesSummary(period)    
-        this.fetchChartSaleByPayment(period);
+        this.fetchChartSaleByPayment(period,session,pos,responsible,product);
         this.fetchChartTotalSalesPerHour(period)
         this.getPosTopSaleCashier(period)
         this.getTopProductPosSales(period)
@@ -206,8 +206,8 @@ export class OwlAccountingDashboard extends Component {
           }
     }
 
-    async fetchChartSaleByPayment(period) {
-        let dateFilter = []
+    async fetchChartSaleByPayment(period=false,session=false,pos=false,responsible=false,product=false) {
+        let domain = []
             if (period) {
                 const today = new Date();
                 let fromDate = new Date(today);
@@ -224,12 +224,29 @@ export class OwlAccountingDashboard extends Component {
                     fromDate.setDate(today.getDate() - 365);
                 }
 
-                dateFilter = [['payment_date', '>', fromDate.toISOString().split('T')[0]],['payment_date','<=',today.toISOString().split('T')[0]]];
+                domain = [['payment_date', '>', fromDate.toISOString().split('T')[0]],['payment_date','<=',today.toISOString().split('T')[0]]];
             
             }
 
+            if  (session){
+                domain.push(['session_id','=',session])
+            }
+
+            if (pos){
+                domain.push(['pos_order_id.config_id','=',pos])
+            }
+
+            if (responsible){
+                domain.push(['pos_order_id.user_id','=',responsible])
+            }
+
+            if (product){
+                console.log("getchChartSale: ",product)
+                domain.push(['pos_order_id.lines.product_id','=',product])
+            }
+
         try {
-            const data = await this.orm.readGroup("pos.payment", dateFilter, ['payment_method_id.name', "amount:sum"], ['payment_method_id']);
+            const data = await this.orm.readGroup("pos.payment", domain, ['payment_method_id.name', "amount:sum"], ['payment_method_id']);
             console.log('test getPosPayment: ',data)
             this.state.salesByPaymentMethodLabels = (data || []).map(item => 
                 Array.isArray(item.payment_method_id) && item.payment_method_id.length > 1 
