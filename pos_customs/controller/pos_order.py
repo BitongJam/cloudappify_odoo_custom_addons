@@ -40,7 +40,9 @@ class PosDashboardController(http.Controller):
 
         disc = request.env['pos.order.line'].read_group(domain,['discount_amount'],[])
         tips = 0
-        val = {'disc_amount':disc[0].get('discount_amount', 0),'tips_amount':tips}
+        discount_amount = disc[0].get('discount_amount', 0) or 0
+        discount_amount_str = f"{discount_amount:,.2f}"
+        val = {'disc_amount':discount_amount,'str_disc_amount':discount_amount_str,'tips_amount':tips}
         return val
 
     @http.route('/report/get_top_pos_sales_cashier', type='json', auth='user')

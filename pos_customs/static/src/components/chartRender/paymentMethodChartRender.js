@@ -16,6 +16,8 @@ export class PaymentMethodChartRender extends Component {
             await loadJS("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js")
             // await this.getPosPayment();
         })
+        this.colorPalette = ["#D9ECF2", "#F56A79", "#1AA587", "#002D40"]; // ✅ Moved inside `this`
+
         this.state = useState({
             labels:this.props.dataValues,
             dataValues:this.props.dataValues
@@ -29,13 +31,10 @@ export class PaymentMethodChartRender extends Component {
     }
 
     
-
     getRandomColor = () => {
-        const r = Math.floor(Math.random() * 50);  // Keep red low (0-50)
-        const g = Math.floor(Math.random() * 200) + 55; // Green is dominant (55-255)
-        const b = Math.floor(Math.random() * 50);  // Keep blue low (0-50)
-        return `rgba(${r}, ${g}, ${b}, 0.7)`;
+        return this.colorPalette[Math.floor(Math.random() * this.colorPalette.length)]; // ✅ Now it picks from the palette
     };
+    
 
 
     updateChart() {

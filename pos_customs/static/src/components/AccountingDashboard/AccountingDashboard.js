@@ -145,6 +145,7 @@ export class OwlAccountingDashboard extends Component {
         const data = await this.rpc("/report/get_discount_tips_data",{period:period,session:session,pos:pos,responsible:responsible,product:product});
         this.state.dataTipsDiscount.disc_amnt = data.disc_amount
         this.state.dataTipsDiscount.tips_amnt = data.tips_amount
+        this.state.dataTipsDiscount.str_disc_amnt = data.str_disc_amount
         console.log("getTipsDiscountAmount: ",data)
     }
     async getDataListPointOfSale(){

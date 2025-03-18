@@ -51,7 +51,8 @@ class PosConfig(models.Model):
             {
                 'config_id': rec['config_id'][0],  # ID
                 'config_name': rec['config_id'][1].split('(')[0].strip(),  # Extract clean name no extended
-                'total_sales': "{:,.2f}".format(rec['price_total'])
+                'total_sales': "{:,.2f}".format(rec['price_total']),
+                'do_not_display': False if rec['price_total'] != 0 else True
             }
             for rec in group_data
         ]

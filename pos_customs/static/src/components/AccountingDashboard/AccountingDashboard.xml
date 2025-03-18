@@ -55,27 +55,25 @@
 
             <div class="row">
                 <div class="col-lg-3">
-                    <div><h1 class="text-primary fw-bold border-bottom border-dark">Sales Summary</h1></div>
+                    <div class="border-bottom border-dark"><h1 class="text-primary fw-bold ms-3">Sales Summary</h1></div>
                     <div class="row">
-                        <div class="col">
+                        <div class="col-6 d-flex flex-column align-items-center justify-content-center">
                             <t t-foreach="state.posTerminal" t-as="i" t-key="i.config_id">
-                             <div class="mb-2">
-                                <h2 class="text-primary fw-bold"><span t-esc="i.config_name"/></h2>
-                                <h2 class="text-info"><span t-esc='i.total_sales' /></h2>
-                            </div>
+                                <t t-if="i.do_not_display != true">
+                                    <div class="mb-2">
+                                        <h2 class="text-primary fw-bold">
+                                            <span t-esc="i.config_name" />
+                                        </h2>
+                                        <h2 class="text-info">
+                                            <span t-esc='i.total_sales' />
+                                        </h2>
+                                    </div>
+                                </t>
+
                             </t>
-                           
-                            <!-- <div class="mb-2">
-                                <h1 class="text-primary fw-bold">Branch 2</h1>
-                                <h2 class="text-info">Sales</h2>
-                            </div>
-                            <div class="mb-2">
-                                <h1 class="text-primary fw-bold">Branch 3</h1>
-                                <h2 class="text-info">Sales</h2>
-                            </div> -->
                         </div>
-                        <div class="col">
-                            <div style="height:300px">
+                        <div class="col-6">
+                            <div style="height:150px" >
                                 <ChartRender type="'doughnut'" labels="state.salesSumaryLabels" values="state.salesSummaryData" title="'Top Products Report'" />
                             </div>
                         </div>
@@ -84,7 +82,8 @@
 
                 </div>
                 <div class="col-lg-9">
-                    <div class="row p-2">
+                    <div></div>
+                    <div class="row p-2 mt-4">
                         <KpiCard name="'Orders'" value="state.strcountPosOrder" percentage="N/A" />
                         <KpiCard name="'Revenues'" value="state.strTotalRevenue" percentage="N/A" />
                         <KpiCard name="'Average Order'" value="state.averageOrder" percentage="N/A" />
@@ -96,7 +95,7 @@
             <div class="row">
                 <div class="col-lg-4">
                        <div class="border-bottom border-dark">
-                        <h1 class="text-primary fw-bold">Sales by Payment Method</h1>
+                        <h1 class="text-primary fw-bold ms-3">Sales by Payment Method</h1>
                     </div>
                     <div style="height:250px; width:100%">
                         <PaymentMethodChartRender type="'bar'" dataValues="state.salesByPaymentMethodData" labels="state.salesByPaymentMethodLabels" title="'Payment Method'" />
@@ -104,40 +103,40 @@
                 </div>
                 <div class="col-lg-5">
                     <div class="border-bottom border-dark">
-                        <h1 class="text-primary fw-bold">Sales by Hour</h1>
+                        <h1 class="text-primary fw-bold ms-3">Sales by Hour</h1>
                     </div>
                      <div style="height:250px; width:100%">
                         <SalesByHourChartRender title="'Sales by Hour'" dataValues="state.fetchChartTotalSalesPerHourData" />
                     </div>
                 </div>
                 <div class="col-lg-3">
-                    <div class="border-bottom border-dark">
-                        <h1 class="text-primary fw-bold">Tips &amp; Discount</h1>
-                    </div>
-      
-                        <div class="row">
-                            <div class="col">
-                                <div style="height:300px; position: relative;">
-                                    <h2 class="text-danger" t-if="state.dataTipsDiscount.tips_amnt==0 and state.dataTipsDiscount.disc_amnt==0" style="position: absolute; top: 50%; left: 50%; transform: translateX(-50%,-50%); z-index: 10;">No Data</h2>
-                                    <TipsDiscountChartRender title="'Tips &amp; Discount'" values="state.dataTipsDiscount"/>
-                                    <!-- <t t-if="state.dataTipsDiscount.tips_amnt == 0 and state.dataTipsDiscount.disc_amnt == 0"> -->
-                                       
-                                    <!-- </t> -->
-                                </div>
+                    <div class="border-bottom border-dark"><h1 class="text-primary fw-bold ms-3">Tips &amp; Discount</h1></div>
+                    <div class="row">
+                        <div class="col-6 d-flex flex-column align-items-center justify-content-center">
+                            <div class="mb-2 text-left">
+                                <h2 class="text-primary fw-bold">Discount</h2>
+                                <h2 class="text-info">
+                                    <span t-esc="state.dataTipsDiscount.str_disc_amnt" />
+                                </h2>
                             </div>
-                            <div class="col p-3">
-                                <div class="mb-2">
-                                    <h2 class="text-primary fw-bold">Discount</h2>
-                                    <h2 class="text-info"><span t-esc="state.dataTipsDiscount.disc_amnt"/></h2>
-                                </div>
-                                <div class="mb-2">
-                                    <h2 class="text-primary fw-bold">Tips</h2>
-                                    <h2 class="text-info"><span t-esc="state.dataTipsDiscount.tips_amnt"/></h2>
-                                </div>
+                            <div class="mb-2  text-left">
+                                <h2 class="text-primary fw-bold">Tips</h2>
+                                <h2 class="text-info">
+                                    <span t-esc="state.dataTipsDiscount.tips_amnt" />
+                                </h2>
                             </div>
                         </div>
+                        <div class="col-6">
+                            <div style="height:200px;" class="mt-2">
+                                <TipsDiscountChartRender title="'Tips &amp; Discount'"
+                                    values="state.dataTipsDiscount" />
+                                <!-- <t t-if="state.dataTipsDiscount.tips_amnt == 0 and
+                                state.dataTipsDiscount.disc_amnt == 0"> -->
 
-
+                                <!-- </t> -->
+                            </div>
+                        </div>
+                    </div>
                   
 
                 </div>
@@ -146,7 +145,7 @@
             <div class="row">
                 <div class="col-lg-4">
                     <div class="border-bottom border-dark">
-                        <h1 class="text-primary">Top Salesperson</h1>
+                        <h1 class="text-primary ms-3">Top Salesperson</h1>
                     </div>
 
                     <table class="table table-striped">
@@ -171,7 +170,7 @@
                 </div>
                 <div class="col-lg-4">
                     <div class="border-bottom border-dark">
-                        <h1 class="text-primary">Top Product</h1>
+                        <h1 class="text-primary ms-3">Top Product</h1>
                     </div>
 
                     <table class="table table-striped">
@@ -196,7 +195,7 @@
                 </div>
                 <div class="col-lg-4">
                     <div class="border-bottom border-dark">
-                        <h1 class="text-primary">Expenses by Product Category</h1>
+                        <h1 class="text-primary ms-3">Expenses by Product Category</h1>
                     </div>
 
                     <table class="table table-striped">

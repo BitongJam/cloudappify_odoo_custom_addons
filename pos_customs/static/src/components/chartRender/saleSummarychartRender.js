@@ -9,7 +9,7 @@ export class ChartRender extends Component {
     this.chartRef = useRef("chart");
     this.chartInstance = null; // 🔹 Store the chart instance
     this.orm = useService("orm");
-
+    this.colorPalette = ["#D9ECF2", "#F56A79", "#1AA587", "#002D40"];
     onWillStart(async () => {
       await loadJS("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js");
     });
@@ -22,43 +22,80 @@ export class ChartRender extends Component {
       this.updateChart();
     });
   }
+  getRandomColor = () => {
+    return this.colorPalette[Math.floor(Math.random() * this.colorPalette.length)]; // ✅ Now it picks from the palette
+};
 
   renderChart() {
     if (!this.props.labels || !this.props.values) {
-      console.error("Missing labels or values in props:", this.props);
-      return;
+        console.error("Missing labels or values in props:", this.props);
+        return;
     }
 
-    // 🔥 Properly destroy the previous chart before creating a new one
+    // 🔥 Destroy the previous chart before creating a new one
     if (this.chartInstance) {
-      this.chartInstance.destroy();
+        this.chartInstance.destroy();
     }
+
+    const labels = Object.values(this.props.labels);
+    const values = Object.values(this.props.values);
+
+    // const backgroundColors = ["#FF6384", "#36A2EB", "#FFCE56"]; // Example colors, replace with your own
+    const dataValues = this.props.values || [];
+
+    const backgroundColors = dataValues.map(() => this.getRandomColor());
+
+    // Merge label with corresponding value
+    let new_label = labels.map((label, index) => 
+        `${label} - ${values[index].toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    );
+
+    console.log('new_label: ', new_label);
 
     this.chartInstance = new Chart(this.chartRef.el, {
       type: this.props.type,
       data: {
-        labels: this.props.labels,
-        datasets: [{
-          label: 'PoS Sale Summary Pie Chart',
-          data: this.props.values,
-          hoverOffset: 4
-        }]
+          labels: new_label,
+          datasets: [{
+              label: 'PoS Sale Summary Pie Chart',
+              data:dataValues,
+              backgroundColor: backgroundColors,
+              hoverOffset: 4,
+              hidden: false // 🔹 Ensure dataset is visible
+          }]
       },
       options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'bottom',
-          },
-          title: {
-            display: true,
-            text: this.props.title,
-            position: 'bottom',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+              legend: {
+                  display: false,
+                  position: 'right',
+                  labels: {
+                      generateLabels: (chart) => {
+                          return chart.data.labels.map((label, i) => ({
+                              text: label,
+                              fillStyle: chart.data.datasets[0].backgroundColor[i],
+                              fontColor: chart.data.datasets[0].backgroundColor[i],
+                              hidden: false, // 🔹 Ensure legend labels are always visible,
+                              pointStyle: false,
+                          }));
+                      },
+                      usePointStyle: false,
+                      boxWidth: 0, 
+                      font: {
+                          size: 14,
+                          family: 'Arial',
+                          weight: 'bold'
+                      }
+                  }
+              }
           }
-        }
       }
-    });
-  }
+  });
+  
+}
+
 
   updateChart() {
     if (this.chartInstance) {
