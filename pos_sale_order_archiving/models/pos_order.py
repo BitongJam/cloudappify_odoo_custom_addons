@@ -77,19 +77,19 @@ class PosOrder(models.Model):
     def get_orders_to_archive(self,min_target,max_target,month,year):
 
         # get the first date and last date of the month and year
-        first_date = datetime(year,month,1)
-        last_date = datetime(year,month,calendar.monthrange(year, month)[1])
-
+        first_date = datetime(year, month, 1).date()
+        last_date = datetime(year, month, calendar.monthrange(year, month)[1]).date()
         PosOrder = self.env['pos.order']
         
         # Get the total sum of active, posted, and paid orders
         domain = [
             ('active', '=', True),
-            ('state', 'in', ('done', 'paid')),('date_order','>=',first_date),('date_order','<=',last_date),('official_receipt','=',False)
+            ('state', 'in', ('done', 'paid')),('date_order','>=',first_date),('date_order','<=',last_date)
         ]
 
         total = sum(PosOrder.search(domain).mapped('amount_total'))
-
+        total_state= sum(PosOrder.search([('state', '=', 'done'),('date_order','>=',first_date),('date_order','<=',last_date)]).mapped('amount_total'))
+        raise ValidationError(total_state)
 
         batch_size = 10
         offset = 0
@@ -101,7 +101,7 @@ class PosOrder(models.Model):
             # Fetch a batch of orders, oldest first
             orders = PosOrder.search(
                 domain,
-                order="id ASC",
+                order="amount_total ASC",
                 limit=batch_size,
                 offset=offset
             )
@@ -120,4 +120,4 @@ class PosOrder(models.Model):
 
         return order_ids
 
-
+   
