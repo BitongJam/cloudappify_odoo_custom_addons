@@ -8,11 +8,24 @@
             <form>
                 <sheet>
                     <group>
-                        
+                        <field name="from_date" />
+                        <field name="to_date" />
                     </group>
+                    <footer>
+                        <button name="action_pos_order_archive" string="Generate" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
                 </sheet>
             </form>
         </field>
     </record>
 
+    <record id="wiz_batch_pos_order_archive_action" model="ir.actions.act_window">
+        <field name="name">Batch PoS Order Archive</field>
+        <field name="res_model">wizard.batch.pos.order.archive</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
 </odoo>

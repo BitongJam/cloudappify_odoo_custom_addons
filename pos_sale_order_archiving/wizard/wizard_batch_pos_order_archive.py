@@ -2,7 +2,7 @@ from odoo import _, api, fields, models
 
 
 
-class WizardBatchPosOrderArchive(models.AbstractModel):
+class WizardBatchPosOrderArchive(models.TransientModel):
     _name = 'wizard.batch.pos.order.archive'
     _description = 'Wizard Batch Pos Order Archive'
 

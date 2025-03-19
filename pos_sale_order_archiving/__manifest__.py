@@ -11,10 +11,14 @@
         'point_of_sale'
     ],
     'data':[
+        'security/ir.model.access.csv',
+        'data/cron.xml',
+        'wizard/wizard_batch_pos_order_archive.xml',
         'views/res_config_settings.xml',
         'views/pos_order.xml',
         'views/pos_payment.xml',
-        'data/cron.xml'
+        'views/menu.xml'
+
     ],
     'auto_install': False,
     'application': False,
