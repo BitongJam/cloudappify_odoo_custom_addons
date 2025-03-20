@@ -2,9 +2,9 @@
 <odoo>
 
     <menuitem
-        id="batch_archive_pos_order_menu"
-        name="Batch Archive PoS Orders"
-        action="wiz_batch_pos_order_archive_action"
+        id="manual_archive_pos_order_menu"
+        name="Manual Archive PoS Orders"
+        action="wiz_manual_pos_order_archive_action"
         parent="point_of_sale.menu_point_config_product"
         sequence="10"/>
 
