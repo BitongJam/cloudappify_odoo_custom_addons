@@ -3,13 +3,13 @@ import { registry } from "@web/core/registry"
 import { loadJS } from "@web/core/assets"
 import { useService } from "@web/core/utils/hooks";
 const { Component, onWillStart, useRef, onMounted, onPatched } = owl;
+import { ColorComponent } from "../colorComponent";
 
 export class ChartRender extends Component {
   setup() {
     this.chartRef = useRef("chart");
     this.chartInstance = null; // 🔹 Store the chart instance
     this.orm = useService("orm");
-    this.colorPalette = ["#D9ECF2", "#F56A79", "#1AA587", "#002D40"];
     onWillStart(async () => {
       await loadJS("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js");
     });
@@ -22,10 +22,6 @@ export class ChartRender extends Component {
       this.updateChart();
     });
   }
-  getRandomColor = () => {
-    return this.colorPalette[Math.floor(Math.random() * this.colorPalette.length)]; // ✅ Now it picks from the palette
-};
-
   renderChart() {
     if (!this.props.labels || !this.props.values) {
         console.error("Missing labels or values in props:", this.props);
@@ -43,7 +39,7 @@ export class ChartRender extends Component {
     // const backgroundColors = ["#FF6384", "#36A2EB", "#FFCE56"]; // Example colors, replace with your own
     const dataValues = this.props.values || [];
 
-    const backgroundColors = dataValues.map(() => this.getRandomColor());
+    const backgroundColors = dataValues.map(() => ColorComponent.getRandomColor());
 
     // Merge label with corresponding value
     let new_label = labels.map((label, index) => 
