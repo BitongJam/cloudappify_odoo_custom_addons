@@ -233,7 +233,7 @@ export class OwlAccountingDashboard extends Component {
                     fromDate.setDate(today.getDate() - 365);
                 }
 
-                domain = [['payment_date', '>', fromDate.toISOString().split('T')[0]],['payment_date','<=',today.toISOString().split('T')[0]]];
+                domain = [['payment_date', '>=', fromDate.toISOString().split('T')[0]],['payment_date','<=',today.toISOString().split('T')[0]]];
             
             }
 
@@ -338,17 +338,22 @@ export class OwlAccountingDashboard extends Component {
     
                 if (period === 1) {
                     fromDate = today;
+                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 7) {
                     fromDate.setDate(today.getDate() - 7);
+                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 30) {
                     fromDate.setDate(today.getDate() - 30);
+                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 90) {
                     fromDate.setDate(today.getDate() - 90);
+                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 365) {
                     fromDate.setDate(today.getDate() - 365);
+                    fromDate.setHours(0, 0, 0, 0);
                 }
 
-                domain = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
+                domain = [['date', '>=', fromDate]];
             
             }
 
@@ -386,22 +391,27 @@ export class OwlAccountingDashboard extends Component {
             //period
             if (period) {
                 const today = new Date();
-                console.log('test today: ',today)
+                
                 let fromDate = new Date(today);
     
                 if (period === 1) {
                     fromDate = today;
+                    fromDate.setHours(0, 0, 0, 0); 
                 } else if (period === 7) {
                     fromDate.setDate(today.getDate() - 7);
+                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 30) {
                     fromDate.setDate(today.getDate() - 30);
+                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 90) {
                     fromDate.setDate(today.getDate() - 90);
+                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 365) {
                     fromDate.setDate(today.getDate() - 365);
+                    fromDate.setHours(0, 0, 0, 0);
                 }
 
-                domain = [['date_order', '>', fromDate.toISOString().split('T')[0]],['date_order','<=',today.toISOString().split('T')[0]]];
+                domain = [['date_order', '>=', fromDate]];
             }
 
             if (session){
@@ -427,7 +437,8 @@ export class OwlAccountingDashboard extends Component {
                 ['lines', '!=', false],
                 ...domain,  // Add the date filter dynamically
             ]);
-  
+   
+            console.log("fetchPosOrderCount domain: ",domain)
     
             this.state.countPosOrder = data;
             console.log('test fetchPosOrderCount: ',data)
@@ -542,20 +553,23 @@ export class OwlAccountingDashboard extends Component {
     
                 if (period === 1) {
                     fromDate = today;
+                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 7) {
                     fromDate.setDate(today.getDate() - 7);
+                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 30) {
                     fromDate.setDate(today.getDate() - 30);
+                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 90) {
                     fromDate.setDate(today.getDate() - 90);
+                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 365) {
                     fromDate.setDate(today.getDate() - 365);
+                    fromDate.setHours(0, 0, 0, 0);
                 }
 
-                let date_from = ['date_order', '>', fromDate.toISOString().split('T')[0]];
+                let date_from = ['date_order', '>=', fromDate];
                 domain.push(date_from)
-                let date_to = ['date_order','<=',today.toISOString().split('T')[0]]
-                domain.push(date_to)
             }
 
             if (session){
