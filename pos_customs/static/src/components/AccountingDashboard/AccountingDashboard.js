@@ -379,79 +379,60 @@ export class OwlAccountingDashboard extends Component {
         }
     }
 
-    async fetchPosOrderCount(period = false, session = false, pos = false, responsible = false, product = false) {
+    async fetchPosOrderCount(period=false,session=false,pos=false,responsible=false,product=false) {
         try {
             // Define the date range filter
             let domain = [];
-    
-            // Handle period filters with correct datetime
+            //period
             if (period) {
-                const today = new Date();  // Current date
-                today.setHours(23, 59, 59, 999);  // End of the day (23:59:59)
-                console.log('test today: ', today);
+                const today = new Date();
+                console.log('test today: ',today)
+                let fromDate = new Date(today);
     
-                let fromDate = new Date(today);  // Clone today's date
-    
-                // Adjust 'fromDate' based on selected period
                 if (period === 1) {
-                    console.log('test period: ', today.getDate());
-                    fromDate.setHours(0, 0, 0, 0);  // Start of the same day
+                    fromDate = today;
                 } else if (period === 7) {
-                    fromDate.setDate(today.getDate() - 7);  // 7 days ago
-                    fromDate.setHours(0, 0, 0, 0);  // Start of that day
+                    fromDate.setDate(today.getDate() - 7);
                 } else if (period === 30) {
-                    fromDate.setDate(today.getDate() - 30);  // 30 days ago
-                    fromDate.setHours(0, 0, 0, 0);
+                    fromDate.setDate(today.getDate() - 30);
                 } else if (period === 90) {
-                    fromDate.setDate(today.getDate() - 90);  // 90 days ago
-                    fromDate.setHours(0, 0, 0, 0);
+                    fromDate.setDate(today.getDate() - 90);
                 } else if (period === 365) {
-                    fromDate.setDate(today.getDate() - 365);  // 365 days ago
-                    fromDate.setHours(0, 0, 0, 0);
+                    fromDate.setDate(today.getDate() - 365);
                 }
-    
-                // Add datetime range to domain for filtering
-                domain = [
-                    ['date_order', '>=', fromDate.toISOString()],  // From start of the day
-                    ['date_order', '<=', today.toISOString()]     // Until end of today
-                ];
-                console.log('test domain: ', domain);
+
+                domain = [['date_order', '>', fromDate.toISOString().split('T')[0]],['date_order','<=',today.toISOString().split('T')[0]]];
+            }
+
+            if (session){
+                domain.push(['session_id','=',session])
+                //fucntion
+            }
+
+            if (pos){
+                domain.push(['config_id','=',pos])
+            }
+
+            if (responsible){
+                domain.push(['user_id','=',responsible])
+            }
+
+            if (product){
+                domain.push(['lines.product_id.id','=',product])
             }
     
-            // Add filters dynamically based on other parameters
-            if (session) {
-                domain.push(['session_id', '=', session]);
-            }
-    
-            if (pos) {
-                domain.push(['config_id', '=', pos]);
-            }
-    
-            if (responsible) {
-                domain.push(['user_id', '=', responsible]);
-            }
-    
-            if (product) {
-                domain.push(['lines.product_id.id', '=', product]);
-            }
-    
-            // Fetch the count of POS orders with the filters
+            // Fetch the count with dynamic filters
             const data = await this.orm.searchCount("pos.order", [
-                ['state', 'not in', ['cancel', 'draft']],  // Exclude cancelled or draft orders
-                ['lines','!=',false],  // Exclude orders without any lines
-                ...domain,  // Add dynamically built filters
+                ['state', 'not in', ['cancel', 'draft']],
+                ['lines', '!=', false],
+                ...domain,  // Add the date filter dynamically
             ]);
+  
     
-            // Update the state with the fetched count
             this.state.countPosOrder = data;
-            console.log('test fetchPosOrderCount: ', data);
-    
-            // Format the count nicely with commas
+            console.log('test fetchPosOrderCount: ',data)
             this.state.strcountPosOrder = data.toLocaleString('en-US', { maximumFractionDigits: 0 });
-    
-            // Calculate average order value (if needed)
-            this.getaverageOrder(this.state.totalRevenue, this.state.countPosOrder);
-    
+            this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder)
         } catch (error) {
             console.error("Error Fetch Records fetchPosOrderCount Function: ", error);
         }
