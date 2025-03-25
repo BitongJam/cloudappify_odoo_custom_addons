@@ -110,13 +110,10 @@ class PosDashboardController(http.Controller):
         """
 
         params = []
-        if end_date:
+        if end_date:  # If end_date exists, add the condition
             query += """
-                AND (rpo.date AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Manila')::DATE >= %s 
-                AND (rpo.date AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Manila') <= (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Manila')
+                AND rpo.date::DATE > %s AND rpo.date::DATE <= CURRENT_DATE
             """
-            # Ensure you apply 00:00:00 time to the end_date
-            end_date = f"{end_date} 00:00:00"
             params.append(end_date)
 
         if session:

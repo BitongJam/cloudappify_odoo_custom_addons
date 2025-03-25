@@ -233,7 +233,7 @@ export class OwlAccountingDashboard extends Component {
                     fromDate.setDate(today.getDate() - 365);
                 }
 
-                domain = [['payment_date', '>=', fromDate.toISOString().split('T')[0]],['payment_date','<=',today.toISOString().split('T')[0]]];
+                domain = [['payment_date', '>', fromDate.toISOString().split('T')[0]],['payment_date','<=',today.toISOString().split('T')[0]]];
             
             }
 
@@ -279,36 +279,26 @@ export class OwlAccountingDashboard extends Component {
             let dateFilter = []
             let fromDate = false
             if (period) {
-                const today = new Date();  // Current date
-                today.setHours(23, 59, 59, 999);  // End of the day (23:59:59)
-                console.log('test today: ', today);
+                const today = new Date();
+                console.log('test today: ',today)
+                fromDate = new Date(today);
     
-                let fromDate = new Date(today);  // Clone today's date
-    
-                // Adjust 'fromDate' based on selected period
                 if (period === 1) {
-                    console.log('test period: ', today.getDate());
-                    fromDate.setHours(0, 0, 0, 0);  // Start of the same day
+                    fromDate = today;
                 } else if (period === 7) {
-                    fromDate.setDate(today.getDate() - 7);  // 7 days ago
-                    fromDate.setHours(0, 0, 0, 0);  // Start of that day
+                    fromDate.setDate(today.getDate() - 7);
                 } else if (period === 30) {
-                    fromDate.setDate(today.getDate() - 30);  // 30 days ago
-                    fromDate.setHours(0, 0, 0, 0);
+                    fromDate.setDate(today.getDate() - 30);
                 } else if (period === 90) {
-                    fromDate.setDate(today.getDate() - 90);  // 90 days ago
-                    fromDate.setHours(0, 0, 0, 0);
+                    fromDate.setDate(today.getDate() - 90);
                 } else if (period === 365) {
-                    fromDate.setDate(today.getDate() - 365);  // 365 days ago
-                    fromDate.setHours(0, 0, 0, 0);
+                    fromDate.setDate(today.getDate() - 365);
                 }
-                console.log('test today: ', fromDate);  // Check today's date
-            
-                domain.end_date = fromDate.toISOString();  // Set the date-only value in the domain
-                console.log('test domain: ', domain);
+
+                dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
+                fromDate = fromDate.toISOString().split('T')[0]
+                domain.end_date = fromDate
             }
-            
-    
 
             if (session){
                 domain.session = session
@@ -358,7 +348,7 @@ export class OwlAccountingDashboard extends Component {
                     fromDate.setDate(today.getDate() - 365);
                 }
 
-                domain = [['date', '>=', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
+                domain = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
             
             }
 
@@ -370,7 +360,7 @@ export class OwlAccountingDashboard extends Component {
                 domain.push(['pos_session_id.config_id','=',pos])
             }
             if (responsible){
-                domain.push(['create_uid','=',responsible])
+                domain.push(['user_id','=',responsible])
             }
             const data = await this.orm.readGroup(
                 'account.bank.statement.line',
@@ -466,7 +456,6 @@ export class OwlAccountingDashboard extends Component {
             console.error("Error Fetch Records fetchPosOrderCount Function: ", error);
         }
     }
-    
 
     async getTopProductPosSales(period=false,session=false,pos=false,responsible=false,product=false){
         try{
@@ -490,7 +479,7 @@ export class OwlAccountingDashboard extends Component {
                     fromDate.setDate(today.getDate() - 365);
                 }
 
-                dateFilter = [['date', '>=', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
+                dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
                 fromDate = fromDate.toISOString().split('T')[0]
                 domain.end_date = fromDate
             }
@@ -544,7 +533,7 @@ export class OwlAccountingDashboard extends Component {
                     fromDate.setDate(today.getDate() - 365);
                 }
 
-                dateFilter = [['date', '>=', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
+                dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
                 fromDate = fromDate.toISOString().split('T')[0]
             }
 
@@ -566,14 +555,12 @@ export class OwlAccountingDashboard extends Component {
         try{
             let domain = [['state', 'not in', ['cancel', 'draft']]]
             if (period) {
-                const today = new Date();  // Current date
-                today.setHours(23, 59, 59, 999);  // End of the day (23:59:59)
-                console.log('test today: ', today);
-    
-                let fromDate = new Date(today);  // Clone today's date
+                const today = new Date();
+                console.log('test today: ',today)
+                let fromDate = new Date(today);
     
                 if (period === 1) {
-                    fromDate.setHours(0, 0, 0, 0);  // Start of the same day
+                    fromDate = today;
                 } else if (period === 7) {
                     fromDate.setDate(today.getDate() - 7);
                 } else if (period === 30) {
@@ -584,15 +571,11 @@ export class OwlAccountingDashboard extends Component {
                     fromDate.setDate(today.getDate() - 365);
                 }
 
-                let date_from = ['date_order', '>', fromDate.toISOString()];
+                let date_from = ['date_order', '>', fromDate.toISOString().split('T')[0]];
                 domain.push(date_from)
-                let date_to = ['date_order','<=',today.toISOString()]
+                let date_to = ['date_order','<=',today.toISOString().split('T')[0]]
                 domain.push(date_to)
-
             }
-
-         
-    
 
             if (session){
                 domain.push(['session_id','=',session])
@@ -672,7 +655,7 @@ export class OwlAccountingDashboard extends Component {
                     fromDate.setDate(today.getDate() - 365);
                 }
 
-                dateFilter = [['date', '>=', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
+                dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
                 fromDate = fromDate.toISOString().split('T')[0]
                 domain.end_date = fromDate
             }
