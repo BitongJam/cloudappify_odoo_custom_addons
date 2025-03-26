@@ -8,12 +8,13 @@ class PosDashboardController(http.Controller):
         domain = []
         if period:
 
-            today = datetime.now().date()
+            today = datetime.now()
             print('test today: ', today)
             from_date = today
 
             if period == 1:
                 from_date = today
+                
             elif period == 7:
                 from_date = today - timedelta(days=7)
             elif period == 30:
@@ -22,9 +23,16 @@ class PosDashboardController(http.Controller):
                 from_date = today - timedelta(days=90)
             elif period == 365:
                 from_date = today - timedelta(days=365)
+            
+            
+            from_date = from_date.replace(hour=0, minute=0, second=0, microsecond=0)
+            # from_date = from_date - timedelta(hours=8)
+            # from_date = from_date.replace(hour=0, minute=0, second=0, microsecond=0)
+            from_date_str = from_date.strftime('%Y-%m-%d %H:%M:%S')
+            today_str = today.strftime('%Y-%m-%d %H:%M:%S')
 
-            domain.append(('order_id.date_order', '>', from_date))
-            domain.append(('order_id.date_order', '<=', today))
+            domain.append(('date', '>=', from_date_str))
+            # domain.append(('order_id.date_order', '<=', today_str))
 
         if session:
             domain.append(('order_id.session_id','=',session))
@@ -38,9 +46,10 @@ class PosDashboardController(http.Controller):
         if product:
             domain.append(('product_id','=',product))
 
-        disc = request.env['pos.order.line'].read_group(domain,['discount_amount'],[])
+        # disc = request.env['pos.order.line'].read_group(domain,['discount_amount'],[])
+        disc = request.env['report.pos.order'].read_group(domain, ['total_discount:sum'],['total_discount'])
         tips = 0
-        discount_amount = disc[0].get('discount_amount', 0) or 0
+        discount_amount = sum(rec.get('total_discount', 0) for rec in disc)        # discount_amount = disc[0].get('total_discount', 0) or 0
         discount_amount_str = f"{discount_amount:,.2f}"
         val = {'disc_amount':discount_amount,'str_disc_amount':discount_amount_str,'tips_amount':tips}
         return val
@@ -49,8 +58,8 @@ class PosDashboardController(http.Controller):
     def get_top_pos_sales_cashier(self,end_date = False,session=False,pos=False,responsible=False,product=False):
         query = '''
             SELECT 
-                TO_CHAR(SUM(rpo.price_total),'FM999,999,999.00') AS amount, count(*) as order,
-                rp.name AS name 
+                TO_CHAR(SUM(rpo.price_total),'FM999,999,999.00') AS amount, COUNT(DISTINCT rpo.order_id) AS order,
+                rp.name AS name,SUM(rpo.price_total) AS actual_amount
             FROM report_pos_order rpo
             JOIN res_users ru ON ru.id = rpo.user_id 
             JOIN res_partner rp ON rp.id = ru.partner_id
@@ -61,7 +70,6 @@ class PosDashboardController(http.Controller):
         if end_date:  # If end_date exists, add the condition
             query += """
                 AND rpo.date::DATE > %s  -- Greater than from_date
-                AND rpo.date::DATE <= CURRENT_DATE -- Less than or equal to to_date
             """
             params.append(end_date)
 
@@ -91,7 +99,7 @@ class PosDashboardController(http.Controller):
 
         query+="""
                 GROUP BY rp.name
-            order by amount desc ;
+            order by actual_amount desc ;
             """
         request.cr.execute(query, params)
         result = request.cr.fetchall()
@@ -112,7 +120,7 @@ class PosDashboardController(http.Controller):
         params = []
         if end_date:  # If end_date exists, add the condition
             query += """
-                AND rpo.date::DATE > %s AND rpo.date::DATE <= CURRENT_DATE
+                AND rpo.date >= %s
             """
             params.append(end_date)
 
@@ -141,7 +149,7 @@ class PosDashboardController(http.Controller):
             params.append(product)
 
         query += """
-            group by pt.name
+            group by pt.name,pp.id
             order by price_total desc
             limit 10;
         """
@@ -171,7 +179,7 @@ class PosDashboardController(http.Controller):
 
         if end_date:  # If end_date exists, add the condition
             query += """
-                AND rpo.date::DATE > %s  -- Greater than from_date
+                AND rpo.date::DATE >= %s  -- Greater than from_date
                 AND rpo.date::DATE <= CURRENT_DATE -- Less than or equal to to_date
             """
             params.append(end_date)

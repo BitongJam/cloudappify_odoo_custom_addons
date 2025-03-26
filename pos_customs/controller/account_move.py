@@ -174,7 +174,7 @@ class SaleReport(http.Controller):
         params=[]
         if end_date:  # If end_date exists, add the condition
             query += """
-                AND am.date::DATE > %s  -- Greater than from_date
+                AND am.date::DATE >= %s  -- Greater than from_date
                 AND am.date::DATE <= CURRENT_DATE -- Less than or equal to to_date
             """
             params.append(end_date)

@@ -285,18 +285,23 @@ export class OwlAccountingDashboard extends Component {
     
                 if (period === 1) {
                     fromDate = today;
+                    fromDate.setHours(0,0,0,0);
                 } else if (period === 7) {
                     fromDate.setDate(today.getDate() - 7);
+                    fromDate.setHours(0,0,0,0);
                 } else if (period === 30) {
                     fromDate.setDate(today.getDate() - 30);
+                    fromDate.setHours(0,0,0,0);
                 } else if (period === 90) {
                     fromDate.setDate(today.getDate() - 90);
+                    fromDate.setHours(0,0,0,0);
                 } else if (period === 365) {
                     fromDate.setDate(today.getDate() - 365);
+                    fromDate.setHours(0,0,0,0);
                 }
 
-                dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
-                fromDate = fromDate.toISOString().split('T')[0]
+                dateFilter = [['date', '>=', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
+                fromDate = fromDate
                 domain.end_date = fromDate
             }
 
@@ -461,6 +466,7 @@ export class OwlAccountingDashboard extends Component {
     
                 if (period === 1) {
                     fromDate = today;
+                    
                 } else if (period === 7) {
                     fromDate.setDate(today.getDate() - 7);
                 } else if (period === 30) {
@@ -470,9 +476,9 @@ export class OwlAccountingDashboard extends Component {
                 } else if (period === 365) {
                     fromDate.setDate(today.getDate() - 365);
                 }
-
-                dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
-                fromDate = fromDate.toISOString().split('T')[0]
+                fromDate.setHours(0, 0, 0, 0);
+ 
+                fromDate = fromDate
                 domain.end_date = fromDate
             }
 
@@ -525,7 +531,7 @@ export class OwlAccountingDashboard extends Component {
                     fromDate.setDate(today.getDate() - 365);
                 }
 
-                dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
+                // dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
                 fromDate = fromDate.toISOString().split('T')[0]
             }
 
@@ -640,18 +646,22 @@ export class OwlAccountingDashboard extends Component {
     
                 if (period === 1) {
                     fromDate = today;
+                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 7) {
                     fromDate.setDate(today.getDate() - 7);
+                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 30) {
                     fromDate.setDate(today.getDate() - 30);
+                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 90) {
                     fromDate.setDate(today.getDate() - 90);
+                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 365) {
                     fromDate.setDate(today.getDate() - 365);
+                    fromDate.setHours(0, 0, 0, 0);
                 }
 
-                dateFilter = [['date', '>', fromDate.toISOString().split('T')[0]],['date','<=',today.toISOString().split('T')[0]]];
-                fromDate = fromDate.toISOString().split('T')[0]
+                fromDate = fromDate
                 domain.end_date = fromDate
             }
             console.log('session: ',session,' pos: ',pos,'responsible: ',responsible,' product: ',product)

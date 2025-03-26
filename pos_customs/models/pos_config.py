@@ -9,12 +9,14 @@ class PosConfig(models.Model):
     def get_pos_config_total_sale(self,period=False,session=False,pos=False,responsible=False,product=False):
         domain = [('state','not in',('draft','cancel'))]
         if period:
-            today = datetime.now().date()
+
+            today = datetime.now()
             print('test today: ', today)
             from_date = today
 
             if period == 1:
                 from_date = today
+                
             elif period == 7:
                 from_date = today - timedelta(days=7)
             elif period == 30:
@@ -23,21 +25,29 @@ class PosConfig(models.Model):
                 from_date = today - timedelta(days=90)
             elif period == 365:
                 from_date = today - timedelta(days=365)
+            
+            
+            from_date = from_date.replace(hour=0, minute=0, second=0, microsecond=0)
+            from_date = from_date - timedelta(hours=8)
+            # from_date = from_date.replace(hour=0, minute=0, second=0, microsecond=0)
+            from_date_str = from_date.strftime('%Y-%m-%d %H:%M:%S')
+            today_str = today.strftime('%Y-%m-%d %H:%M:%S')
 
-            domain.append(('date', '>', from_date))
-            domain.append( ('date', '<=', today))
-    
+            domain.append(('date', '>=', from_date_str))
+            # domain.append(('order_id.date_order', '<=', today_str))
+
         if session:
-           domain.append(('session_id','=',session))
+            domain.append(('order_id.session_id','=',session))
 
         if pos:
-           domain.append(('config_id','=',pos))
+            domain.append(('order_id.config_id','=',pos))
 
         if responsible:
-            domain.append(('user_id','=',responsible))
+            domain.append(('order_id.user_id','=',responsible))
 
         if product:
             domain.append(('product_id','=',product))
+
 
         group_data = self.env['report.pos.order'].read_group(
             domain=domain,  # No filters
