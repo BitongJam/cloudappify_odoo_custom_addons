@@ -625,8 +625,7 @@ export class OwlAccountingDashboard extends Component {
             console.log("test totalRevenue: ",totalRevenue);
             console.log("test countPosOrder: ",countPosOrder);
             const averrev = totalRevenue/countPosOrder
-            this.state.averageOrder  = averrev.toFixed(2)
-            console.log("test getaverageOrder: ",averrev.toFixed(2))
+            this.state.averageOrder  = Math.round(averrev)
         }catch (error){
             console.error("Error Fetch Records getaverageOrder Function: ",error)
         }
