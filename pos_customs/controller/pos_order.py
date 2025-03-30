@@ -179,8 +179,8 @@ class PosDashboardController(http.Controller):
 
         if end_date:  # If end_date exists, add the condition
             query += """
-                AND rpo.date::DATE >= %s  -- Greater than from_date
-                AND rpo.date::DATE <= CURRENT_DATE -- Less than or equal to to_date
+                AND rpo.date >= %s  -- Greater than from_date
+               -- AND rpo.date::DATE <= CURRENT_DATE -- Less than or equal to to_date
             """
             params.append(end_date)
 

@@ -1,65 +1,80 @@
 /** @odoo-module */
 
-import { registry } from "@web/core/registry"
-import { loadJS } from "@web/core/assets"
-const { Component, onWillStart, useRef, onMounted,onPatched } = owl
-import { ColorComponent } from "../colorComponent"
+import { registry } from "@web/core/registry";
+import { loadJS } from "@web/core/assets";
+const { Component, onWillStart, useRef, onMounted, onPatched } = owl;
+import { ColorComponent } from "../colorComponent";
 
 export class SalesByHourChartRender extends Component {
     setup() {
-        this.chartRef = useRef("chart")
-        this.dataSet = []
+        this.chartRef = useRef("chart");
+        this.dataSet = [];
         onWillStart(async () => {
-            await loadJS("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js")
-            // await this.getTtotalSalesPerHourPos()
-        })
+            await loadJS("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js");
+        });
 
-        onMounted(() => this.renderChart()) // Call renderChart after mounting
+        onMounted(() => this.renderChart()); // Call renderChart after mounting
         onPatched(() => {
             console.log("Props updated! Updating chart...");
             this.updateChart();
-          });
+        });
     }
 
+    convertToAmPm(hour) {
+        let h = parseInt(hour, 10);
+        let suffix = h >= 12 ? "PM" : "AM";
+        h = h % 12 || 12; // Convert 0 -> 12, 13 -> 1, etc.
+        return `${h} ${suffix}`;
+    }
 
     updateChart() {
-        if (this.chartInstance) {
-          // 🔄 Update chart data dynamically
-        //   this.chartInstance.data.labels = labels;
-          this.chartInstance.data.datasets[0].data = this.props.dataValues;
-          this.chartInstance.update();  
-        } else {
-          this.renderChart();  // If chart is not initialized, render it
-        }
-      }
+        console.log("saleByHourChartRender.labelValues: ", this.props.labelValues);
 
+        if (this.chartInstance) {
+            // Generate full 24-hour range (00–23)
+            const fullHourLabels = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
+
+            // Convert to AM/PM format
+            const amPmLabels = fullHourLabels.map(hour => this.convertToAmPm(hour));
+
+            // Create a map of existing values
+            const dataMap = new Map(this.props.labelValues.map((label, index) => [label, this.props.dataValues[index]]));
+
+            // Fill in missing hours with 0
+            const fixedDataValues = fullHourLabels.map(hour => dataMap.get(hour) || 0);
+
+            // Update chart data
+            this.chartInstance.data.labels = amPmLabels;
+            this.chartInstance.data.datasets[0].data = fixedDataValues;
+            this.chartInstance.update();
+        } else {
+            this.renderChart(); // If chart is not initialized, render it
+        }
+    }
 
     renderChart = () => { // ✅ Convert to arrow function to keep `this` context
-        const DATA_COUNT = 7;
-        const NUMBER_CFG = { count: DATA_COUNT, min: -100, max: 100 };
+        console.log("saleByHourChartRender: ", this.props.labelValues);
 
-        const labels =  ["12am","2am", "4am", "6am", "8am", "10am", "12pm",
-            "2pm", "4pm", "6pm", "8pm", "10pm"];
+        const fullHourLabels = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
+        const amPmLabels = fullHourLabels.map(hour => this.convertToAmPm(hour));
 
-        // const CHART_COLORS = {
-        //         red: 'rgb(255, 99, 132)',
-        //         blue: 'rgb(54, 162, 235)',
-        //         green: 'rgb(75, 192, 192)',
-        //         yellow: 'rgb(255, 205, 86)',
-        //         purple: 'rgb(153, 102, 255)',
-        //         orange: 'rgb(255, 159, 64)'
-        //     };
-        const backgroundColors =  ColorComponent.getRandomColor();
-        const color = backgroundColors
-            
+        // Create a map of existing values
+        const dataMap = new Map(this.props.labelValues.map((label, index) => [label, this.props.dataValues[index]]));
+
+        // Fill in missing hours with 0
+        const fixedDataValues = fullHourLabels.map(hour => dataMap.get(hour) || 0);
+
+        const backgroundColors = ColorComponent.getRandomColor();
+        const color = backgroundColors;
+
         const data = {
-            labels: labels,
+            labels: amPmLabels,
             datasets: [
                 {
-                    label: 'Filled',
+                    label: 'Sales',
                     backgroundColor: color,
-                    borderColor:color,
-                    data: this.props.dataValues,
+                    borderColor: color,
+                    data: fixedDataValues,
                     fill: true,
                 }
             ]
@@ -78,7 +93,7 @@ export class SalesByHourChartRender extends Component {
                 plugins: {
                     title: {
                         display: false,
-                        text: 'Chart.js Line Chart'
+                        text: 'Sales by Hour'
                     },
                 },
                 interaction: {
@@ -90,14 +105,14 @@ export class SalesByHourChartRender extends Component {
                         display: true,
                         title: {
                             display: true,
-                            text: 'Hour'
+                            text: 'Hour (AM/PM)'
                         }
                     },
                     y: {
                         display: true,
                         title: {
                             display: true,
-                            text: 'Value'
+                            text: 'Total Sales'
                         }
                     }
                 }
@@ -106,4 +121,4 @@ export class SalesByHourChartRender extends Component {
     }
 }
 
-SalesByHourChartRender.template = "owl.SalesByHourChartRender"
+SalesByHourChartRender.template = "owl.SalesByHourChartRender";

@@ -54,7 +54,7 @@ export class OwlAccountingDashboard extends Component {
             salesSummaryData:[],
             salesByPaymentMethodLabels:[],
             salesByPaymentMethodData:[],
-            fetchChartTotalSalesPerHourData:[],
+            fetchChartTotalSalesPerHourData:{'sale_hour':false,'sale_amount':0},
 
             dataTipsDiscount:{'tips_amnt':0,'disc_amnt':0},
             dataPointOfSaleList:[],
@@ -324,8 +324,8 @@ export class OwlAccountingDashboard extends Component {
             const rpc = this.env.services.rpc
             const data = await rpc("/report/get_total_sales_per_hour_pos", domain)
             
-            const filter_even = data.filter(item => item.sale_hour % 2 === 0)
-            this.state.fetchChartTotalSalesPerHourData = filter_even.map(item => item.total_sales)
+            this.state.fetchChartTotalSalesPerHourData.sale_amount = data.map(item => item.total_sales)
+            this.state.fetchChartTotalSalesPerHourData.sale_hour = data.map(item => item.sale_hour)
             console.log('fetchChartTotalSalesPerHourData: ',this.state.fetchChartTotalSalesPerHourData)
         } catch (error) {
             console.error('Error fetching getTtotalSalesPerHourPos data:', error);
