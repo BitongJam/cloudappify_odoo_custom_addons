@@ -84,10 +84,10 @@
                 <div class="col-lg-9">
                     <div></div>
                     <div class="row p-2 mt-4">
-                        <KpiCard name="'Orders'" value="state.strcountPosOrder" percentage="N/A" />
-                        <KpiCard name="'Revenues'" value="state.strTotalRevenue" percentage="N/A" />
-                        <KpiCard name="'Average Order'" value="state.averageOrder" percentage="N/A" />
-                        <KpiCard name="'Cash Out'" value="state.ttalCashOutAmount" percentage="N/A" />
+                        <KpiCard name="'Orders'" value="state.strcountPosOrder" percentage="state.countPosOrderPercGrow" />
+                        <KpiCard name="'Revenues'" value="state.strTotalRevenue" percentage="state.totalRevenuePercGrow" />
+                        <KpiCard name="'Average Order'" value="state.averageOrder" percentage="state.averageOrderPercGrow" />
+                        <KpiCard name="'Cash Out'" value="state.ttalCashOutAmount" percentage="state.ttalCashOutAmountPercGrow" />
                     </div>
                 </div>
             </div>

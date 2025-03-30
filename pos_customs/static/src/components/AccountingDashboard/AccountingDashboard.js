@@ -37,10 +37,18 @@ export class OwlAccountingDashboard extends Component {
             posTerminal:[],
             countPosOrder:0,
             strcountPosOrder:0,
+            beforeCountPosOrder:0,
+            countPosOrderPercGrow:0,
             totalRevenue:0,
+            totalRevenuePercGrow:0,
             strTotalRevenue:0,
+            beforeTotalRevenue:0,
             averageOrder:0,
+            beforeAverageOrder:0,
+            averageOrderPercGrow:0,
             ttalCashOutAmount:0,
+            beforeTtalCashOutAmount:0,
+            ttalCashOutAmountPercGrow:0,
             getPosTopSalesCashier:[],
             getTopProductPosSales:[],
             getProductCategoryExpenses:[],
@@ -70,7 +78,7 @@ export class OwlAccountingDashboard extends Component {
             await this.getTopSessionDiscount()
             await this.fetchPosOrderCount();
             await this.getTotaRevenues();
-            await this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder);
+            await this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder,this.state.beforeTotalRevenue,this.state.beforeCountPosOrder);
             await this.fetchCashOutAmount();
             await this.getPosTopSaleCashier();
             await this.getTopProductPosSales();
@@ -336,6 +344,7 @@ export class OwlAccountingDashboard extends Component {
     async fetchCashOutAmount(period=false,session=false,pos=false,responsible=false){
         try{
             let domain = []
+            let domainBeforeDay =[]
             if (period) {
                 const today = new Date();
                 console.log('test today: ',today)
@@ -359,22 +368,33 @@ export class OwlAccountingDashboard extends Component {
                 }
 
                 domain = [['date', '>=', fromDate]];
+                const beforeDate = new Date(fromDate)
+                beforeDate.setDate(beforeDate.getDate() - 1)
+                domainBeforeDay = [['date','>=',beforeDate]]
             
             }
 
             if (session){
                 domain.push(['pos_session_id','=',session])
+                domainBeforeDay.push(['pos_session_id','=',session])
             }
 
             if (pos){
                 domain.push(['pos_session_id.config_id','=',pos])
+                domainBeforeDay.push(['pos_session_id.config_id','=',pos])
             }
             if (responsible){
                 domain.push(['user_id','=',responsible])
+                domainBeforeDay.push(['user_id','=',responsible])
             }
             const data = await this.orm.readGroup(
                 'account.bank.statement.line',
                 [['payment_ref','ilike','-out-'],...domain],
+                ['amount:sum'],[],
+            );
+            const dataBeforeDay = await this.orm.readGroup(
+                'account.bank.statement.line',
+                [['payment_ref','ilike','-out-'],...domainBeforeDay],
                 ['amount:sum'],[],
             );
             console.log('test fetchCashOutAmount: ',data)
@@ -382,6 +402,13 @@ export class OwlAccountingDashboard extends Component {
                 let amount = Math.abs(data[0].amount);
                 let strAmount = amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 this.state.ttalCashOutAmount = strAmount
+            }
+
+            if (dataBeforeDay !=false){
+                let currentAmount = Math.abs(data[0].amount)
+                let beforeamount = Math.abs(dataBeforeDay[0].amount);
+                const PercGrow = ((currentAmount-beforeamount)/beforeamount)*100
+                this.state.ttalCashOutAmountPercGrow = Math.round(PercGrow)
             }
 
         }catch(error){
@@ -393,6 +420,7 @@ export class OwlAccountingDashboard extends Component {
         try {
             // Define the date range filter
             let domain = [];
+            let domainBeforeDay =[]
             //period
             if (period) {
                 const today = new Date();
@@ -417,23 +445,32 @@ export class OwlAccountingDashboard extends Component {
                 }
 
                 domain = [['date_order', '>=', fromDate]];
+
+                let beforeDate = new Date(fromDate);
+                beforeDate.setDate(beforeDate.getDate() - 1);
+
+                domainBeforeDay = [['date_order', '>=', beforeDate]]
             }
 
             if (session){
                 domain.push(['session_id','=',session])
+                domainBeforeDay.push(['session_id','=',session])
                 //fucntion
             }
 
             if (pos){
                 domain.push(['config_id','=',pos])
+                domainBeforeDay.push(['config_id','=',pos])
             }
 
             if (responsible){
                 domain.push(['user_id','=',responsible])
+                domainBeforeDay.push(['user_id','=',responsible])
             }
 
             if (product){
                 domain.push(['lines.product_id.id','=',product])
+                domainBeforeDay.push(['lines.product_id.id','=',product])
             }
     
             // Fetch the count with dynamic filters
@@ -442,13 +479,38 @@ export class OwlAccountingDashboard extends Component {
                 ['lines', '!=', false],
                 ...domain,  // Add the date filter dynamically
             ]);
+
+            const dataBeforeDay = await this.orm.searchCount("pos.order", [
+                ['state', 'not in', ['cancel', 'draft']],
+                ['lines', '!=', false],
+                ...domainBeforeDay,  // Add the date filter dynamically
+            ]);
    
             console.log("fetchPosOrderCount domain: ",domain)
     
             this.state.countPosOrder = data;
             console.log('test fetchPosOrderCount: ',data)
             this.state.strcountPosOrder = data.toLocaleString('en-US', { maximumFractionDigits: 0 });
-            this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder)
+            this.state.beforeCountPosOrder = dataBeforeDay
+            // percentage before day
+            console.log('data order count: ',data)
+            console.log('dataBeforeDay order count: ',dataBeforeDay)
+
+            // compute percentage grow from last period of average order
+           
+            
+            if (!period){
+                this.state.countPosOrderPercGrow = 0
+            }else{
+                let percGrow = ((this.state.countPosOrder - this.state.beforeCountPosOrder) /this.state.beforeCountPosOrder)*100
+                this.state.countPosOrderPercGrow = Math.round(percGrow)
+
+                
+                // const lastAverOrder = this.getaverageOrder(this.state.beforeTotalRevenue,this.state.beforeCountPosOrder)
+                // this.state.averageOrderPercGrow = ((curentAverOrder-lastAverOrder)/lastAverOrder)*100
+            }
+            
+            this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder,this.state.beforeTotalRevenue,this.state.beforeCountPosOrder)
         } catch (error) {
             console.error("Error Fetch Records fetchPosOrderCount Function: ", error);
         }
@@ -552,6 +614,7 @@ export class OwlAccountingDashboard extends Component {
     async getTotaRevenues(period=false,session=false,pos=false,responsible=false,product=false){
         try{
             let domain = [['state', 'not in', ['cancel', 'draft']]]
+            let domainBeforeDay = domain
             if (period) {
                 const today = new Date();
                 console.log('test today: ',today)
@@ -576,56 +639,86 @@ export class OwlAccountingDashboard extends Component {
 
                 let date_from = ['date_order', '>=', fromDate];
                 domain.push(date_from)
+
+                let beforeDate = new Date(fromDate);
+                beforeDate.setDate(beforeDate.getDate() - 1);
+                domainBeforeDay = [['date_order', '>=', beforeDate]]
             }
 
             if (session){
                 domain.push(['session_id','=',session])
+                domainBeforeDay.push(['session_id','=',session])
                 //fucntion
             }
 
             if (pos){
                 domain.push(['config_id','=',pos])
+                domainBeforeDay.push(['config_id','=',pos])
             }
 
             if (responsible){
                 domain.push(['user_id','=',responsible])
+                domainBeforeDay.push(['user_id','=',responsible])
             }
 
             if (product){
                 domain.push(['lines.product_id.id','=',product])
+                domainBeforeDay.push(['lines.product_id.id','=',product])
             }
     
 
             console.log('test datefilter: ',domain)
 
             const data = await this.orm.readGroup("pos.order",domain,["amount_total:sum"],[]);
+            const dataBeforeDay = await this.orm.readGroup("pos.order",domainBeforeDay,["amount_total:sum"],[]);
             console.log('getTotalRevenues test: ',data)
             let amount = data[0].amount_total
+            let amountBeforeDay = dataBeforeDay[0].amount_total
 
             // this function toLocaleString it will format numbers has commay then decimal will be 2
             if (amount === null){
                 amount = 0
             }
             this.state.totalRevenue = amount
+            this.state.beforeTotalRevenue = amountBeforeDay
             console.log('test amount: ',amount)
             this.state.strTotalRevenue = amount.toLocaleString("en-US",{
                 minimumFractionDigits:2,
                 maximumFractionDigits:2
             })
 
-            this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder)
+            console.log("dataBeforeDay: ",dataBeforeDay)
+
+            if (!period){
+                this.state.totalRevenuePercGrow = 0
+            }else{
+                let percGrow = ((this.state.totalRevenue - this.state.beforeTotalRevenue)/this.state.beforeTotalRevenue)*100
+                console.log("perGrow: ",percGrow)
+                this.state.totalRevenuePercGrow = Math.round(percGrow)
+                // const curentAverOrder = this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder)
+                // const lastAverOrder = this.getaverageOrder(this.state.beforeTotalRevenue,this.state.beforeCountPosOrder)
+                // this.state.averageOrderPercGrow = ((curentAverOrder-lastAverOrder)/lastAverOrder)*100
+            }
+            
+            this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder,this.state.beforeTotalRevenue,this.state.beforeCountPosOrder)
+            
 
         }catch (error){
             console.error("Error Fetch Records getTotaRevenues Function: ",error)
         }
     }
 
-    async getaverageOrder(totalRevenue,countPosOrder){
+    async getaverageOrder(totalRevenue,countPosOrder,beforeTotalRevenue=0,beforeCountPosOrder=0){
         try{
             console.log("test totalRevenue: ",totalRevenue);
             console.log("test countPosOrder: ",countPosOrder);
             const averrev = totalRevenue/countPosOrder
             this.state.averageOrder  = Math.round(averrev)
+            const beforeaverrev = beforeTotalRevenue/beforeCountPosOrder
+            this.state.beforeAverageOrder = Math.round(beforeaverrev)
+
+            const averPerOrderGrow = ((this.state.averageOrder-this.state.beforeAverageOrder)/this.state.beforeAverageOrder)*100
+            this.state.averageOrderPercGrow = Math.round(averPerOrderGrow)
         }catch (error){
             console.error("Error Fetch Records getaverageOrder Function: ",error)
         }
