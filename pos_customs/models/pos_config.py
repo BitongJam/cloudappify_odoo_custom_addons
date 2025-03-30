@@ -1,9 +1,15 @@
 from odoo import _, api, fields, models
 from datetime import datetime,timedelta
-
+from odoo.exceptions import UserError
 
 class PosConfig(models.Model):
     _inherit = 'pos.config'
+
+    def open_ui(self):
+        if self.current_user_id.id != self.env.user.id:
+            raise UserError("You cannot open this Session. This Session Belong to %s"%self.current_user_id.name)
+        res = super(PosConfig,self).open_ui()
+        return res
 
     @api.model
     def get_pos_config_total_sale(self,period=False,session=False,pos=False,responsible=False,product=False):
