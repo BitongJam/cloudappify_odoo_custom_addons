@@ -145,7 +145,7 @@
             <div class="row">
                 <div class="col-lg-4">
                     <div class="border-bottom border-dark">
-                        <h1 class="text-primary ms-3">Top Salesperson</h1>
+                        <h1 class="text-primary ms-3">Sales by Employee</h1>
                     </div>
 
                     <table class="table table-striped">
