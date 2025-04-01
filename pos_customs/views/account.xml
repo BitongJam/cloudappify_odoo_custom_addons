@@ -6,7 +6,7 @@
             id="custom_dashboard_menu"
             name="Dashboard"
             sequence="10"/>
-            
+
         <record id="action_invoicing_dashboard" model="ir.actions.client">
             <field name="name">Report Dashboard</field>
             <field name="tag">pos_customs.owlAccountingDashboard</field>
@@ -29,7 +29,9 @@
 
         <menuitem
             id="spreadsheet_dashboard.spreadsheet_dashboard_menu_root"
-            active="0"/>
+            name="SpreadSheet Dashboard"
+            groups="base.group_system"/>
+
     </data>
 
 
