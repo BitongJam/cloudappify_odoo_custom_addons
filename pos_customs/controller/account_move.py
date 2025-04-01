@@ -168,7 +168,7 @@ class SaleReport(http.Controller):
             JOIN product_template pt ON pt.id = pp.product_tmpl_id
             JOIN product_category pc ON pc.id = pt.categ_id
             JOIN account_move am ON am.id = aml.move_id
-            WHERE am.move_type = 'in_invoice' -- Only vendor bills
+            WHERE am.move_type = 'in_invoice' AND am.state = 'posted'-- Only vendor bills 
             
         """
         params=[]
