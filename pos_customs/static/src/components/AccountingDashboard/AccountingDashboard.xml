@@ -177,17 +177,19 @@
                         <thead>
                             <tr>
                                 <th>Product</th>
-                                <th>Orders</th>
+                                <!-- <th>Orders</th> --> <!--Number of Orders-->
+                                <th>Qty</th>
                                 <th>Revenue</th>
                             </tr>
                         </thead>
                         <tbody>
                             <!-- Generate exactly 10 empty rows -->
-                            <t t-foreach="state.getTopProductPosSales" t-as="i" t-key="i[0]">
+                            <t t-foreach="state.getTopProductPosSales" t-as="i" t-key="i.id">
                                 <tr>
-                                    <td><span t-esc="i[1].en_US"/></td>
-                                    <td><span t-esc="i[4]"/></td>
-                                    <td><span t-esc="i[3]"/></td>
+                                    <td><span t-esc="i.product"/></td>
+                                    <!-- <td><span t-esc="i[4]"/></td> --> <!--Number of Orders-->
+                                    <td><span t-esc="i.qty"/></td>
+                                    <td><span t-esc="i.revenue"/></td>
                                 </tr>
                             </t>
                         </tbody>

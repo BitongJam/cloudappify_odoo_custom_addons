@@ -109,11 +109,20 @@ class PosDashboardController(http.Controller):
     @http.route('/report/get_top_product_pos_sales', type='json', auth='user') 
     def get_top_product_pos_sales(self,end_date = False,session=False,pos=False,responsible=False,product=False):
         query = """
-            select ROW_NUMBER() OVER () AS id,pt.name,sum(rpo.price_total) as price_total, TO_CHAR(sum(rpo.price_total),'FM999,999,999.00') as str_price_total,count(*) as order
-            from report_pos_order rpo 
-            join product_product pp on pp.id = rpo.product_id
-            inner join product_template pt on pt.id = pp.product_tmpl_id
-            where state in ('paid','done','invoiced') 
+            SELECT 
+                ROW_NUMBER() OVER () AS id,
+                pt.name AS product_name,
+                STRING_AGG(DISTINCT ptg.name->>'en_US', ', ') AS product_tags,  -- Extract 'en_US' value and remove duplicates
+                SUM(rpo.price_total) AS price_total,
+                TO_CHAR(SUM(rpo.price_total), 'FM999,999,999.00') AS str_price_total,
+                COUNT(*) AS order_count,
+                SUM(rpo.product_qty) AS qty
+            FROM report_pos_order rpo
+            JOIN product_product pp ON pp.id = rpo.product_id
+            JOIN product_template pt ON pt.id = pp.product_tmpl_id
+            JOIN product_tag_product_template_rel ptptr ON ptptr.product_template_id = pt.id
+            JOIN product_tag ptg ON ptg.id = ptptr.product_tag_id
+            WHERE rpo.state IN ('paid', 'done', 'invoiced') 
 
         """
 
@@ -156,10 +165,10 @@ class PosDashboardController(http.Controller):
         request.cr.execute(query,params)
         result = request.cr.fetchall()
 
+        format = [{'id': row[0], 'product': row[1].get('en_US','Unkwn Product')+"(%s)"%row[2], 'qty': row[6],'revenue':row[4]} for index,row in enumerate(result)]
+        return format
         # Ensure a unique ID is added
         # product_sales = [{'id': index + 1, 'name': row[0], 'price_total': row[1]} for index, row in enumerate(result)]
-
-        return result  # Ensure it returns a list of dictionaries with 'id'
     
     @http.route('/report/get_total_sales_per_hour_pos', type='json', auth='user')
     def get_total_sales_per_hour_pos(self, end_date = False,session=False,pos=False,responsible=False,product=False):
