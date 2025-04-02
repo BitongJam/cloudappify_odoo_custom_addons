@@ -165,7 +165,7 @@ class PosDashboardController(http.Controller):
         request.cr.execute(query,params)
         result = request.cr.fetchall()
 
-        format = [{'id': row[0], 'product': row[1].get('en_US','Unkwn Product')+"(%s)"%row[2], 'qty': row[6],'revenue':row[4]} for index,row in enumerate(result)]
+        format = [{'id': row[0], 'product': row[1].get('en_US','Unkwn Product')+" (%s)"%row[2], 'qty': row[6],'revenue':row[4]} for index,row in enumerate(result)]
         return format
         # Ensure a unique ID is added
         # product_sales = [{'id': index + 1, 'name': row[0], 'price_total': row[1]} for index, row in enumerate(result)]
