@@ -5,7 +5,8 @@ export class ColorComponent extends Component {
     
     static getRandomColor = () => {
         const colorPalette = [
-            "#F04770", "#F78C6A", "#FFD167", "#06d7a0", "#108AB1", "#073A4B"
+            "#FF3473", "#FF457E", "#FF5353", "#FF8F4A", "#FFDB45", "#4694FF",
+            "#30E584"
         ];
         return colorPalette[Math.floor(Math.random() * colorPalette.length)];
     };

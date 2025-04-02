@@ -4,7 +4,7 @@ import { registry } from "@web/core/registry"
 import { loadJS } from "@web/core/assets"
 import { useService } from "@web/core/utils/hooks";
 import { useState } from "@odoo/owl";
-
+import { ColorComponent } from "../colorComponent";
 const { Component, onWillStart, useRef, onMounted, onPatched } = owl
 
 export class PaymentMethodChartRender extends Component {
@@ -16,8 +16,8 @@ export class PaymentMethodChartRender extends Component {
             await loadJS("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js")
             // await this.getPosPayment();
         })
-        this.colorPalette = ["#D9ECF2", "#F56A79", "#1AA587", "#002D40"]; // ✅ Moved inside `this`
-
+        // this.colorPalette = ["#D9ECF2", "#F56A79", "#1AA587", "#002D40"]; // ✅ Moved inside `this`
+        // ColorComponent.getRandomColor()
         this.state = useState({
             labels:this.props.dataValues,
             dataValues:this.props.dataValues
@@ -55,7 +55,7 @@ export class PaymentMethodChartRender extends Component {
     const labels = this.state.labels || [];
     const dataValues = this.state.dataValues || [];
 
-    const backgroundColors = dataValues.map(() => this.getRandomColor()); // ✅ Now it works!
+    const backgroundColors = dataValues.map(() => ColorComponent.getRandomColor()); // ✅ Now it works!
     const borderColors = backgroundColors.map(color => color.replace('0.7', '1')); // Adjust opacity
 
     if (this.chartInstance) {
