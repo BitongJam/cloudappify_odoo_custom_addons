@@ -354,22 +354,17 @@ export class OwlAccountingDashboard extends Component {
     
                 if (period === 1) {
                     fromDate = today;
-                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 7) {
                     fromDate.setDate(today.getDate() - 7);
-                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 30) {
                     fromDate.setDate(today.getDate() - 30);
-                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 90) {
                     fromDate.setDate(today.getDate() - 90);
-                    fromDate.setHours(0, 0, 0, 0);
                 } else if (period === 365) {
                     fromDate.setDate(today.getDate() - 365);
-                    fromDate.setHours(0, 0, 0, 0);
                 }
 
-                domain = [['date', '>=', fromDate]];
+                domain = [['date', '>=', fromDate.toISOString().split('T')[0]]];
                 const beforeDate = new Date(fromDate)
                 beforeDate.setDate(beforeDate.getDate() - 1)
                 domainBeforeDay = [['date','>=',beforeDate]]
