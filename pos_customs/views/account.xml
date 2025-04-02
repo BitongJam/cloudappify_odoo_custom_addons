@@ -6,7 +6,7 @@
             id="custom_dashboard_menu"
             name="Dashboard"
             sequence="10"
-            groups="pos_customs.custom_dashboard_access"
+            groups="pos_customs.custom_dashboard_group"
             />
 
         <record id="action_invoicing_dashboard" model="ir.actions.client">
