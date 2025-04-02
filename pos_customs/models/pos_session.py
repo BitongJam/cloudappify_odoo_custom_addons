@@ -17,8 +17,9 @@ class PosSession(models.Model):
     total_discount = fields.Float(help="Computed of total discount from orders.",compute="_compute_total_discount",store=True,readonly=True)
     
     def open_frontend_cb(self):
-        if self.user_id != self.env.user.id:
-            raise UserError("You cannot open this Session. This Session Belong to %s"%self.user_id.name)
+        if self.user_id:
+            if self.user_id != self.env.user.id:
+                raise UserError("You cannot open this Session. This Session Belong to %s"%self.user_id.name)
         res = super(PosSessionPaymentLines,self).open_frontend_cb()
         return res
     
