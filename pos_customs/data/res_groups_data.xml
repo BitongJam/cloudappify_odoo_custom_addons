@@ -3,7 +3,6 @@
 
     <record id="custom_dashboard_group" model="res.groups">
         <field name="name">Custom Dashboard Access</field>
-        <field name="category_id" ref="pos_customs.custom_dashboard_access"/>
     </record>
 
 </odoo>
