@@ -240,8 +240,10 @@ export class OwlAccountingDashboard extends Component {
                 } else if (period === 365) {
                     fromDate.setDate(today.getDate() - 365);
                 }
-
-                domain = [['payment_date', '>=', fromDate.toISOString().split('T')[0]],['payment_date','<=',today.toISOString().split('T')[0]]];
+                fromDate.setHours(0,0,0,0);
+                console.log("fetchChartSaleByPayment: ",fromDate)
+                const formatted = fromDate.toISOString().slice(0,19).replace("T"," ");
+                domain = [['payment_date', '>=', fromDate]];
             
             }
 
