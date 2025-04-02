@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="custom_dashboard_group" model="res.groups">
+        <field name="name">Custom Dashboard Access</field>
+        <field name="category_id" ref="pos_customs.custom_dashboard_access"/>
+    </record>
+
+</odoo>

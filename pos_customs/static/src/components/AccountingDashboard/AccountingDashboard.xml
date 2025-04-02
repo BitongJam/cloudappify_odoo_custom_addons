@@ -1,132 +1,224 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
     <t t-name="pos_customs.owl_accounting_dashboard_template" owl="1">
-        <Layout display="display" >
-                <div class="row p-3">
-                    <div class="col-lg-6 p-5">
-                        <div class="m-3">
-                            <div class="text-center">
-                                <h3>Overall Expences per Product Category</h3>
-                            </div>
+        <div class="vh-100 overflow-auto bg-muted">
+            <div class="row mb-5 p-4 border-bottom">
+                <div class="col-3">
+                    <h2>Point of Sale</h2>
+                </div>
+                <div class="col-9">
+                    <div class="d-flex">
+                        <select class="date_filter_values o_input me-3" t-on-change="periodFilterChange">
+                            <option value="0">Select Period</option>
+                            <option value="1">Today</option>
+                            <option value="7_days">Last 7 Days</option>
+                            <option value="30_days">Last 30 Days</option>
+                            <option value="90_days">Last 90 Days</option>
+                            <option value="365_days">Last 365 Days</option>
+                        </select>
 
-                            <table class="table table-striped table-sm m-3">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Prdouct Category</th>
-                                        <th class="text-center">Amount</th>
-                                    </tr>
+                        <select class="o_field_many2many_selection o_input me-3" t-on-change="sessionFilterChange">
+                            <option value="false">--Session--</option>
+                            <t t-foreach="state.dataPosSession" t-as="i" t-key="i.id">
+                                 <option t-att-value="i.id"><t t-esc="i.name"/></option>
+                            </t>
 
-                                </thead>
-                                <tbody>
+                        </select>
 
-                                    <tr t-foreach="state.overallExpenseProductCategory" t-as="ls"
-                                        t-key="ls.name">
-                                        <td class="text-center">
-                                            <span t-esc="ls.name" />
-                                        </td>
-                                        <td class="text-center">
-                                            <span t-esc="ls.expenses" />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <select class="date_filter_values o_input me-3" t-on-change="posFilterChange">
+                            <option value="0">--Point of Sale--</option>
+                            <t t-foreach="state.dataPointOfSaleList" t-as="i" t-key="i.id">
+                                 <option t-att-value="i.id"><t t-esc="i.name"/></option>
+                            </t>
 
+                        </select>
+
+                        <select class="date_filter_values o_input me-3" t-on-change="responsibleFilterChange">
+                            <option t-att-valuevalue="0">--Responsible--</option>
+                            <t t-foreach="state.dataResponsible" t-as="responsible" t-key="responsible.id">
+                                <option t-att-value="responsible.id"><t t-esc="responsible.name"/></option>
+                            </t>
+
+                        </select>
+
+                        <select class="date_filter_values o_input me-3" t-on-change="productFilterChange">
+                            <option value="0">--Product--</option>
+                            <t t-foreach="state.dataListProduct" t-as="product" t-key="product.id" >
+                                <option t-att-value="product.id"><t t-esc="product.name.en_US"/></option>
+
+                            </t>
+                        </select>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="m-3 p-5">
-                            <div class="text-center ">
-                                <h3>Net Income Per Payment Method</h3>
-                            </div>
 
-                            <!-- <t t-foreach="state.overallPosIncome"  t-as="l">
-                    <span t-esc="l"/>
-                </t> -->
+                </div>
+            </div>
 
-                            <table class="table table-striped  table-sm m-3">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Payment Method</th>
-                                        <th class="text-center">Income</th>
-                                        <th class="text-center">Expense</th>
-                                        <th class="text-center">Net Income</th>
-                                    </tr>
-
-                                </thead>
-                                <!-- <tbody>
-
-                                    <tr t-foreach="state.overallPosIncome" t-as="ls"
-                                        t-key="ls.payment_method">
-                                        <td class="text-center">
-                                            <span t-esc="ls.payment_method" />
-                                        </td>
-                                        <td class="text-center">
-                                            <span t-esc="ls.income" />
-                                        </td>
-                                        <td class="text-center">
-                                            <span t-esc="ls.income" />
-                                        </td>
-                                    </tr>
-                                </tbody> -->
-                                <t t-foreach="state.bankCashJournal" t-as="i" t-key="i.payment_method">
-                                    <tr>
-                                    <td class="text-center">
-                                            <span t-esc="i. payment_method" />
-                                        </td>
-                                        <td class="text-center">
-                                <span t-esc="i.income" t-if="i.income"/>
-                                        </td>
-                                        <td class="text-center">
-                                         <span t-esc="i.expense" t-if="i.expense"/>
-                                        </td>
-                                        <td class="text-center">
-                                         <span t-esc="i.total"/>
-                                        </td>
-                                    </tr>
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="border-bottom border-dark"><h1 class="text-primary fw-bold ms-3">Sales Summary</h1></div>
+                    <div class="row">
+                        <div class="col-6 d-flex flex-column align-items-center justify-content-center">
+                            <t t-foreach="state.posTerminal" t-as="i" t-key="i.config_id">
+                                <t t-if="i.do_not_display != true">
+                                    <div class="mb-2">
+                                        <h2 class="text-primary fw-bold">
+                                            <span t-esc="i.config_name" />
+                                        </h2>
+                                        <h2 class="text-info">
+                                            <span t-esc='i.total_sales' />
+                                        </h2>
+                                    </div>
                                 </t>
-                            </table>
+
+                            </t>
                         </div>
-
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="m-3 p-5">
-                            <div class="text-center ">
-                                <h3>Top PoS Session Discounts</h3>
+                        <div class="col-6">
+                            <div style="height:150px" >
+                                <ChartRender type="'doughnut'" labels="state.salesSumaryLabels" values="state.salesSummaryData" title="'Top Products Report'" />
                             </div>
-
-                            <!-- <t t-foreach="state.overallPosIncome"  t-as="l">
-                    <span t-esc="l"/>
-                </t> -->
-
-                            <table class="table table-striped  table-sm m-3">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Session</th>
-                                        <th class="text-center">Discount Amount</th>
-                                    </tr>
-
-                                </thead>
-                                <tbody>
-
-                                    <tr t-foreach="state.topSessionDiscount" t-as="ls"
-                                        t-key="ls.session">
-                                        <td class="text-center">
-                                            <span t-esc="ls.session" />
-                                        </td>
-                                        <td class="text-center">
-                                            <span t-esc="ls.total_discount" />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
                         </div>
                     </div>
+
+
                 </div>
+                <div class="col-lg-9">
+                    <div></div>
+                    <div class="row p-2 mt-4">
+                        <KpiCard name="'Orders'" value="state.strcountPosOrder" percentage="state.countPosOrderPercGrow" />
+                        <KpiCard name="'Revenues'" value="state.strTotalRevenue" percentage="state.totalRevenuePercGrow" />
+                        <KpiCard name="'Average Order'" value="state.averageOrder" percentage="state.averageOrderPercGrow" />
+                        <KpiCard name="'Cash Out'" value="state.ttalCashOutAmount" percentage="state.ttalCashOutAmountPercGrow" />
+                    </div>
+                </div>
+            </div>
 
-        </Layout>
+            <div class="row">
+                <div class="col-lg-4">
+                       <div class="border-bottom border-dark">
+                        <h1 class="text-primary fw-bold ms-3">Sales by Payment Method</h1>
+                    </div>
+                    <div style="height:250px; width:100%">
+                        <PaymentMethodChartRender type="'bar'" dataValues="state.salesByPaymentMethodData" labels="state.salesByPaymentMethodLabels" title="'Payment Method'" />
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="border-bottom border-dark">
+                        <h1 class="text-primary fw-bold ms-3">Sales by Hour</h1>
+                    </div>
+                     <div style="height:250px; width:100%">
+                        <SalesByHourChartRender title="'Sales by Hour'" dataValues="state.fetchChartTotalSalesPerHourData.sale_amount" labelValues="state.fetchChartTotalSalesPerHourData.sale_hour"/>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="border-bottom border-dark"><h1 class="text-primary fw-bold ms-3">Tips &amp; Discount</h1></div>
+                    <div class="row">
+                        <div class="col-6 d-flex flex-column align-items-center justify-content-center">
+                            <div class="mb-2 text-left">
+                                <h2 class="text-primary fw-bold">Discount</h2>
+                                <h2 class="text-info">
+                                    <span t-esc="state.dataTipsDiscount.str_disc_amnt" />
+                                </h2>
+                            </div>
+                            <div class="mb-2  text-left">
+                                <h2 class="text-primary fw-bold">Tips</h2>
+                                <h2 class="text-info">
+                                    <span t-esc="state.dataTipsDiscount.tips_amnt" />
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div style="height:200px;" class="mt-2">
+                                <TipsDiscountChartRender title="'Tips &amp; Discount'"
+                                    values="state.dataTipsDiscount" />
+                                <!-- <t t-if="state.dataTipsDiscount.tips_amnt == 0 and
+                                state.dataTipsDiscount.disc_amnt == 0"> -->
 
+                                <!-- </t> -->
+                            </div>
+                        </div>
+                    </div>
+                  
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="border-bottom border-dark">
+                        <h1 class="text-primary ms-3">Sales by Employee</h1>
+                    </div>
+
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Salesperson</th>
+                                <th>Orders</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Generate exactly 10 empty rows -->
+                            <t t-foreach="state.getPosTopSalesCashier" t-as="i" t-key="i">
+                                <tr>
+                                    <td><span t-esc="i[2]"/></td>
+                                    <td><span t-esc="i[1]"/></td>
+                                    <td><span t-esc="i[0]"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-4">
+                    <div class="border-bottom border-dark">
+                        <h1 class="text-primary ms-3">Top Product</h1>
+                    </div>
+
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <!-- <th>Orders</th> --> <!--Number of Orders-->
+                                <th>Qty Sold</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Generate exactly 10 empty rows -->
+                            <t t-foreach="state.getTopProductPosSales" t-as="i" t-key="i.id">
+                                <tr>
+                                    <td><span t-esc="i.product"/></td>
+                                    <!-- <td><span t-esc="i[4]"/></td> --> <!--Number of Orders-->
+                                    <td><span t-esc="i.qty"/></td>
+                                    <td><span t-esc="i.revenue"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-4">
+                    <div class="border-bottom border-dark">
+                        <h1 class="text-primary ms-3">Expenses by Product Category</h1>
+                    </div>
+
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Generate exactly 10 empty rows -->
+                            <t t-foreach="state.getProductCategoryExpenses" t-as="i" t-key="i.id">
+                                <tr>
+                                    <td><span t-esc="i.category"/></td>
+                                    <td> <span t-esc="i.str_total_expense"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </t>
 </templates>

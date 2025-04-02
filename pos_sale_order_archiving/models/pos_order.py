@@ -2,6 +2,7 @@ from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 from datetime import datetime
 import calendar
+import pytz
 
 class PosOrder(models.Model):
     _inherit = 'pos.order'
@@ -74,36 +75,52 @@ class PosOrder(models.Model):
             self._create_archiving_log(log,get_order_ids)
         
 
-    def get_orders_to_archive(self,min_target,max_target,month,year):
+    def get_orders_to_archive(self, min_target, max_target, month, year):
+        """Fetch POS orders to archive based on total amount constraints."""
 
-        # get the first date and last date of the month and year
-        first_date = datetime(year,month,1)
-        last_date = datetime(year,month,calendar.monthrange(year, month)[1])
+        # Get the user's timezone from Odoo settings
+        user_tz = self.env.user.tz or 'UTC'  # Default to UTC if not set
+        user_timezone = pytz.timezone(user_tz)
+        utc_tz = pytz.utc  # Define UTC timezone
 
+        # First day of the month at 00:00:00 in user timezone
+        first_date_local = user_timezone.localize(datetime(year, month, 1, 0, 0, 0))
+
+        # Last day of the month at 23:59:59 in user timezone
+        last_day = calendar.monthrange(year, month)[1]
+        last_date_local = user_timezone.localize(datetime(year, month, last_day, 23, 59, 59))
+
+        # Convert to UTC for ORM search
+        first_date_utc = first_date_local.astimezone(utc_tz)
+        last_date_utc = last_date_local.astimezone(utc_tz)
+
+        # Define POS order model
         PosOrder = self.env['pos.order']
-        
+
         # Get the total sum of active, posted, and paid orders
         domain = [
             ('active', '=', True),
-            ('state', 'in', ('done', 'paid')),('date_order','>=',first_date),('date_order','<=',last_date),('official_receipt','=',False)
+            ('state', 'in', ('done', 'paid')),
+            ('date_order', '>=', first_date_utc),
+            ('date_order', '<=', last_date_utc)
         ]
 
         total = sum(PosOrder.search(domain).mapped('amount_total'))
+        # Raise ValidationError if needed (placed correctly now)
+        if total < 0:
+            raise ValidationError("Total state cannot be negative!")
 
-
+        # Batch processing variables
         batch_size = 10
         offset = 0
         order_ids = []
-
 
         # Archive orders until total is within the target range
         while total > max_target:
             # Fetch a batch of orders, oldest first
             orders = PosOrder.search(
                 domain,
-                order="id ASC",
-                limit=batch_size,
-                offset=offset
+                order="amount_total DESC", 
             )
 
             if not orders:
@@ -116,8 +133,7 @@ class PosOrder(models.Model):
                 total -= order.amount_total
                 order_ids.append(order.id)
 
-            offset += batch_size  # Move to the next batch
+            # offset += batch_size  # Move to the next batch
 
         return order_ids
-
-
+   

@@ -14,6 +14,7 @@
         'point_of_sale','board','base','web','pos_sale'
     ],
     'data': [
+        'data/res_groups_data.xml',
         'security/ir.model.access.csv',
         'views/pos_order.xml',
         'views/stock.xml',

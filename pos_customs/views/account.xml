@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+
+        <menuitem
+            id="custom_dashboard_menu"
+            name="Dashboard"
+            sequence="10"
+            groups="pos_customs.custom_dashboard_access"
+            />
+
         <record id="action_invoicing_dashboard" model="ir.actions.client">
             <field name="name">Report Dashboard</field>
             <field name="tag">pos_customs.owlAccountingDashboard</field>
@@ -8,9 +16,9 @@
 
         <menuitem
             id="invoicing_dashboard_menu"
-            name="Dashboard"
+            name="Point of Sale"
             action="action_invoicing_dashboard"
-            parent="point_of_sale.menu_point_root"
+            parent="pos_customs.custom_dashboard_menu"
             groups="point_of_sale.group_pos_manager"
             sequence="0" />
 
@@ -19,6 +27,13 @@
             id="point_of_sale.menu_pos_dashboard"
             parent="point_of_sale.menu_point_root"
             name="Terminals"/>
+
+
+        <menuitem
+            id="spreadsheet_dashboard.spreadsheet_dashboard_menu_root"
+            name="SpreadSheet Dashboard"
+            groups="base.group_system"/>
+
     </data>
 
 

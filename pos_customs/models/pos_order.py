@@ -30,7 +30,7 @@ class PosOrder(models.Model):
 class PosOrderLine(models.Model):
     _inherit = 'pos.order.line'
 
-    discount_amount  = fields.Float(compute="_compute_discount_amount")
+    discount_amount  = fields.Float(compute="_compute_discount_amount",store=True)
 
     @api.depends('price_unit', 'qty', 'discount', 'tax_ids')
     def _compute_discount_amount(self):
