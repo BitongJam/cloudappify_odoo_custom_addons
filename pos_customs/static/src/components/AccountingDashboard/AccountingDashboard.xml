@@ -178,7 +178,7 @@
                             <tr>
                                 <th>Product</th>
                                 <!-- <th>Orders</th> --> <!--Number of Orders-->
-                                <th>Qty</th>
+                                <th>Qty Sold</th>
                                 <th>Revenue</th>
                             </tr>
                         </thead>
