@@ -19,7 +19,7 @@ export class PaymentMethodChartRender extends Component {
         // this.colorPalette = ["#D9ECF2", "#F56A79", "#1AA587", "#002D40"]; // ✅ Moved inside `this`
         // ColorComponent.getRandomColor()
         this.state = useState({
-            labels:this.props.dataValues,
+            labels:this.props.labels,
             dataValues:this.props.dataValues
         })
         onMounted(() => this.renderChart()) // Call renderChart after mounting
