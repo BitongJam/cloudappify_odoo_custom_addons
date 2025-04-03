@@ -11,7 +11,7 @@ import { KpiCard} from "../kpiCard/kpiCard"
 import { SalesByHourChartRender } from "../chartRender/salesByHourChartRender";
 import { TipsDiscountChartRender } from "../chartRender/tipDiscountChartRender";
 
-const { Component,useSubEnv,useState,onWillStart } = owl;
+const { Component,useSubEnv,useState,onWillStart,onWillUnmount } = owl;
 
 export class OwlAccountingDashboard extends Component {
     setup() {
@@ -71,27 +71,41 @@ export class OwlAccountingDashboard extends Component {
             dataListProduct:[]
         });
 
+        let isMounted = true;
+
+        onWillUnmount(() => {
+            isMounted = false
+        });
+
         onWillStart(async ()=>{
-            await this.overallExpensePerProductCategory()
-            await this.overallPosIncome()
-            await this.getBankAndCashJournal();
-            await this.getTopSessionDiscount()
-            await this.fetchPosOrderCount();
-            await this.getTotaRevenues();
-            await this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder,this.state.beforeTotalRevenue,this.state.beforeCountPosOrder);
-            await this.fetchCashOutAmount();
-            await this.getPosTopSaleCashier();
-            await this.getTopProductPosSales();
-            await this.getProductCategoryExpenses(false);
-            await this.fetchChartDateSalesSummary(false)
-            await this.fetchChartSaleByPayment();
-            await this.fetchChartTotalSalesPerHour();
-            await this.getTopProductPosSales();
-            await this.getDataListPointOfSale();
-            await this.getDataListSession();
-            await this.getDataResponsible();
-            await this.getDataListProduct();
-            await this.getTipsDiscountAmount();
+            try {
+                if (!isMounted) return;
+
+                await this.overallExpensePerProductCategory()
+                await this.overallPosIncome()
+                await this.getBankAndCashJournal();
+                await this.getTopSessionDiscount()
+                await this.fetchPosOrderCount();
+                await this.getTotaRevenues();
+                await this.getaverageOrder(this.state.totalRevenue, this.state.countPosOrder, this.state.beforeTotalRevenue, this.state.beforeCountPosOrder);
+                await this.fetchCashOutAmount();
+                await this.getPosTopSaleCashier();
+                await this.getTopProductPosSales();
+                await this.getProductCategoryExpenses(false);
+                await this.fetchChartDateSalesSummary(false)
+                await this.fetchChartSaleByPayment();
+                await this.fetchChartTotalSalesPerHour();
+                await this.getTopProductPosSales();
+                await this.getDataListPointOfSale();
+                await this.getDataListSession();
+                await this.getDataResponsible();
+                await this.getDataListProduct();
+                await this.getTipsDiscountAmount();
+            }catch(error){
+                console.error("Error fetching POS data:", error);
+
+            }
+            
         });
         
         // sample
