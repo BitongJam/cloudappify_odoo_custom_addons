@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="pos_index_rebrand" name="pos_index_rebrand" inherit_id="point_of_sale.index">
+        <xpath expr="//head/title" position="replace">
+            <title>
+                <t t-set="company_id" t-value="session_info['user_companies']['current_company']"/>
+                <t t-set="company_name" t-value="session_info['user_companies']['allowed_companies'][company_id]['name']"/>
+                <t t-esc="company_name"/>
+            </title>
+        </xpath>
+    </template>
+
+</odoo>

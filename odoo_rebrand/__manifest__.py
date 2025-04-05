@@ -12,7 +12,8 @@
         'web','base'
     ],
     'data':[
-        'views/webclient_templates.xml'
+        'views/webclient_templates.xml',
+        'views/pos_assets_index.xml'
 
     ],
     'auto_install': False,
