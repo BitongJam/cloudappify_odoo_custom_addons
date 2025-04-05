@@ -7,9 +7,11 @@ class PosOrder(models.Model):
 
     def action_pos_order_cancel(self):
         pick = self.env['stock.picking'].search([('pos_order_id','=',self.id)])
-        for p in pick:
-            #cancel picking
-            p.action_cancel()
+
+        if pick:
+            for p in pick:
+                #cancel picking
+                p.action_cancel()
 
         for pay_line in self.payment_ids:
             #remove payments

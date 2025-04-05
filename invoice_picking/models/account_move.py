@@ -124,19 +124,13 @@ class AccountMove(models.Model):
     
     def button_draft(self):
         res = super(AccountMove,self).button_draft()
-        picking = self.env['stock.picking'].search([('origin','=',self.name)])
-        if len(picking) > 0:
-            picking.unlink()
+        if self.validate_picking:
+            picking = self.env['stock.picking'].search([('origin','=',self.name)])
+            if len(picking) > 0:
+                picking.unlink()
 
         return res
     
-    def button_cancel(self):
-        res = super(AccountMove,self).button_cancel()
-        picking = self.env['stock.picking'].search([('origin','=',self.name)])
-        if len(picking) > 0:
-            picking.unlink()
-        
-        return res
 
 
 class AccountMoveLine(models.Model):
