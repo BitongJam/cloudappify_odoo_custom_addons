@@ -7,21 +7,22 @@ class StockPicking(models.Model):
 
 
     def unlink(self):
-        if self.state not in ('draft','cancel'):
-            raise ValidationError("You Cannot Delete Active Stock Picking")
-        name = self.name
-        db = self.env.cr.dbname
-        message =  "Delete by %s"%self.env.user.name
-        res = super(StockPicking,self).unlink()
-        
-        self.env['ir.logging'].create({
-            'name': 'Stock Picking Delete: %s'%name,
-            'dbname': db,
-            'type': 'client',
-            'level': 'info',
-            'path':'/',
-            'func':'unlink()',
-            'line':'N/A',
-            'message':message,
-        })
-        return res
+        for rec in self:
+            if rec.state not in ('cancel'):
+                raise ValidationError("You Cannot Delete Active Stock Picking")
+            name = rec.name
+            db = rec.env.cr.dbname
+            message =  "Delete by %s"%rec.env.user.name
+            res = super(StockPicking,rec).unlink()
+            
+            rec.env['ir.logging'].create({
+                'name': 'Stock Picking Delete: %s'%name,
+                'dbname': db,
+                'type': 'client',
+                'level': 'info',
+                'path':'/',
+                'func':'unlink()',
+                'line':'N/A',
+                'message':message,
+            })
+            return res
