@@ -31,14 +31,12 @@ export class TipsDiscountChartRender extends Component {
     }
 
     renderChart = () => { // ✅ Convert to arrow function to keep `this` context
-        console.log("tips and discount: ", this.props.values)
         if (!this.props.values) {
             console.error("Missing labels or values in props:", this.props);
             return;
         }
 
         let data_vals = this.props.values
-        console.log('tips_amnt: ', data_vals.tips_amnt, ' discount: ', data_vals.disc_amnt)
         // const CHART_COLORS = {
         //     red: 'rgb(255, 99, 132)',
         //     blue: 'rgb(54, 162, 235)',

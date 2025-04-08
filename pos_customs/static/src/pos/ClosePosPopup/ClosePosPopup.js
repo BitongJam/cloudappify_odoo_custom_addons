@@ -21,7 +21,6 @@ const ClosePosPopupExtend = (ClosePosPopup) =>
                     args: [[this.env.pos.pos_session.id], ['id', 'name', 'cash_register_balance_start']],
                 });
 
-                console.log('Fetched POS Session Data:', sessionData);
 
                 // Example: Set starting cash details based on session data
                 if (sessionData && sessionData.length > 0) {

@@ -25,7 +25,6 @@ export class PaymentMethodChartRender extends Component {
         onMounted(() => this.renderChart()) // Call renderChart after mounting
 
         onPatched(() => {
-            console.log("Props updated! Updating chart...");
             this.updateChart();
           });
     }

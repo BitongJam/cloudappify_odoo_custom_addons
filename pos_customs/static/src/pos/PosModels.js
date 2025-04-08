@@ -12,10 +12,8 @@ odoo.define('pos_customs.models', function(require) {
  
                  // // Add your custom logic
                  const selectedLine = this.selected_paymentline;
-                 console.log('Custom add_paymentline called');
                  if (selectedLine) {
                      selectedLine.transaction_id = ''; // Initialize transaction_id
-                     console.log('Transaction ID added:', selectedLine);
                  }
  
                  return ret

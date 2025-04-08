@@ -15,7 +15,6 @@ export class SalesByHourChartRender extends Component {
 
         onMounted(() => this.renderChart()); // Call renderChart after mounting
         onPatched(() => {
-            console.log("Props updated! Updating chart...");
             this.updateChart();
         });
     }
@@ -28,7 +27,6 @@ export class SalesByHourChartRender extends Component {
     }
 
     updateChart() {
-        console.log("saleByHourChartRender.labelValues: ", this.props.labelValues);
 
         if (this.chartInstance) {
             // Generate full 24-hour range (00–23)
@@ -53,7 +51,6 @@ export class SalesByHourChartRender extends Component {
     }
 
     renderChart = () => { // ✅ Convert to arrow function to keep `this` context
-        console.log("saleByHourChartRender: ", this.props.labelValues);
 
         const fullHourLabels = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
         const amPmLabels = fullHourLabels.map(hour => this.convertToAmPm(hour));

@@ -141,7 +141,6 @@ export class OwlAccountingDashboard extends Component {
 
     productFilterChange(event){
         const selectedValue = parseInt(event.target.value)
-        console.log("productFilterChange: ",selectedValue)
         this.state.filterProductStateValue = selectedValue
         this.upgradeChartData();
     }
@@ -168,12 +167,10 @@ export class OwlAccountingDashboard extends Component {
         this.state.dataTipsDiscount.disc_amnt = data.disc_amount
         this.state.dataTipsDiscount.tips_amnt = data.tips_amount
         this.state.dataTipsDiscount.str_disc_amnt = data.str_disc_amount
-        console.log("getTipsDiscountAmount: ",data)
     }
     async getDataListPointOfSale(){
        const data =  await this.orm.searchRead("pos.config",[],['id','name'])
        this.state.dataPointOfSaleList = data
-       console.log('getDataListPointOfSale: ',data)
     }
 
 
@@ -181,7 +178,6 @@ export class OwlAccountingDashboard extends Component {
         const data = await this.orm.searchRead("res.users", [['share', '=', false]], ['id', 'name']);
     
         this.state.dataResponsible = data
-        console.log('getDataResponsible: ',data)
     }
 
     async getDataListSession(){
@@ -227,8 +223,6 @@ export class OwlAccountingDashboard extends Component {
               this.state.salesSumaryLabels = rec.map(item => item.config_name);
               this.state.salesSummaryData = rec.map(item => Number(item.total_sales.replace(/,/g, '')));
       
-              console.log("charDAta labels",this.state.salesSumaryLabels);
-              console.log("charDAta datasets",this.state.salesSummaryData);
             }
         
       
@@ -255,7 +249,6 @@ export class OwlAccountingDashboard extends Component {
                     fromDate.setDate(today.getDate() - 365);
                 }
                 fromDate.setHours(0,0,0,0);
-                console.log("fetchChartSaleByPayment: ",fromDate)
                 const formatted = fromDate.toISOString().slice(0,19).replace("T"," ");
                 domain = [['payment_date', '>=', fromDate]];
             
@@ -274,13 +267,11 @@ export class OwlAccountingDashboard extends Component {
             }
 
             if (product){
-                console.log("getchChartSale: ",product)
                 domain.push(['pos_order_id.lines.product_id','=',product])
             }
 
         try {
             const data = await this.orm.readGroup("pos.payment", domain, ['payment_method_id.name', "amount:sum"], ['payment_method_id']);
-            console.log('test getPosPayment: ',data)
             this.state.salesByPaymentMethodLabels = (data || []).map(item => 
                 Array.isArray(item.payment_method_id) && item.payment_method_id.length > 1 
                     ? item.payment_method_id[1]  // ✅ Extracts the payment method name
@@ -304,7 +295,6 @@ export class OwlAccountingDashboard extends Component {
             let fromDate = false
             if (period) {
                 const today = new Date();
-                console.log('test today: ',today)
                 fromDate = new Date(today);
     
                 if (period === 1) {
@@ -350,7 +340,6 @@ export class OwlAccountingDashboard extends Component {
             
             this.state.fetchChartTotalSalesPerHourData.sale_amount = data.map(item => item.total_sales)
             this.state.fetchChartTotalSalesPerHourData.sale_hour = data.map(item => item.sale_hour)
-            console.log('fetchChartTotalSalesPerHourData: ',this.state.fetchChartTotalSalesPerHourData)
         } catch (error) {
             console.error('Error fetching getTtotalSalesPerHourPos data:', error);
             return {};
@@ -363,7 +352,6 @@ export class OwlAccountingDashboard extends Component {
             let domainBeforeDay =[]
             if (period) {
                 const today = new Date();
-                console.log('test today: ',today)
                 let fromDate = new Date(today);
     
                 if (period === 1) {
@@ -408,7 +396,6 @@ export class OwlAccountingDashboard extends Component {
                 [['payment_ref','ilike','-out-'],...domainBeforeDay],
                 ['amount:sum'],[],
             );
-            console.log('test fetchCashOutAmount: ',data)
             if (data != false){
                 let amount = Math.abs(data[0].amount);
                 let strAmount = amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -497,15 +484,11 @@ export class OwlAccountingDashboard extends Component {
                 ...domainBeforeDay,  // Add the date filter dynamically
             ]);
    
-            console.log("fetchPosOrderCount domain: ",domain)
     
             this.state.countPosOrder = data;
-            console.log('test fetchPosOrderCount: ',data)
             this.state.strcountPosOrder = data.toLocaleString('en-US', { maximumFractionDigits: 0 });
             this.state.beforeCountPosOrder = dataBeforeDay
             // percentage before day
-            console.log('data order count: ',data)
-            console.log('dataBeforeDay order count: ',dataBeforeDay)
 
             // compute percentage grow from last period of average order
            
@@ -534,7 +517,6 @@ export class OwlAccountingDashboard extends Component {
             let fromDate = false
             if (period) {
                 const today = new Date();
-                console.log('test today: ',today)
                 fromDate = new Date(today);
     
                 if (period === 1) {
@@ -574,7 +556,6 @@ export class OwlAccountingDashboard extends Component {
             const rpc = this.env.services.rpc
             const data = await rpc("/report/get_top_product_pos_sales", domain)
 
-            console.log("getTopProductPosSales test: ",data)
             this.state.getTopProductPosSales = data
 
         }catch(error){
@@ -589,7 +570,6 @@ export class OwlAccountingDashboard extends Component {
             let fromDate = false
             if (period) {
                 const today = new Date();
-                console.log('test today: ',today)
                 fromDate = new Date(today);
     
                 if (period === 1) {
@@ -612,7 +592,6 @@ export class OwlAccountingDashboard extends Component {
             const rpc = this.env.services.rpc
             const data = await rpc("/report/get_product_category_expenses", {end_date:fromDate})
 
-            console.log("getProductCategoryExpenses test: ",data)
             this.state.getProductCategoryExpenses = data
 
         }catch(error){
@@ -628,7 +607,6 @@ export class OwlAccountingDashboard extends Component {
             let domainBeforeDay = domain
             if (period) {
                 const today = new Date();
-                console.log('test today: ',today)
                 let fromDate = new Date(today);
     
                 if (period === 1) {
@@ -678,11 +656,9 @@ export class OwlAccountingDashboard extends Component {
             }
     
 
-            console.log('test datefilter: ',domain)
 
             const data = await this.orm.readGroup("pos.order",domain,["amount_total:sum"],[]);
             const dataBeforeDay = await this.orm.readGroup("pos.order",domainBeforeDay,["amount_total:sum"],[]);
-            console.log('getTotalRevenues test: ',data)
             let amount = data[0].amount_total
             let amountBeforeDay = dataBeforeDay[0].amount_total
 
@@ -692,19 +668,16 @@ export class OwlAccountingDashboard extends Component {
             }
             this.state.totalRevenue = amount
             this.state.beforeTotalRevenue = amountBeforeDay
-            console.log('test amount: ',amount)
             this.state.strTotalRevenue = amount.toLocaleString("en-US",{
                 minimumFractionDigits:2,
                 maximumFractionDigits:2
             })
 
-            console.log("dataBeforeDay: ",dataBeforeDay)
 
             if (!period){
                 this.state.totalRevenuePercGrow = 0
             }else{
                 let percGrow = ((this.state.totalRevenue - this.state.beforeTotalRevenue)/this.state.beforeTotalRevenue)*100
-                console.log("perGrow: ",percGrow)
                 this.state.totalRevenuePercGrow = Math.round(percGrow)
                 // const curentAverOrder = this.getaverageOrder(this.state.totalRevenue,this.state.countPosOrder)
                 // const lastAverOrder = this.getaverageOrder(this.state.beforeTotalRevenue,this.state.beforeCountPosOrder)
@@ -721,8 +694,6 @@ export class OwlAccountingDashboard extends Component {
 
     async getaverageOrder(totalRevenue,countPosOrder,beforeTotalRevenue=0,beforeCountPosOrder=0){
         try{
-            console.log("test totalRevenue: ",totalRevenue);
-            console.log("test countPosOrder: ",countPosOrder);
             const averrev = totalRevenue/countPosOrder
             this.state.averageOrder  = Math.round(averrev)
             const beforeaverrev = beforeTotalRevenue/beforeCountPosOrder
@@ -744,7 +715,6 @@ export class OwlAccountingDashboard extends Component {
             let fromDate = false
             if (period) {
                 const today = new Date();
-                console.log('test today: ',today)
                 fromDate = new Date(today);
     
                 if (period === 1) {
@@ -767,7 +737,6 @@ export class OwlAccountingDashboard extends Component {
                 fromDate = fromDate
                 domain.end_date = fromDate
             }
-            console.log('session: ',session,' pos: ',pos,'responsible: ',responsible,' product: ',product)
             if (session){
                 domain.session = session
             }
@@ -787,7 +756,6 @@ export class OwlAccountingDashboard extends Component {
             const rpc = this.env.services.rpc
             const data = await rpc("/report/get_top_pos_sales_cashier", domain)
 
-            console.log("getPosTopSaleCashier test: ",domain)
             this.state.getPosTopSalesCashier = data
         }catch(error){
             console.error('Error fetching getPosTopSaleCashier data:', error);
@@ -826,7 +794,6 @@ export class OwlAccountingDashboard extends Component {
         try {
             const rpc = this.env.services.rpc
             const data = await rpc("/report/getBankCashJournal", {})
-            console.log('getBankAndCashJournal: ',data)
             this.state.bankCashJournal = data
             
 
@@ -840,7 +807,6 @@ export class OwlAccountingDashboard extends Component {
         try {
             const rpc = this.env.services.rpc
             const data = await rpc("/report/getTopSessionDiscount", {})
-            console.log('getBankAndCashJournal: ',data)
             this.state.topSessionDiscount = data
             
 

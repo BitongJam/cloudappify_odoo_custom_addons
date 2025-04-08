@@ -18,7 +18,6 @@ export class ChartRender extends Component {
 
     // onPatched will be trigger if there is change on DOM so that it will replicate if there is changes on the props
     onPatched(() => {
-      console.log("Props updated! Updating chart...");
       this.updateChart();
     });
   }
@@ -46,7 +45,6 @@ export class ChartRender extends Component {
         `${label} - ${values[index].toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
     );
 
-    console.log('new_label: ', new_label);
 
     this.chartInstance = new Chart(this.chartRef.el, {
       type: this.props.type,

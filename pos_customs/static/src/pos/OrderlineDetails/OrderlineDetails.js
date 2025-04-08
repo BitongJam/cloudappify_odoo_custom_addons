@@ -11,7 +11,6 @@ odoo.define('pos_customs.OrderLineDetailsJarlwing', function (require) {
             const line = this.props.line;
             // Add a new property to the result
             result.productNameWTag = line.get_product().display_name_w_tag;
-            console.log('Return OrderLineDetailsJarlwing: ',result)
 
             return result;
         }

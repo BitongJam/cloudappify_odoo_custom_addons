@@ -7,11 +7,9 @@ const PaymentScreenInherit = (payment_screen) =>
     class extends payment_screen {
         setup() {
             super.setup();
-            console.log("Inherited Payment Screen");
         }
 
         async payment_ref() {
-            console.log("You clicked to add a payment reference.");
             
             const selectedPaymentline = this.currentOrder.selected_paymentline;
             if (!selectedPaymentline) {
@@ -28,7 +26,6 @@ const PaymentScreenInherit = (payment_screen) =>
             if (confirmed) {
                 // Set the transaction_id on the selected payment line
                 selectedPaymentline.transaction_id = transactionId;
-                console.log("Transaction ID updated:", transactionId);
             }
         }
     };
