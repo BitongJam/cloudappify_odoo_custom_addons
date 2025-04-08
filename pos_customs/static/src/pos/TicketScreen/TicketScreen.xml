@@ -31,6 +31,12 @@
                                         <div t-if="env.isMobile">Total</div>
                                         <div><t t-esc="getTotal(order)"></t></div>
                                     </div>
+                                    <div class="col end">
+                                        <div t-if="env.isMobile">Mode of Payment</div>
+                                            <t t-if="order.selected_paymentline">
+                                                <div><t t-esc="order.selected_paymentline.name"/></div>
+                                            </t>
+                                        </div>
                                     <div class="col narrow">
                                         <div t-if="env.isMobile">Status</div>
                                         <div><t t-esc="getStatus(order)"></t></div>
@@ -44,5 +50,10 @@
                               
                             </t>
         </xpath>
+        
+        <xpath expr="//div[hasclass('orders')]/t[2]/div[hasclass('header-row')]/div[6]" position="after">
+            <div class="col end">Mode of Payment</div>
+        </xpath>
+
     </t>
     </templates>
