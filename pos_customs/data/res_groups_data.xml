@@ -5,4 +5,8 @@
         <field name="name">Custom Dashboard Access</field>
     </record>
 
+    <record id="session_override_open_group" model="res.groups">
+        <field name="name">PoS Session Override Open</field>
+    </record>
+
 </odoo>
