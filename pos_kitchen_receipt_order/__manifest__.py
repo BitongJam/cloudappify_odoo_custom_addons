@@ -14,6 +14,11 @@
     'data':[
         'views/pos_config_views.xml'
     ],
+    'assets': {
+        'point_of_sale.assets': [
+            'pos_kitchen_receipt_order/static/src/xml/template_kitchen_receipt.xml',
+        ],
+    },
     'auto_install': False,
     'application': False,
 }

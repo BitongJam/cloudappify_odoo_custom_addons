@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template id="kitchen_receipt_template" xml:space="preserve">
+    <t t-name="pos_kitchen_receipt_order.KitchenReceiptTemplate" owl="1">
+        <div><h2>***KITCHEN ORDER***</h2></div>
+        <div style="font-weight:bold;">PoS Category</div>
+        <div class="responsive-price">
+            <div>Product Name</div>
+            <div class="pos-receipt-right-align">
+                <span>0</span>x
+            </div>
+        </div>
+    </t>
+
+    <t  t-name="OrderReceiptinheritKitchenOrder"  t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
+        <xpath expr="//t/div[hasclass('pos-receipt')]" position="inside">
+            <t t-call="pos_kitchen_receipt_order.KitchenReceiptTemplate"/>
+        </xpath>
+    </t>
+</template>
