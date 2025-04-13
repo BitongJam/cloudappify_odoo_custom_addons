@@ -12,6 +12,7 @@ odoo.define('pos_customs.pos_extension', function (require) {
 
                 // Add custom logic: Add product category to the result
                 const product = this.get_product();
+                result.product_categ_id = product.categ ? product.categ.id : false;
                 result.product_categ = product.categ ? product.categ.name : 'No category'; // Safeguard for undefined categories
                 result.display_name_w_tag = product.display_name_w_tag
                 result.product_display_name = product.name
