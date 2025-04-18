@@ -1,69 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <template id="kitchen_receipt_template" xml:space="preserve">
     <t t-name="pos_kitchen_receipt_order.KitchenReceiptTemplate" owl="1">
-        <br/>
-        <br/>
-        <div style="border: 1px dashed black;"/>
-        <br/>
-        <div style="border: 1px dashed black;"/>
-        <br/>
-        <br/>
-        <div class="pos-receipt-center-align">
-            <h2>***KITCHEN ORDER***</h2>
-        </div>
-        <div>
-            <!-- <div>Product Name</div>
+        <div><h2>***KITCHEN ORDER***</h2></div>
+        <div style="font-weight:bold;">PoS Category</div>
+        <div class="responsive-price">
+            <div>Product Name</div>
             <div class="pos-receipt-right-align">
                 <span>0</span>x
-            </div> -->
-
-            <t t-if="receipt.pos_orderline_kitchen_include">
-                <br/>
-                <t t-set="check_categ" t-value="0"/>
-                <t t-set="total_items" t-value="0"/>
-                <t t-foreach="receipt.pos_orderline_kitchen_include" t-as="line" t-key="line.key">
-                    
-                    <t t-if="check_categ != line.pos_categ[0]">
-                        <div style="font-weight:bold ;"><t t-esc="line.pos_categ[1]"/></div>
-                        <t t-set="check_categ" t-value="line.pos_categ[0]"/>
-                    </t>
-                    
-                    <div class="responsive-price">
-                        <div t-esc="line.product.display_name" />
-
-                        <div class="pos-receipt-right-align">
-                            <span t-esc="line.quantity"/>x   
-                            <t t-set="total_items" t-value="total_items+line.quantity"/>
-                        </div>
-
-                    </div>
-
-                </t>
-
-                <div style="text-align: center;">
-                    ---------------<br/>
-                    <span t-esc="total_items"/> item(s)<br/>
-                    ---------------
-                </div>
-                <div class="pos-receipt-order-data">
-                    <t t-if="receipt.date.localestring">
-                        <div><t t-esc="receipt.date.localestring" /></div>
-                    </t>
-                    <t t-else="">
-                        <div><t t-esc="receipt.date.validation_date" /></div>
-                        <br/>
-                    </t>
-                </div>
-            </t>
-
+            </div>
         </div>
-
-        <div style="border: 1px dashed black;"/>
-        <br/>
-        <div style="border: 1px dashed black;"/>
     </t>
 
-    <t t-name="OrderReceiptinheritKitchenOrder" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
+    <t  t-name="OrderReceiptinheritKitchenOrder"  t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
         <xpath expr="//t/div[hasclass('pos-receipt')]" position="inside">
             <t t-call="pos_kitchen_receipt_order.KitchenReceiptTemplate"/>
         </xpath>
