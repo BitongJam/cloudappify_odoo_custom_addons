@@ -26,13 +26,14 @@ const OrderReceiptInherit = (order_receipt_inherit) => class extends order_recei
                     product: line.product,
                     quantity: line.quantity,
                     pos_categ: line.product.pos_categ_id,
+                    customer_note: line.customerNote,
                     pos_categ_name: pos.db.get_category_by_id(line.product.pos_categ_id?.[0])?.name || false,
                     key: `${line.product.id}_${index}` 
                 };
             })
             .sort((a, b) => a.pos_categ[0] - b.pos_categ[0]);
 
-        // console.log("Kitchen Products:", kitchenproduct);
+        console.log("Kitchen Products:", orderlines);
         return kitchenproduct
     }
 }

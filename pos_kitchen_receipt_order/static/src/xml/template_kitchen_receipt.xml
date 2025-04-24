@@ -2,10 +2,7 @@
 <template id="kitchen_receipt_template" xml:space="preserve">
     <t t-name="pos_kitchen_receipt_order.KitchenReceiptTemplate" owl="1">
         <br/>
-        <br/>
         <div style="border: 1px dotted black;border-width:2px"/>
-        <br/>
-        <br/>
         <div class="pos-receipt-center-align">
             <h2>***<span style="margin-left:10px;margin-right:10px;">KITCHEN ORDER</span>***</h2>
         </div>
@@ -27,7 +24,11 @@
                     </t>
                     
                     <div class="responsive-price">
-                        <div t-esc="line.product.display_name" />
+                        <div>
+                            <div><span t-esc="line.product.display_name"/></div>
+                            <div style="font-style:italic;padding-left: 20px;">-<span t-esc="line.customer_note"/></div>
+                        </div>
+                        
 
                         <div class="pos-receipt-right-align">
                             <span t-esc="line.quantity"/>x   
