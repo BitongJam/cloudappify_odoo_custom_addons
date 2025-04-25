@@ -16,7 +16,7 @@ const OrderReceiptInherit = (order_receipt_inherit) => class extends order_recei
         const allowedCategoryIds = reciptEnv.order?.pos?.config?.pos_categ_inclue_kitchen_order_receipt_ids || [];
         const pos = this.env.pos;
         const orderlines = reciptEnv.orderlines || [];  // 🛡️ Fallback to 
-        const kitchenproduct = orderlines
+        let kitchenproduct = orderlines
             .filter((line) => {
                 const categoryId = line.product?.pos_categ_id?.[0];
                 return allowedCategoryIds.includes(categoryId);
@@ -32,8 +32,11 @@ const OrderReceiptInherit = (order_receipt_inherit) => class extends order_recei
                 };
             })
             .sort((a, b) => a.pos_categ[0] - b.pos_categ[0]);
-
-        console.log("Kitchen Products:", orderlines);
+        
+        if (kitchenproduct.length == 0){
+            kitchenproduct = false;
+        }
+        console.log("Kitchen Products:", kitchenproduct);
         return kitchenproduct
     }
 }
