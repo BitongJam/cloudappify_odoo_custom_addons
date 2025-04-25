@@ -45,16 +45,16 @@
                     ---------------
                 </div>
                 <div class="pos-receipt-order-data">
+                    <br/>
+                    <br/>
                     <t t-if="receipt.date.localestring">
                         <div><t t-esc="receipt.date.localestring" /></div>
                     </t>
                     <t t-else="">
-                        <br/>
-                        <br/>
                         <div><t t-esc="receipt.date.validation_date" /></div>
-                        <br/>
-                        <br/>
                     </t>
+                    <br/>
+                    <br/>
                 </div>
             </t>
 
