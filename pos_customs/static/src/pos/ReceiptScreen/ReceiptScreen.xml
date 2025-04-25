@@ -11,9 +11,14 @@
         </xpath> -->
         <xpath expr="." position="replace">
             <t t-name="OrderLinesReceipt" owl="1">
+                <t t-set="check_pos_categ" t-value="0"/>
                 <t t-foreach="receipt.orderlines" t-as="line" t-key="line.id">
                     <!-- <t t-if="isSimple(line)"> -->
-                        <div style="font-weight:bold;"><t t-esc="line.product_categ"/></div>
+                        <t t-if="check_pos_categ != line.product_categ_id">
+                            <div style="font-weight:bold;"><t t-esc="line.product_categ"/></div>
+                            <t t-set="check_pos_categ" t-value="line.product_categ_id"/>
+                        </t>
+                        
                         <div class="responsive-price">
                             <t t-if="line.display_name_w_tag == 'no_tag'">
                                 <div t-esc="line.product_name" />
