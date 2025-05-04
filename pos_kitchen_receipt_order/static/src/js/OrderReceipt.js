@@ -36,7 +36,7 @@ const OrderReceiptInherit = (order_receipt_inherit) => class extends order_recei
         if (kitchenproduct.length == 0){
             kitchenproduct = false;
         }
-        console.log("Kitchen Products:", kitchenproduct);
+        // console.log("Kitchen Products:", kitchenproduct);
         return kitchenproduct
     }
 }
