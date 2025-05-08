@@ -113,11 +113,11 @@ class ReportSaleDetails(models.AbstractModel):
             'payments': payments,
             'company_name': self.env.company.name,
             'taxes': list(taxes.values()),
-            'starting_balance':session.cash_register_balance_start if session else 0,
-            'ending_balance':session.cash_register_balance_end_real if session else 0,
-            'expected_ending_balance':session.cash_register_balance_end if session else 0,
-            'cash_register_diff': session.cash_register_difference if session else 0,
-            'cash_register_trans':self._get_cash_register_transaction(session.id) if session else False,
+            'starting_balance':  sum(session.mapped('cash_register_balance_start')) if session else 0,
+            'ending_balance':sum(session.mapped('cash_register_balance_end_real')) if session else 0,
+            'expected_ending_balance':sum(session.mapped('cash_register_balance_end')) if session else 0,
+            'cash_register_diff': sum(session.mapped('cash_register_difference')) if session else 0,
+            'cash_register_trans':self._get_cash_register_transaction(session) if session else False,
             'products': sorted([{
                 'product_id': product.id,
                 'product_name': product.name,
@@ -130,9 +130,9 @@ class ReportSaleDetails(models.AbstractModel):
             } for (product, price_unit, discount), qty in products_sold.items()], key=lambda l: l['product_name'])
         }
 
-    def _get_cash_register_transaction(self,session_id):
+    def _get_cash_register_transaction(self,session_ids):
         res = []
-        cash_register = self.env['account.bank.statement.line'].search([('pos_session_id','=',session_id),('payment_ref','!=','Cash difference observed during the counting (Loss) - opening')],order='name asc')
+        cash_register = self.env['account.bank.statement.line'].search([('pos_session_id','in',(session_ids.ids)),('payment_ref','!=','Cash difference observed during the counting (Loss) - opening')],order='name asc')
 
         for cr in cash_register:
             res.append({
