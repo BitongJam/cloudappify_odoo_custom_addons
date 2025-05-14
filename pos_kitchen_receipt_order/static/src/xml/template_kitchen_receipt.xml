@@ -2,6 +2,10 @@
 <template id="kitchen_receipt_template" xml:space="preserve">
     <t t-name="pos_kitchen_receipt_order.KitchenReceiptTemplate" owl="1">
         <br/>
+        <br />
+        <br />
+        <br />
+        <br />
         <div style="border: 1px dotted black;border-width:2px"/>
         <div class="pos-receipt-center-align">
             <h2>***<span style="margin-left:10px;margin-right:10px;">KITCHEN ORDER</span>***</h2>
@@ -19,14 +23,14 @@
                 <t t-foreach="receipt.pos_orderline_kitchen_include" t-as="line" t-key="line.key">
                     
                     <t t-if="check_categ != line.pos_categ[0]">
-                        <div style="font-weight:bold ;"><t t-esc="line.pos_categ_name"/></div>
+                        <div style="font-weight:bold ;font-size:16px;"><t t-esc="line.pos_categ_name"/></div>
                         <t t-set="check_categ" t-value="line.pos_categ[0]"/>
                     </t>
                     
                     <div class="responsive-price">
                         <div>
                             <div><span t-esc="line.product.display_name"/></div>
-                            <div style="font-style:italic;padding-left: 20px;">-<span t-esc="line.customer_note"/></div>
+                            <div style="font-style:italic;padding-left: 20px;;font-size:16px;">-<span t-esc="line.customer_note"/></div>
                         </div>
                         
 
