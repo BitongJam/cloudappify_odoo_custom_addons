@@ -23,20 +23,22 @@
                 <t t-foreach="receipt.pos_orderline_kitchen_include" t-as="line" t-key="line.key">
                     
                     <t t-if="check_categ != line.pos_categ[0]">
-                        <div style="font-weight:bold ;font-size:16px;"><t t-esc="line.pos_categ_name"/></div>
+                        <h2 style="margin:0;"><div><t t-esc="line.pos_categ_name"/></div></h2>
                         <t t-set="check_categ" t-value="line.pos_categ[0]"/>
                     </t>
                     
-                    <div class="responsive-price">
+                    <div class="responsive-price" style="margin:0;padding:0;">
                         <div>
-                            <div><span t-esc="line.product.display_name"/></div>
-                            <div style="font-style:italic;padding-left: 20px;;font-size:16px;">-<span t-esc="line.customer_note"/></div>
+                            <h2  style="margin:0;font-weight:normal;"><div><span t-esc="line.product.display_name"/></div></h2>
+                            <h2  style="margin:0;"><div style="font-style:italic; padding-left: 20px;;font-size:16px;" t-if="line.customer_note">-<span t-esc="line.customer_note"/></div></h2>
                         </div>
                         
 
                         <div class="pos-receipt-right-align">
-                            <span t-esc="line.quantity"/>x   
-                            <t t-set="total_items" t-value="total_items+line.quantity"/>
+                            <h2  style="margin:0;font-weight:normal;">
+                                <span t-esc="line.quantity" />x <t t-set="total_items" t-value="total_items+line.quantity"/>
+                            </h2>
+                            
                         </div>
 
                     </div>
