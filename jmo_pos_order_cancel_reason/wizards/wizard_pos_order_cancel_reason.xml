@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wiz_pos_order_cancel_reason_view_form" model="ir.ui.view">
+        <field name="name">wiz.pos.order.cancel.reason.view.form</field>
+        <field name="model">wiz.pos.order.cancel.reason</field>
+        <field name="arch" type="xml">
+            <form string="Reason For PoS Order Cancel">
+                <sheet>
+                    <group>
+                        <!-- <h2>Reason For PoS Order Cancel</h2> -->
+                        <field name="pos_order_id" readonly="1"/>
+                        <field name="reason" />
+                    </group>
+                </sheet>
+                <footer>
+                    <button string='Cancel Order' name="action_cancel_order" type="object"
+                        class="btn-primary" data-hotkey="q" />
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="wizard_pos_order_cancel_action" model="ir.actions.act_window">
+        <field name="name">PoS Order Cancellation Reason</field>
+        <field name="res_model">wiz.pos.order.cancel.reason</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

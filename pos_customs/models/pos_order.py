@@ -5,20 +5,20 @@ from odoo import _, api, fields, models
 class PosOrder(models.Model):
     _inherit = 'pos.order'
 
-    def action_pos_order_cancel(self):
-        pick = self.env['stock.picking'].search([('pos_order_id','=',self.id)])
+    # def action_pos_order_cancel(self):
+    #     pick = self.env['stock.picking'].search([('pos_order_id','=',self.id)])
 
-        if pick:
-            for p in pick:
-                #cancel picking
-                p.action_cancel()
+    #     if pick:
+    #         for p in pick:
+    #             #cancel picking
+    #             p.action_cancel()
 
-        for pay_line in self.payment_ids:
-            #remove payments
-            pay_line.unlink()
+    #     for pay_line in self.payment_ids:
+    #         #remove payments
+    #         pay_line.unlink()
         
-        res = super(PosOrder,self).action_pos_order_cancel()
-        return res
+    #     res = super(PosOrder,self).action_pos_order_cancel()
+    #     return res
     
     # Computed field for total discount
     total_discount = fields.Float(string='Total Discount', compute='_compute_total_discount', store=True,readonly=True)

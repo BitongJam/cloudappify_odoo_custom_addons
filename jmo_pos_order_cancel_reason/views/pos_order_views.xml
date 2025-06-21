@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="pos_order_view_form_inherit_jmo_pors_order_cancel_reason" model="ir.ui.view">
+        <field name="name">pos.order.view.form.jmo_pors_order_cancel_reason</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button string="Cancel" states="paid,done,invoiced" name="action_post_order_cancel_reasons"
+                    type="object" class="oe_highlight" />
+            </xpath>
+            <xpath expr="//sheet" position="after">
+                <!-- Chatter -->
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="message_ids"/>
+                    </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
