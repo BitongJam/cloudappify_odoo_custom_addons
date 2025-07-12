@@ -21,6 +21,9 @@
     'assets': {
         'web.assets_backend': [ 
             'odoo_rebrand/web/static/src/webclient/webclient.js',
-        ]
+        ],
+        'web._assets_primary_variables': [
+           ('prepend','odoo_rebrand/static/src/scss/primary_variables.scss'),
+        ],
     }
 }
