@@ -2,6 +2,12 @@
 
 This repository contains custom Odoo addons designed to extend the core functionality of Odoo for specific business needs.
 
+## Python Verssion
+Python3.8 and higher
+
+but recommended on Python3.8
+- i use Python3.8.10
+
 ## 📂 Installation
 
 To install these addons, follow the steps below:
