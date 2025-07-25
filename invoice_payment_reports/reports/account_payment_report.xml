@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<template id="check_voucher_report">
+		<t t-call="web.html_container">`
+			<t t-foreach="docs" t-as="o">
+				<t t-call="web.external_layout">
+					<div class="page">
+						<div style="margin-top:10px;">
+							<div class="col-xs-9 ">
+								<h4 style="margin-left:1px;">Date: <span t-field="o.date"/>
+								<br/>
+							</h4>
+							<h4 style="margin-left:1px;">Payee: 
+								<span t-if="o.payment_type=='outbound'" t-field="o.partner_id.name"/>
+								<span t-if="o.payment_type=='inbound'" t-field="o.company_id.partner_id.name"/>
+							<br/>
+							<span style="margin-left:10%;" t-field="o.partner_id.street"/>
+,
+							<span t-field="o.partner_id.city"/>
+							<span t-field="o.partner_id.state_id.name"/>
+							<br/>
+							<span style="margin-left:10%;" t-field="o.partner_id.country_id.name"/>
+							<br/>
+						</h4>
+						<h4>Amount in Figures : <span t-field="o.amount"/>
+						</h4>
+						<h4>Amount in Words : *** <span t-field="o.amount_words"/> ***</h4>
+						<h4>Check# :<span t-field="o.cheque_reference"/>
+						</h4>
+						<h4>Remarks :<span t-field="o.ref"/>
+						</h4>
+						<br/>
+					</div>
+					<div class="row">
+						<div class="col-12">
+							<div>
+								<h4>CHECK VOUCHER</h4>
+
+							</div>
+							<div>
+								<h5>
+									<span t-field="o.name"/>
+								</h5>
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+				<h4>Journal Entries :</h4>
+				<table class="table">
+					<thead>
+						<th>ACCOUNT</th>
+						<th>PARTICULARS</th>
+						<th>DEBIT</th>
+						<th>CREDIT</th>
+					</thead>
+					<tbody>
+						<t t-foreach="o.move_id.line_ids" t-as="line">
+							<tr>
+								<td>
+									<span>
+										<t t-esc="line.account_id.code + line.account_id.name"/>
+									</span>
+								</td>
+								<td>
+									<span>
+										<t t-esc="line.name"/>
+									</span>
+								</td>
+								<td>
+									<span>
+										<t t-esc="line.debit"/>
+									</span>
+								</td>
+								<td>
+									<span>
+										<t t-esc="line.credit"/>
+									</span>
+								</td>
+							</tr>
+						</t>
+
+						<tr>
+							<td>TOTALS</td>
+							<td/>
+							<td>
+								<t t-esc="payment_dict['total_debit']"/>
+							</td>
+							<td>
+								<t t-esc="payment_dict['total_credit']"/>
+							</td>
+						</tr>
+						<hr/>
+					</tbody>
+				</table>
+			</div>
+		</t>
+	</t>
+</t>
+</template>
+
+</odoo>

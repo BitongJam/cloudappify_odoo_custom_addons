@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report
+        id="account_payment_check_voucher_report"
+        model="account.payment"
+        string="Check Voucher Report"
+        report_type="qweb-pdf"
+        name="invoice_payment_reports.check_voucher_report"
+        file="invoice_payment_reports.check_voucher_report"
+        menu="True"
+    />
+
+    <report
+        id="account_move_ap_voucher_report"
+        model="account.move"
+        string="A/P Voucher Report"
+        report_type="qweb-pdf"
+        name="invoice_payment_reports.ap_voucher"
+        file="invoice_payment_reports.ap_voucher"
+        menu="True"
+    />
+        
+
+</odoo>

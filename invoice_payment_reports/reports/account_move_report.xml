@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="ap_voucher" name="ap_voucher">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- DOCUMENT HEADERS -->
+                        <div style="position:absolute;top:0mm;right:2mm;padding-bottom:0;">
+                            <p class="text-center" style="font-size:200%;padding-bottom:0;font-weight:bold;font-family:arial">A/P
+                                VOUCHER</p>
+                            <p class="text-center" style="font-size:150%;padding-bottom:0;font-weight:bold;font-family:arial">
+                                <span t-field="o.name"/>
+                            </p>
+                        </div>
+
+                        <!-- JOURNAL DATE -->
+                        <p style="position:absolute;top:0mm;left:5mm;font-size:18px;width:10cm;padding-bottom:0">APV
+                            DATE: <span t-field="o.date"/>
+                        </p>
+
+                        <!-- DUE DATE -->
+                        <!-- Inserted by ETM, 20-May-2022 -->
+                        <p style="position:absolute;top:8mm;left:5mm;font-size:18px;;width:10cm;padding-bottom:0">DUE
+                            DATE: <span t-field="o.invoice_date_due"/>
+                        </p>
+
+
+                        <!-- PARTNER ID -->
+                        <p style="position:absolute;top:14mm;left:5mm;width:10cm;font-size:18px;padding-bottom:10px">
+                            PAYEE/PARTNER: <span t-field="o.partner_id"/>
+                        </p>
+
+
+                        <!-- REFERENCE -->
+                        <p style="position:absolute;top:30mm;left:5mm;font-size:18px;width:30cm;padding-bottom:0">
+                            REFERENCE: <span t-field="o.ref"/>
+                        </p>
+
+
+                        <!-- JOURNAL ENTRIES TABLE -->
+                        <div style="position:absolute;top:40mm;left:5mm;font-size:14px;padding-bottom:0px;font-family:arial">
+                            <p>JOURNAL ENTRIES:</p>
+                        </div>
+
+                        <div style="position:absolute;top:45mm;left:5mm;font-size:13px;width:30cm;padding-bottom:0">
+                            <table class="table table-condensed table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Label</th>
+                                        <th class="text-center">Account</th>
+                                        <!--  <th groups="analytic.group_analytic_accounting">
+                                                Department
+                                            </th>
+                                            <th>Partner</th> -->
+
+                                        <th class="text-center">Debit</th>
+                                        <th class="text-center">Credit</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="invoice_tbody">
+                                    <t t-set="credits" t-value="0"/>
+                                    <t t-set="debits" t-value="0"/>
+                                    <tr t-foreach="o.line_ids" t-as="l">
+
+                                        <td>
+                                            <span t-field="l.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="l.account_id"/>
+                                        </td>
+                                        <!--  <td groups="analytic.group_analytic_accounting">
+                                                <span t-field="l.analytic_account_id"/>
+                                            </td>
+                                            <td><span t-field="l.partner_id"/></td> -->
+
+                                        <td class="text-right">
+                                            <span t-field="l.debit"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="l.credit"/>
+                                        </td>
+                                        <t t-set="credits" t-value="credits+l.credit"/>
+                                        <t t-set="debits" t-value="debits+l.debit"/>
+                                    </tr>
+                                    <tr/>
+                                    <tr class="border-black">
+                                        <td colspan="2">TOTAL</td>
+                                        <!-- <td groups="analytic.group_analytic_accounting"/> -->
+
+                                        <td class="text-right">
+                                            <span t-esc="'{:,.2f}'.format(credits)"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="'{:,.2f}'.format(debits)"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p t-field="o.narration"/>
+                        </div>
+                        <div class="footer">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <td class="text-center">
+                                            <p style="font-size:12px">Prepared by:</p>
+                                        </td>
+
+                                        <td class="text-center">
+                                            <p style="font-size:12px">Checked/Noted by:</p>
+                                        </td>
+
+                                        <td class="text-center">
+                                            <p style="font-size:12px">Approved by:</p>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th class="text-center" style="font-size:12px">
+                                            <strong>
+                                                <span t-field="o.write_uid"/>
+                                            </strong>
+                                        </th>
+                                        <th class="text-center" style="font-size:12px">
+                                            <strong/>
+                                        </th>
+                                        <th class="text-center" style="font-size:12px">
+                                            <strong/>
+                                        </th>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
