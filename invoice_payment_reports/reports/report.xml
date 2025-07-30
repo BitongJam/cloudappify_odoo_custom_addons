@@ -12,9 +12,19 @@
     />
 
     <report
+        id="account_payment_cash_voucher_report"
+        model="account.payment"
+        string="Cash Voucher"
+        report_type="qweb-pdf"
+        name="invoice_payment_reports.cash_voucher"
+        file="invoice_payment_reports.cash_voucher"
+        menu="True"
+    />
+
+    <report
         id="account_move_ap_voucher_report"
         model="account.move"
-        string="A/P Voucher Report"
+        string="A/P Voucher"
         report_type="qweb-pdf"
         name="invoice_payment_reports.ap_voucher"
         file="invoice_payment_reports.ap_voucher"
