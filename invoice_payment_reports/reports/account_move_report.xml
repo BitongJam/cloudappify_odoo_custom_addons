@@ -7,44 +7,97 @@
                 <t t-call="web.external_layout">
                     <div class="page">
                         <!-- DOCUMENT HEADERS -->
-                        <div style="position:absolute;top:0mm;right:2mm;padding-bottom:0;">
+                        <!-- <div style="position:absolute;top:0mm;right:2mm;padding-bottom:0;">
                             <p class="text-center" style="font-size:200%;padding-bottom:0;font-weight:bold;font-family:arial">A/P
                                 VOUCHER</p>
                             <p class="text-center" style="font-size:150%;padding-bottom:0;font-weight:bold;font-family:arial">
                                 <span t-field="o.name"/>
                             </p>
+                        </div> -->
+
+                        <div class="d-flex flex-row  mb-3">
+                            <div class="p-1">
+                                <h4 class="text-center fw-bold">A/P
+                                VOUCHER</h4>
+                            </div>
+                            <div class="p-1">
+                                <h5 class="text-center fw-bold" t-field="o.name"/>
+                            </div>
+
                         </div>
 
-                        <!-- JOURNAL DATE -->
-                        <p style="position:absolute;top:0mm;left:5mm;font-size:18px;width:10cm;padding-bottom:0">APV
-                            DATE: <span t-field="o.date"/>
-                        </p>
-
-                        <!-- DUE DATE -->
-                        <!-- Inserted by ETM, 20-May-2022 -->
-                        <p style="position:absolute;top:8mm;left:5mm;font-size:18px;;width:10cm;padding-bottom:0">DUE
-                            DATE: <span t-field="o.invoice_date_due"/>
-                        </p>
+                        <div>
 
 
-                        <!-- PARTNER ID -->
-                        <p style="position:absolute;top:14mm;left:5mm;width:10cm;font-size:18px;padding-bottom:10px">
-                            PAYEE/PARTNER: <span t-field="o.partner_id"/>
-                        </p>
+                            <div class="row">
+                                <div class="col-3">
+                                    <!-- JOURNAL DATE -->
+                                    <div >
+                                        <p class="m-0">APV DATE:</p>
+                                    </div>
+                                    <div >
+                                        <span t-field="o.date"/>
+                                    </div>
 
 
-                        <!-- REFERENCE -->
-                        <p style="position:absolute;top:30mm;left:5mm;font-size:18px;width:30cm;padding-bottom:0">
-                            REFERENCE: <span t-field="o.ref"/>
-                        </p>
+                                </div>
+
+                                <div class="col-3">
+                                    <!-- DUE DATE -->
+                                    <!-- Inserted by ETM, 20-May-2022 -->
+                                    <div>
+                                        <p class="m-0">DUE
+                            DATE: 
+                                        </p>
+                                    </div>
+                                    <div >
+                                        <span t-field="o.invoice_date_due"/>
+                                    </div>
+
+                                </div>
 
 
-                        <!-- JOURNAL ENTRIES TABLE -->
-                        <div style="position:absolute;top:40mm;left:5mm;font-size:14px;padding-bottom:0px;font-family:arial">
-                            <p>JOURNAL ENTRIES:</p>
+                                <div class="col-3">
+                                    <!-- JOURNAL -->
+                                    <!-- PARTNER ID -->
+                                    <div >
+                                        <p class="m-0">
+                            PAYEE/PARTNER: 
+                                        </p>
+                                    </div>
+
+                                    <div >
+                                        <span t-field="o.partner_id"/>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-3">
+                                    <!-- REFERENCE -->
+                                    <div >
+                                        <p class="m-0">
+                            REFERENCE: 
+                                        </p>
+                                    </div>
+                                    <div  >
+                                        <span t-field="o.ref"/>
+
+                                    </div>
+                                </div>
+
+
+
+
+
+                            </div>
+                            <!-- JOURNAL ENTRIES TABLE -->
+
                         </div>
 
-                        <div style="position:absolute;top:45mm;left:5mm;font-size:13px;width:30cm;padding-bottom:0">
+                        <div class="mt-3">
+                            <p class="m-0">JOURNAL ENTRIES:</p>
+                        </div>
+                        <div>
                             <table class="table table-condensed table-striped">
                                 <thead>
                                     <tr>
