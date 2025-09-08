@@ -136,24 +136,46 @@ class AccountMove(models.Model):
 
         else:
             return super(AccountMove, self)._compute_suitable_journal_ids()
+    # Original code
+    # @api.constrains('branch_id', 'line_ids')
+    # def _check_move_line_branch_id(self):
+    #     """methode to check branch of accounts and entry"""
+    #     for move in self:
+    #         branches = move.line_ids.account_id.branch_id
+    #         if branches and branches != move.branch_id:
+    #             bad_accounts = move.line_ids.account_id.filtered(
+    #                 lambda a: a.branch_id and a.branch_id != move.branch_id)
+    #             raise ValidationError(_(
+    #                 "Your items contains accounts from %(line_branch)s branch"
+    #                 " whereas your entry belongs to %(move_branch)s branch. "
+    #                 "\n Please change the branch of your entry or remove the "
+    #                 "accounts from other branches (%(bad_accounts)s).",
+    #                 line_branch=', '.join(branches.mapped('name')),
+    #                 move_branch=move.branch_id.name,
+    #                 bad_accounts=', '.join(bad_accounts.mapped('name')),
+    #             ))
 
+    # Updated to allow to proceed if branches are false even its not same compared branch
     @api.constrains('branch_id', 'line_ids')
     def _check_move_line_branch_id(self):
-        """methode to check branch of accounts and entry"""
+        """Check branch of accounts and entry, allow if compare branch is False"""
         for move in self:
             branches = move.line_ids.account_id.branch_id
-            if branches and branches != move.branch_id:
+            # Only check when both move.branch_id and line branch exist
+            if move.branch_id and branches and branches != move.branch_id:
                 bad_accounts = move.line_ids.account_id.filtered(
-                    lambda a: a.branch_id and a.branch_id != move.branch_id)
+                    lambda a: a.branch_id and a.branch_id != move.branch_id
+                )
                 raise ValidationError(_(
-                    "Your items contains accounts from %(line_branch)s branch"
-                    " whereas your entry belongs to %(move_branch)s branch. "
-                    "\n Please change the branch of your entry or remove the "
+                    "Your items contain accounts from %(line_branch)s branch "
+                    "whereas your entry belongs to %(move_branch)s branch. "
+                    "\nPlease change the branch of your entry or remove the "
                     "accounts from other branches (%(bad_accounts)s).",
                     line_branch=', '.join(branches.mapped('name')),
                     move_branch=move.branch_id.name,
                     bad_accounts=', '.join(bad_accounts.mapped('name')),
                 ))
+
 
 
 class AccountMoveLine(models.Model):
