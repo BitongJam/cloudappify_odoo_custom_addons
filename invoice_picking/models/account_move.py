@@ -14,11 +14,12 @@ class AccountMove(models.Model):
 
     @api.constrains('state')
     def _check_invoice_with_picking_canceling(self):
-        if self.state in ('cancel','draft'):
-            if self.validate_picking:
-                done_pick = self.env['stock.picking'].search_count([('origin','=',self.name),('state','!=','cancel')])
-                if done_pick > 0:
-                    raise UserError("You cannot Cancel or Set to Draft This invoice. Cancel first its Delivery or set to draft.")
+        for rec in self:
+            if rec.state in ('cancel','draft'):
+                if rec.validate_picking:
+                    done_pick = rec.env['stock.picking'].search_count([('origin','=',rec.name),('state','!=','cancel')])
+                    if done_pick > 0:
+                        raise UserError("You cannot Cancel or Set to Draft This invoice. Cancel first its Delivery or set to draft.")
     
     def action_post(self):
         res = super(AccountMove, self).action_post()
