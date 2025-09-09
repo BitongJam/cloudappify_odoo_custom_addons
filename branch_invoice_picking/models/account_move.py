@@ -1,31 +1,8 @@
-# -*- coding: utf-8 -*-
-
-from odoo import models, fields, api, _
+from odoo import fields, models, api
 from odoo.exceptions import UserError
-
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
-
-    validate_picking = fields.Boolean(default=False, string="With Picking")
-    warehouse_id = fields.Many2one(comodel_name='stock.warehouse', string="Warehouse")
-    auto_post_picking = fields.Boolean(string="Auto Post Picking")
-
-
-    @api.constrains('state')
-    def _check_invoice_with_picking_canceling(self):
-        for rec in self:
-            if rec.state in ('cancel','draft'):
-                if rec.validate_picking:
-                    done_pick = rec.env['stock.picking'].search_count([('origin','=',rec.name),('state','!=','cancel')])
-                    if done_pick > 0:
-                        raise UserError("You cannot Cancel or Set to Draft This invoice. Cancel first its Delivery or set to draft.")
-    
-    def action_post(self):
-        res = super(AccountMove, self).action_post()
-        for rec in self:
-            rec._create_picking()   # call per invoice, not batch
-        return res
 
     def _create_picking(self):
         self.ensure_one()  # ✅ safety: method always works on 1 invoice
@@ -80,6 +57,7 @@ class AccountMove(models.Model):
             'move_type': 'one',
             'invoice_id': self.id,
             "show_validate": True,
+            "branch_id": self.branch_id.id or False
         }
 
         pick = picking_obj.create(picking_vals)
@@ -95,41 +73,3 @@ class AccountMove(models.Model):
                 move_line.qty_done = move_line.move_id.product_uom_qty
             pick.button_validate()
 
-    def get_operation_type(self):
-        for rec in self:
-            operation_type = rec.env['stock.picking.type']
-            if rec.move_type in ['out_invoice','out_receipt']:
-                operation_type = operation_type.search([('warehouse_id','=', rec.warehouse_id.id),('return_picking_type_id','!=',False),
-                                                        ('code', '=', 'outgoing')])
-            elif rec.move_type in ['in_invoice', 'in_receipt']:
-                operation_type = operation_type.search([('warehouse_id','=', rec.warehouse_id.id),('return_picking_type_id','!=',False),
-                                                        ('code', '=', 'incoming')])
-        return operation_type
-    
-        
-    def create_log_message(self, message):
-        # Create an internal log message tied to the record
-        self.env['mail.message'].create({
-            'model': 'account.move',  # Model related to the log
-            'res_id': self.id,  # The record to which the log belongs
-            'body': message,  # The log message
-            'message_type': 'notification',  # Message type (can also be 'email')
-            'subject': 'Log Message',
-        })
-    
-    def button_draft(self):
-        res = super(AccountMove,self).button_draft()
-        if self.validate_picking:
-            picking = self.env['stock.picking'].search([('origin','=',self.name)])
-            if len(picking) > 0:
-                picking.unlink()
-
-        return res
-    
-
-
-class AccountMoveLine(models.Model):
-    _inherit = 'account.move.line'
-
-    tracking = fields.Selection(related='product_id.tracking',help="Related field form product tracking field content")
-    
