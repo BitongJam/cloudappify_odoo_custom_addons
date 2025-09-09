@@ -15,6 +15,15 @@ class PosSession(models.Model):
     )
     
     total_discount = fields.Float(help="Computed of total discount from orders.",compute="_compute_total_discount",store=True,readonly=True)
+
+    # overrided from point_of_sale module to add domain for payment methods loading on pos
+    def _get_pos_ui_pos_payment_method(self, params):
+        """Only load payment methods linked to the current POS config"""
+        pos_config = self.config_id  # each session is tied to a config
+        payment_methods = pos_config.payment_method_ids
+
+        fields = params['search_params'].get('fields', [])
+        return payment_methods.read(fields)
     
     def open_frontend_cb(self):
         if self.user_id:
