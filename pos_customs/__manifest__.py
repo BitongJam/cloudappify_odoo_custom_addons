@@ -17,7 +17,6 @@
         'data/res_groups_data.xml',
         'security/ir.model.access.csv',
         'views/pos_order.xml',
-        'views/product_pricelist_view.xml',
         'views/stock.xml',
         'views/pos_session.xml',
         'views/pos_payment.xml',

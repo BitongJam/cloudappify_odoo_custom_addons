@@ -6,8 +6,7 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     display_name_w_tag = fields.Char(compute="_compute_display_name_w_tag")
-
-    list_price = fields.Float(tracking=True)
+    
 
     def _compute_display_name_w_tag(self):
         for rec in self:
