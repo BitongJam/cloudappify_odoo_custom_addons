@@ -18,6 +18,7 @@ class ProductTemplate(models.Model):
     sale_ok = fields.Boolean(tracking=True)
     purchase_ok = fields.Boolean(tracking=True)
     taxes_id = fields.Many2many(tracking=True)
+    categ_id = fields.Many2one(tracking=True)
 
     # This will allow many2many or one2many field will be track inside the model
     def _mail_track(self, tracked_fields, initial_values):
