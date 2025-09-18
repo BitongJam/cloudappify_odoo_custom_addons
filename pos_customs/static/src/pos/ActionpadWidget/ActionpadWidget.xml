@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
-    <t t-name="ActionpadWidgetInheritPosCustoms" t-inherit="point_of_sale.ActionpadWidget" t-inherit-mode="extension" owl="1">
+    <!-- <t t-name="ActionpadWidgetInheritPosCustoms" t-inherit="point_of_sale.ActionpadWidget" t-inherit-mode="extension" owl="1">
         <xpath expr="//div[hasclass('actionpad')]/button[2]" position="replace">
             <button class="button pay validation"  t-on-click="onclick">
                 <div class="pay-circle" t-att-class="{ 'highlight': props.isActionButtonHighlighted }">
@@ -9,5 +9,5 @@
                 <t t-esc="props.actionName" />
             </button>
         </xpath>
-    </t>
+    </t> -->
 </templates>

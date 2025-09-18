@@ -26,4 +26,4 @@ const ActionpadWidgetInherit = (ActionpadWidget) => class extends ActionpadWidge
 }
 };
 
-Registries.Component.extend(ActionpadWidget, ActionpadWidgetInherit);
+// Registries.Component.extend(ActionpadWidget, ActionpadWidgetInherit);
