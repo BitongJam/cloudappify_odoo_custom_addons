@@ -18,7 +18,12 @@
      <field name="price_unit" position="after">
             <field name="discount_amount"/>
         </field>
+       <xpath expr="//page[@name='products']/field[@name='lines']/tree/field[@name='refunded_qty']" position="after">
+            <field name="note" string="Internal Note added by the Cashier"/>
+        </xpath>
     </field>
+
+    
 </record>
     
 
