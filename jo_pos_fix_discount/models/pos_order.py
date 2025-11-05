@@ -14,7 +14,7 @@ class PosOrder(models.Model):
 class PosOrderLine(models.Model):
     _inherit = 'pos.order.line'
     
-    discountFix = fields.Float()
+    discountFix = fields.Float(string="Fixed Discount")
 
     @api.onchange('discountFix')
     def _onchange_fix_discount(self):
