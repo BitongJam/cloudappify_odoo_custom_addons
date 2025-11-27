@@ -91,32 +91,56 @@ class PosOrder(models.Model):
                 return super().create(vals_list)
 
     def get_details(self, shop_id, order=None):
-        """For getting the kitchen orders for the cook"""
-        dic = order
+        """Optimized: minimal queries, correct domains, faster results."""
 
+        # --- 1. Process incoming order ---
         if order:
-            orders = self.search(
-                [("pos_reference", "=", order[0]['pos_reference'])])
-            if not orders:
-                self.create(dic)
-            else:
-                orders.lines = False
-                orders.lines = dic[0]['lines']
-        kitchen_screen = self.env["kitchen.screen"].sudo().search(
-            [("pos_config_id", "=", shop_id)])
+            pos_ref = order[0].get("pos_reference")
+            order_vals = order[0]
+            lines_vals = order_vals.get("lines", [])
 
-        pos_orders = self.env["pos.order.line"].search(
-            ["&", ("is_cooking", "=", True),
-             ("product_id.pos_categ_id", "in",
-              [rec.id for rec in kitchen_screen.pos_categ_ids])])
-        pos = self.env["pos.order"].search(
-            [("lines", "in", [rec.id for rec in pos_orders])],
-            order="date_order")
-        pos_lines = pos.lines.search(
-            [("product_id.pos_categ_id", "in",
-              [rec.id for rec in kitchen_screen.pos_categ_ids])])
-        values = {"orders": pos.read(), "order_lines": pos_lines.read()}
-        return values
+            existing = self.search([("pos_reference", "=", pos_ref)], limit=1)
+
+            if existing:
+                # replace lines using ORM commands (faster, correct)
+                existing.write({"lines": [(5, 0, 0)] + lines_vals})
+            else:
+                self.create(order)
+
+        # --- 2. Load kitchen screen ---
+        kitchen_screen = (
+            self.env["kitchen.screen"]
+            .sudo()
+            .search([("pos_config_id", "=", shop_id)], limit=1)
+        )
+
+        categ_ids = kitchen_screen.pos_categ_ids.ids
+
+        # --- 3. Get all cooking lines for these categories (much faster domain) ---
+        pos_lines = (
+            self.env["pos.order.line"]
+            .search([
+                ("is_cooking", "=", True),
+                ("product_id.pos_categ_id", "in", categ_ids),
+            ])
+        )
+
+        if not pos_lines:
+            return {"orders": [], "order_lines": []}
+
+        # --- 4. Fetch POS Orders related to these lines ---
+        # Single domain query → MUCH faster than old search
+        pos_orders = self.env["pos.order"].search(
+            [("lines", "in", pos_lines.ids)],
+            order="date_order"
+        )
+
+        # --- 5. Return values ---
+        return {
+            "orders": pos_orders.read(),
+            "order_lines": pos_lines.read(),
+        }
+
     def action_pos_order_paid(self):
         """Supering the action_pos_order_paid function for setting its kitchen
         order and setting the order reference"""
