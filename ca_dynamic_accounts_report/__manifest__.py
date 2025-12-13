@@ -19,6 +19,7 @@
         'views/views.xml',
         'views/kit_menus.xml',
         'views/reports_config_view.xml',
+        'wizard/general_ledger.xml',
         'report/trial_balance.xml',
         'report/general_ledger.xml',
         'report/cash_flow_report.xml',

@@ -25,6 +25,8 @@ from odoo import fields, models, api, _
 import io
 import json
 from odoo.exceptions import AccessError, UserError, AccessDenied
+from datetime import date,timedelta
+from dateutil.relativedelta import relativedelta
 
 try:
     from odoo.tools.misc import xlsxwriter
@@ -35,6 +37,20 @@ except ImportError:
 class GeneralView(models.TransientModel):
     _inherit = "account.report"
     _name = 'account.general.ledger'
+
+
+    date_range = fields.Selection(
+        [('today', 'Today'),
+         ('this_week', 'This Week'),
+         ('this_month', 'This Month'),
+         ('this_quarter', 'This Quarter'),
+         ('this_financial_year', 'This financial Year'),
+         ('yesterday', 'Yesterday'),
+         ('last_week', 'Last Week'),
+         ('last_month', 'Last Month'),
+         ('last_quarter', 'Last Quarter'),
+         ('last_financial_year', 'Last Financial Year')],
+        string='Date Range', default='this_financial_year')
 
     journal_ids = fields.Many2many('account.journal',
                                    string='Journals', required=True,
@@ -55,6 +71,74 @@ class GeneralView(models.TransientModel):
                                    string='Target Moves', required=True)
     date_from = fields.Date(string='Start Date')
     date_to = fields.Date(string='End Date')
+
+    @api.onchange('date_range')
+    def _onchange_date_range(self):
+        today = date.today()
+
+        if self.date_range == 'today':
+            self.date_from = today
+            self.date_to = today
+
+        elif self.date_range == 'yesterday':
+            y = today - timedelta(days=1)
+            self.date_from = y
+            self.date_to = y
+
+        elif self.date_range == 'this_week':
+            start = today - timedelta(days=today.weekday())
+            end = start + timedelta(days=6)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'last_week':
+            start = today - timedelta(days=today.weekday() + 7)
+            end = start + timedelta(days=6)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'this_month':
+            start = today.replace(day=1)
+            end = (start + relativedelta(months=1)) - timedelta(days=1)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'last_month':
+            start = (today.replace(day=1) - relativedelta(months=1))
+            end = (start + relativedelta(months=1)) - timedelta(days=1)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'this_quarter':
+            quarter = (today.month - 1) // 3 + 1
+            start = date(today.year, 3 * (quarter - 1) + 1, 1)
+            end = start + relativedelta(months=3, days=-1)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'last_quarter':
+            quarter = (today.month - 1) // 3 + 1
+            start = date(today.year, 3 * (quarter - 2) + 1, 1)
+            if quarter == 1:
+                start = date(today.year - 1, 10, 1)
+            end = start + relativedelta(months=3, days=-1)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'this_financial_year':
+            start = date(today.year, 1, 1)
+            end = date(today.year, 12, 31)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'last_financial_year':
+            start = date(today.year - 1, 1, 1)
+            end = date(today.year - 1, 12, 31)
+            self.date_from = start
+            self.date_to = end
+        else:
+            self.date_from = False
+            self.date_to = False
 
     @api.model
     def view_report(self, option, title):
@@ -367,7 +451,7 @@ class GeneralView(models.TransientModel):
                 WHERE += ' AND an.id IN %s' % str(
                     tuple(data.get('analytics').ids) + tuple([0]))
             if data['account_tags']:
-                WHERE += ' AND tag IN %s' % str(data.get('account_tags'))
+                WHERE += ' AND act.id IN %s' % str(tuple(data.get('account_tags').ids) + tuple([0]))
             base_sql = ('''SELECT
             l.account_id AS account_id,
             a.code AS code,
@@ -711,3 +795,60 @@ class GeneralView(models.TransientModel):
         output.seek(0)
         response.stream.write(output.read())
         output.close()
+
+    def generate_gl(self):
+        self.ensure_one()
+
+        # Pass wizard ID to the JS client action
+        # return {
+        #     'type': 'ir.actions.client',
+        #     'tag': 'g_l',
+        #     'name':'General Ledger'
+        # }
+        # option = [49]
+        # self.view_report(option,'General Ledger')
+        self.ensure_one()
+
+        wizard = self.env['account.general.ledger'].create({
+            'journal_ids': [(6, 0, self.journal_ids.ids)],
+            'account_ids': [(6, 0, self.account_ids.ids)],
+            'account_tag_ids': [(6, 0, self.account_tag_ids.ids)],
+            'analytic_ids': [(6, 0, self.analytic_ids.ids)],
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+            'target_move': self.target_move,
+            'display_account': self.display_account,
+        })
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'g_l',
+            'name': 'General Ledger',
+            'context': {
+                'wizard': wizard.id,
+                'title': 'General Ledger',
+            }
+        }
+    
+    def generate_cb(self):
+        self.ensure_one()
+        # Genarate Cash Books
+        wizard = self.env['account.general.ledger'].create({
+            'journal_ids': [],
+            'account_ids': [(6, 0, self.account_ids.ids)],
+            'account_tag_ids': [(6, 0, self.account_tag_ids.ids)],
+            'analytic_ids': [(6, 0, self.analytic_ids.ids)],
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+            'target_move': self.target_move,
+            'display_account': self.display_account,
+        })
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'g_l',
+            'name': 'Cash Book',
+            'context': {
+                'wizard': wizard.id,
+                'title': 'Cash Book',
+            }
+        }
