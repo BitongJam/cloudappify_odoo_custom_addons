@@ -76,5 +76,9 @@
         <menuitem id="menu_cash_flow"  action="action_cash_flow"
               name="Cash Flow Statements" parent="dynamic_report_accounting"/>
 
+        <menuitem
+            id="dyanmic_wizard_report_menu"
+            name="Dynamic Wizard Reports"
+            parent="account.menu_finance_reports"/>
     </data>
 </odoo>

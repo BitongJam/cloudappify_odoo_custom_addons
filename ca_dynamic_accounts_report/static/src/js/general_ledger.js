@@ -35,6 +35,15 @@ odoo.define('ca_dynamic_accounts_report.general_ledger', function(require) {
 		start: function() {
 			var self = this;
 			self.initial_render = true;
+
+			// ✔ Wizard already created from Python
+			if (self.wizard_id) {
+				console.log('Wizard Found')
+				self.load_data(self.initial_render);
+				return;
+			}
+
+
 			if (this.searchModel.config.domain.length != 0) {
 				rpc.query({
 					model: 'account.general.ledger',
