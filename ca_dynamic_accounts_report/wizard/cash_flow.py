@@ -22,6 +22,8 @@
 from datetime import datetime
 
 from odoo import models, api, fields
+from datetime import date,timedelta
+from dateutil.relativedelta import relativedelta
 
 FETCH_RANGE = 2000
 import io
@@ -38,6 +40,18 @@ class AccountCasgFlow(models.TransientModel):
     _name = "account.cash.flow"
     _inherit = "account.report"
 
+    date_range = fields.Selection(
+        [('today', 'Today'),
+         ('this_week', 'This Week'),
+         ('this_month', 'This Month'),
+         ('this_quarter', 'This Quarter'),
+         ('this_financial_year', 'This financial Year'),
+         ('yesterday', 'Yesterday'),
+         ('last_week', 'Last Week'),
+         ('last_month', 'Last Month'),
+         ('last_quarter', 'Last Quarter'),
+         ('last_financial_year', 'Last Financial Year')],
+        string='Date Range', default='this_financial_year')
     date_from = fields.Date(string="Start Date", default=str(year) + '-01-01')
     date_to = fields.Date(string="End Date", default=fields.Date.today)
     today = fields.Date(string="Report Date", default=fields.Date.today)
@@ -53,6 +67,76 @@ class AccountCasgFlow(models.TransientModel):
                                    'Very Detailed: Accounts with their move lines')
     account_ids = fields.Many2many("account.account",
                                    string="Accounts")
+    
+
+    @api.onchange('date_range')
+    def _onchange_date_range(self):
+        today = date.today()
+
+        if self.date_range == 'today':
+            self.date_from = today
+            self.date_to = today
+
+        elif self.date_range == 'yesterday':
+            y = today - timedelta(days=1)
+            self.date_from = y
+            self.date_to = y
+
+        elif self.date_range == 'this_week':
+            start = today - timedelta(days=today.weekday())
+            end = start + timedelta(days=6)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'last_week':
+            start = today - timedelta(days=today.weekday() + 7)
+            end = start + timedelta(days=6)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'this_month':
+            start = today.replace(day=1)
+            end = (start + relativedelta(months=1)) - timedelta(days=1)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'last_month':
+            start = (today.replace(day=1) - relativedelta(months=1))
+            end = (start + relativedelta(months=1)) - timedelta(days=1)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'this_quarter':
+            quarter = (today.month - 1) // 3 + 1
+            start = date(today.year, 3 * (quarter - 1) + 1, 1)
+            end = start + relativedelta(months=3, days=-1)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'last_quarter':
+            quarter = (today.month - 1) // 3 + 1
+            start = date(today.year, 3 * (quarter - 2) + 1, 1)
+            if quarter == 1:
+                start = date(today.year - 1, 10, 1)
+            end = start + relativedelta(months=3, days=-1)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'this_financial_year':
+            start = date(today.year, 1, 1)
+            end = date(today.year, 12, 31)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'last_financial_year':
+            start = date(today.year - 1, 1, 1)
+            end = date(today.year - 1, 12, 31)
+            self.date_from = start
+            self.date_to = end
+        else:
+            self.date_from = False
+            self.date_to = False
+
 
     @api.model
     def view_report(self, option):
@@ -720,3 +804,25 @@ class AccountCasgFlow(models.TransientModel):
         output.seek(0)
         response.stream.write(output.read())
         output.close()
+
+    def generate_cash_flow(self):
+        self.ensure_one()
+    
+        # Create a new transient wizard record copying current values
+        wizard = self.env['account.cash.flow'].create({
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+            'levels': self.levels,
+            'account_ids': [(6, 0, self.account_ids.ids)],
+        })
+
+        
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'c_f',  # Your JS registry tag
+            'name': "Cash Flow",
+            'context': {
+                'wizard': wizard.id,
+                'title': 'Cash Book',
+            }
+        }
