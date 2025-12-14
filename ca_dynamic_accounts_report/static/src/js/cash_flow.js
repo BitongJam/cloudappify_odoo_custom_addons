@@ -37,6 +37,14 @@ odoo.define('dynamic_cash_flow_statements.cash_flow', function(require) {
 		start: function() {
 			var self = this;
 			self.initial_render = true;
+			console.log('wizard: ',self.wizard_id)
+			if (self.wizard_id) {
+				console.log('Wizard Found')
+				self.load_data(self.initial_render);
+				return;
+			}
+
+			console.log('Create Cash FLow')
 			rpc.query({
 				model: 'account.cash.flow',
 				method: 'create',
