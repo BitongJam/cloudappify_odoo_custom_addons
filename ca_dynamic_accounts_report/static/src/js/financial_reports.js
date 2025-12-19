@@ -35,6 +35,12 @@ odoo.define('ca_dynamic_accounts_report.financial_reports', function(require) {
 		start: function() {
 			var self = this;
 			self.initial_render = true;
+			console.log('wizard: ',self.wizard_id)
+			if (self.wizard_id) {
+				console.log('Wizard Found')
+				self.load_data(self.initial_render);
+				return;
+			}
 			rpc.query({
 				model: 'dynamic.balance.sheet.report',
 				method: 'create',

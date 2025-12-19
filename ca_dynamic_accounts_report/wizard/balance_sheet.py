@@ -10,10 +10,26 @@ try:
 except ImportError:
     import xlsxwriter
 
+from datetime import date,timedelta
+from dateutil.relativedelta import relativedelta
+
 
 class BalanceSheetView(models.TransientModel):
     _name = 'dynamic.balance.sheet.report'
 
+    date_range = fields.Selection(
+        [('today', 'Today'),
+         ('this_week', 'This Week'),
+         ('this_month', 'This Month'),
+         ('this_quarter', 'This Quarter'),
+         ('this_financial_year', 'This financial Year'),
+         ('yesterday', 'Yesterday'),
+         ('last_week', 'Last Week'),
+         ('last_month', 'Last Month'),
+         ('last_quarter', 'Last Quarter'),
+         ('last_financial_year', 'Last Financial Year')],
+        string='Date Range', default='this_financial_year')
+    
     company_id = fields.Many2one('res.company', required=True,
                                  default=lambda self: self.env.company)
     journal_ids = fields.Many2many('account.journal',
@@ -35,6 +51,75 @@ class BalanceSheetView(models.TransientModel):
         string='Target Move', required=True, default='posted')
     date_from = fields.Date(string="Start date")
     date_to = fields.Date(string="End date")
+
+
+    @api.onchange('date_range')
+    def _onchange_date_range(self):
+        today = date.today()
+
+        if self.date_range == 'today':
+            self.date_from = today
+            self.date_to = today
+
+        elif self.date_range == 'yesterday':
+            y = today - timedelta(days=1)
+            self.date_from = y
+            self.date_to = y
+
+        elif self.date_range == 'this_week':
+            start = today - timedelta(days=today.weekday())
+            end = start + timedelta(days=6)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'last_week':
+            start = today - timedelta(days=today.weekday() + 7)
+            end = start + timedelta(days=6)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'this_month':
+            start = today.replace(day=1)
+            end = (start + relativedelta(months=1)) - timedelta(days=1)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'last_month':
+            start = (today.replace(day=1) - relativedelta(months=1))
+            end = (start + relativedelta(months=1)) - timedelta(days=1)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'this_quarter':
+            quarter = (today.month - 1) // 3 + 1
+            start = date(today.year, 3 * (quarter - 1) + 1, 1)
+            end = start + relativedelta(months=3, days=-1)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'last_quarter':
+            quarter = (today.month - 1) // 3 + 1
+            start = date(today.year, 3 * (quarter - 2) + 1, 1)
+            if quarter == 1:
+                start = date(today.year - 1, 10, 1)
+            end = start + relativedelta(months=3, days=-1)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'this_financial_year':
+            start = date(today.year, 1, 1)
+            end = date(today.year, 12, 31)
+            self.date_from = start
+            self.date_to = end
+
+        elif self.date_range == 'last_financial_year':
+            start = date(today.year - 1, 1, 1)
+            end = date(today.year - 1, 12, 31)
+            self.date_from = start
+            self.date_to = end
+        else:
+            self.date_from = False
+            self.date_to = False
 
     @api.model
     def view_report(self, option, tag, lang):
@@ -516,7 +601,7 @@ class BalanceSheetView(models.TransientModel):
                     AS keys) anl ON true
                     LEFT JOIN account_analytic_account an 
                     ON (anl.keys = an.id)''').format(decimal_places, decimal_places, decimal_places)
-        sql = base_sql + WHERE + final_filters + ''' GROUP BY l.account_id, 
+        sql = base_sql + WHERE + new_final_filter + ''' GROUP BY l.account_id, 
                    a.code,a.id,a.name,anl.keys, act.name'''
 
         if data.get('accounts'):
@@ -673,3 +758,28 @@ class BalanceSheetView(models.TransientModel):
         output.seek(0)
         response.stream.write(output.read())
         output.close()
+
+    def generate_balance_sheet(self):
+        self.ensure_one()
+
+        wizard = self.env['dynamic.balance.sheet.report'].create({
+            'company_id': self.env.company.id,
+            'journal_ids': [(6, 0, self.journal_ids.ids)],
+            'account_ids': [(6, 0, self.account_ids.ids)],
+            'account_tag_ids': [(6, 0, self.account_tag_ids.ids)],
+            'analytic_ids': [(6, 0, self.analytic_ids.ids)],
+            'display_account': self.display_account,
+            'target_move': self.target_move,
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+        })
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'dfr_n',
+            'context': {
+                'wizard': wizard.id,
+                'title': 'Balance Sheet'
+                },
+        }
+ 
