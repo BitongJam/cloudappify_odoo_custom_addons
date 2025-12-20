@@ -657,3 +657,24 @@ class AgeingView(models.TransientModel):
         output.seek(0)
         response.stream.write(output.read())
         output.close()
+
+
+    def generate_partner_ageing(self):
+        self.ensure_one()
+
+        wizard = self.env['account.partner.ageing'].create({
+            'period_length': self.period_length,
+            'date_from': self.date_from,
+            'result_selection': self.result_selection,
+            'partner_ids': self.partner_ids.ids,
+            'partner_category_ids': self.partner_category_ids.ids,
+        })
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'p_a',
+            'name': 'Partner Ageing',
+            'context': {
+                'wizard': wizard.id,
+                },
+         }
