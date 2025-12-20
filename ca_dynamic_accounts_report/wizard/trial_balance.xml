@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_account_trial_balance_wizard_form" model="ir.ui.view">
+        <field name="name">account.trial.balance.wizard.form</field>
+        <field name="model">account.trial.balance</field>
+        <field name="arch" type="xml">
+            <form string="Trial Balance" create="false" edit="true">
+
+                <field name="company_id" invisible="1"/>
+
+                <group>
+                    <!-- LEFT COLUMN -->
+                    <group>
+                        <field name="date_range"/>
+                        <field name="date_from" attrs="{'invisible':[('date_range','!=',False)]}"/>
+                        <field name="date_to" attrs="{'invisible':[('date_range','!=',False)]}"/>
+                        <field name="display_account"/>
+                    </group>
+
+                    <!-- RIGHT COLUMN -->
+                    <group>
+                        <field name="journal_ids" widget="many2many_tags"/>
+                    </group>
+                </group>
+
+                <footer>
+                    <button string="View" type="object" name="generate_trial_balance" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+
+            </form>
+        </field>
+    </record>
+    <record id="action_account_trial_balance_wizard" model="ir.actions.act_window">
+        <field name="name">Trial Balance</field>
+        <field name="res_model">account.trial.balance</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_account_trial_balance_report" name="Trial Balance" parent="dyanmic_wizard_report_menu" action="action_account_trial_balance_wizard" sequence="25"/>
+
+
+</odoo>

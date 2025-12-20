@@ -852,3 +852,25 @@ class GeneralView(models.TransientModel):
                 'title': 'Cash Book',
             }
         }
+    
+    def generate_bb(self):
+        self.ensure_one()
+        wizard = self.env['account.general.ledger'].create({
+            'journal_ids': [],
+            'account_ids': [(6, 0, self.account_ids.ids)],
+            'account_tag_ids': [(6, 0, self.account_tag_ids.ids)],
+            'analytic_ids': [(6, 0, self.analytic_ids.ids)],
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+            'target_move': self.target_move,
+            'display_account': self.display_account,
+        })
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'g_l',
+            'name': 'Bank Book',
+            'context': {
+                'wizard': wizard.id,
+                'title': 'Bank Book',
+            }
+        }
