@@ -777,9 +777,34 @@ class BalanceSheetView(models.TransientModel):
         return {
             'type': 'ir.actions.client',
             'tag': 'dfr_n',
+            'name': 'Balance Sheet',
             'context': {
                 'wizard': wizard.id,
                 'title': 'Balance Sheet'
                 },
         }
  
+    def generate_profit_and_loss(self):
+        self.ensure_one()
+
+        wizard = self.env['dynamic.balance.sheet.report'].create({
+            'company_id': self.env.company.id,
+            'journal_ids': [(6, 0, self.journal_ids.ids)],
+            'account_ids': [(6, 0, self.account_ids.ids)],
+            'account_tag_ids': [(6, 0, self.account_tag_ids.ids)],
+            'analytic_ids': [(6, 0, self.analytic_ids.ids)],
+            'display_account': self.display_account,
+            'target_move': self.target_move,
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+        })
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'dfr_n',
+            'name': 'Profit and Loss',
+            'context': {
+                'wizard': wizard.id,
+                'title': 'Profit and Loss'
+                },
+         }

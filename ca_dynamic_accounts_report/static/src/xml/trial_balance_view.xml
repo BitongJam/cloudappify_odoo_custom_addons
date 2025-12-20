@@ -179,13 +179,15 @@
 
                             <td class="mon_fld" style="">
                                 <strong>
-                                    <t t-raw="Math.round(debit_total * Math.pow(10,currency[3] )) / Math.pow(10, currency[3])"/>
+                                    <!-- <t t-raw="Math.round(debit_total * Math.pow(10,currency[3] )) / Math.pow(10, currency[3])"/> -->
+                                    <t t-esc="debit_total"/>
                                     <t t-esc="currency[0]"/>
                                 </strong>
                             </td>
                             <td class="mon_fld" style="">
                                 <strong>
-                                    <t t-raw="Math.round(credit_total * Math.pow(10, currency[3])) / Math.pow(10, currency[3])"/>
+                                    <!-- <t t-raw="Math.round(credit_total * Math.pow(10, currency[3])) / Math.pow(10, currency[3])"/> -->
+                                    <t t-esc="credit_total"/>
                                     <t t-esc="currency[0]"/>
                                 </strong>
                             </td>

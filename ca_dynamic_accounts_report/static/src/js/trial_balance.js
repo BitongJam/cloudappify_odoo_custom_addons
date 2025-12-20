@@ -46,6 +46,13 @@ odoo.define('ca_dynamic_accounts_report.trial_balance', function(require) {
 		start: function() {
 			var self = this;
 			self.initial_render = true;
+
+			if (self.wizard_id) {
+				console.log('Wizard Found')
+				self.load_data(self.initial_render);
+				return;
+			}
+			console.log('Wizard Not Found')
 			rpc.query({
 				model: 'account.trial.balance',
 				method: 'create',
@@ -72,7 +79,7 @@ odoo.define('ca_dynamic_accounts_report.trial_balance', function(require) {
 					],
 				}).then(function(datas) {
 
-
+					console.log('datas: ',datas)
 
 					_.each(datas['report_lines'], function(rep_lines) {
 						rep_lines.debit = self.format_currency(datas['currency'], rep_lines.debit);
@@ -97,7 +104,7 @@ odoo.define('ca_dynamic_accounts_report.trial_balance', function(require) {
 						//                                    });
 					}
 					var child = [];
-
+					console.log('datas: ',datas)
 					self.$('.table_view_tb').html(QWeb.render('TrialTable', {
 
 						report_lines: datas['report_lines'],
