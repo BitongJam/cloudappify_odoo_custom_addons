@@ -38,6 +38,14 @@ odoo.define('ca_dynamic_accounts_report.ageing', function(require) {
 		start: function() {
 			var self = this;
 			self.initial_render = true;
+
+			if (self.wizard_id) {
+				console.log('Wizard Found')
+				self.load_data(self.initial_render);
+				return;
+			}
+
+			
 			rpc.query({
 				model: 'account.partner.ageing',
 				method: 'create',

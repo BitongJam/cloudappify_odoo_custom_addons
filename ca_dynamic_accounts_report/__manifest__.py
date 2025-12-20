@@ -25,6 +25,7 @@
         'wizard/profit_and_loss.xml',
         'wizard/bank_book.xml',
         'wizard/trial_balance.xml',
+        'wizard/ageing.xml',
         'report/trial_balance.xml',
         'report/general_ledger.xml',
         'report/cash_flow_report.xml',

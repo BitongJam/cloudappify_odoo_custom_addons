@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_account_partner_ageing_wizard_form" model="ir.ui.view">
+        <field name="name">account.partner.ageing.wizard.form</field>
+        <field name="model">account.partner.ageing</field>
+        <field name="arch" type="xml">
+            <form string="Partner Ageing" create="false" edit="true">
+
+                <field name="company_id" invisible="1"/>
+
+                <group>
+                    <!-- LEFT COLUMN -->
+                    <group>
+                        <field name="date_from"/>
+                        <field name="period_length"/>
+                        <field name="result_selection"/>
+                    </group>
+
+                    <!-- RIGHT COLUMN -->
+                    <group>
+                        <field name="partner_ids" widget="many2many_tags"/>
+                        <field name="partner_category_ids" widget="many2many_tags"/>
+                    </group>
+                </group>
+
+                <footer>
+                    <button string="View" type="object" name="generate_partner_ageing" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+
+            </form>
+        </field>
+    </record>
+    <record id="action_account_partner_ageing_wizard" model="ir.actions.act_window">
+        <field name="name">Partner Ageing</field>
+        <field name="res_model">account.partner.ageing</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_account_partner_ageing_report" name="Partner Ageing" parent="dyanmic_wizard_report_menu" action="action_account_partner_ageing_wizard" sequence="40"/>
+
+
+</odoo>
