@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="pwa_layout"  inherit_id="web.layout">
+        <xpath expr="//head" position="inside">
+            <link rel="manifest" href="/setup_pwa/static/src/manifest.json?v=1"/>
+            <script type="text/javascript" src="/setup_pwa/static/src/js/sw-register.js"/>
+
+        </xpath>
+    </template>
+
+</odoo>
