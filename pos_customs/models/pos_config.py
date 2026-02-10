@@ -6,10 +6,10 @@ class PosConfig(models.Model):
     _inherit = 'pos.config'
 
     def open_ui(self):
-        if self.current_user_id:
-            if not self.env.user.has_group('pos_customs.session_override_open_group'):
-                if self.current_user_id.id != self.env.user.id:
-                    raise UserError("You cannot open this Session. This Session Belong to %s"%self.current_user_id.name)
+        # if self.current_user_id:
+        #     if not self.env.user.has_group('pos_customs.session_override_open_group'):
+        #         if self.current_user_id.id != self.env.user.id:
+        #             raise UserError("You cannot open this Session. This Session Belong to %s"%self.current_user_id.name)
         res = super(PosConfig,self).open_ui()
         return res
 

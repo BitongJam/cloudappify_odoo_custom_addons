@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+    <t t-name="jmo_pos_kitchen_screen.KitchenCard" owl="1">
+        <div class="card mx-2 my-3">
+            <div class="card-header text-center">
+                <h5><t t-esc="props.order.name"/></h5>
+            </div>
+            <div class="card-body">
+                <t t-foreach="props.order.items" t-as="item" t-key="item_index">
+                    <div>
+                        <t t-esc="item.name"/> - <t t-esc="item.qty"/> pcs
+                    </div>
+                </t>
+            </div>
+            <div class="card-footer">
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+
+            </div>
+        </div>
+
+
+    </t>
+
+
+</templates>

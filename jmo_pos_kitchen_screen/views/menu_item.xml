@@ -1,0 +1,13 @@
+<odoo>
+    <!-- Client action -->
+    <record id="action_pos_kitchen_display" model="ir.actions.client">
+        <field name="name">Kitchen Display</field>
+        <field name="tag">pos_kitchen_display</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <!-- Menu item -->
+    <menuitem id="menu_pos_kitchen_display"
+              name="POS Kitchen Display"
+              action="action_pos_kitchen_display"/>
+</odoo>

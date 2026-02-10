@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+     <menuitem id="menu_bulk_module_install" name="Bulk Module Installation" sequence="10" parent="base.menu_administration" action="action_bulk_module_install"/>    
+
+</odoo>
