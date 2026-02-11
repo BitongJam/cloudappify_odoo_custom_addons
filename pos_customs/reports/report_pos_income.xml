@@ -16,7 +16,7 @@
                         <t t-foreach="grouped_income" t-as="line">
                             <tr>
                                 <td><t t-esc="line['payment_method']"/></td>
-                                <td><t t-esc="line['income']"/></td>
+                                <td><t t-esc="'{:,.2f}'.format(line['income'])"/></td>
                             </tr>
                         </t>
                     </tbody>
