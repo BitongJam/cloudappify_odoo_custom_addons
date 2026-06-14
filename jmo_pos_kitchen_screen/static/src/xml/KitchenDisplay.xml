@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+    <t t-name="jmo_pos_kitchen_screen.PosKitchenScreen" owl="1">
+        <div class="container-fluid vh-100 d-flex flex-column">
+
+            <!-- Header -->
+            <div class="text-center mt-3">
+                <h1>Kitchen Display</h1>
+            </div>
+
+            <!-- Main row (fills remaining height) -->
+            <div class="row flex-grow-1">
+
+                <!-- First column -->
+                <div class="col-4 border-end vh-100">
+                    <div class="border text-center px-2 py-3">
+                        <h3>Pending Orders</h3>
+                    </div>
+                    <div class="overflow-auto vh-100">
+                                        <t t-foreach="orders" t-as="order" t-key="order.id">
+                        <KitchenCard order="order"/>
+                    </t>
+                    </div>
+
+                </div>
+
+                <!-- Second column -->
+                <div class="col-4 border-end vh-100">
+                    <div class="border text-center px-2 py-3">
+                        <h3>Ready Orders</h3>
+                    </div>
+                    <div class="overflow-auto vh-100">
+                        <t t-foreach="orders" t-as="order" t-key="order.id">
+                            <KitchenCard order="order"/>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Third column -->
+                <div class="col-4 overflow-auto vh-100">
+                    <!-- Content -->
+                    <div class="border text-center px-2 py-3">
+                        <h3>Done Orders</h3>
+                    </div>
+                    <div class="overflow-auto vh-100">
+                        <t t-foreach="orders" t-as="order" t-key="order.id">
+                            <KitchenCard order="order"/>
+                        </t>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </t>
+
+
+</t>
+
+
+</templates>

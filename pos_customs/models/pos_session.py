@@ -26,10 +26,10 @@ class PosSession(models.Model):
         return payment_methods.read(fields)
     
     def open_frontend_cb(self):
-        if self.user_id:
-            if not self.env.user.has_group('pos_customs.session_override_open_group'):
-                if self.user_id.id != self.env.user.id:
-                    raise UserError("You cannot open this Session. This Session Belong to %s"%self.user_id.name)
+        # if self.user_id:
+        #     if not self.env.user.has_group('pos_customs.session_override_open_group'):
+        #         if self.user_id.id != self.env.user.id:
+        #             raise UserError("You cannot open this Session. This Session Belong to %s"%self.user_id.name)
         res = super(PosSession,self).open_frontend_cb()
         return res
     

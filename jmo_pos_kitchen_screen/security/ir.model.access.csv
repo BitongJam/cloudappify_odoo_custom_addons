@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pos_kitchen_order,pos_kitchen_order access,model_pos_kitchen_order,base.group_user,1,1,1,1
+access_pos_kitchen_order_line,pos_kitchen_order_line access,model_pos_kitchen_order_line,base.group_user,1,1,1,1

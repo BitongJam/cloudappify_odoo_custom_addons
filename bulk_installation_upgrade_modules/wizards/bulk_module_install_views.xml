@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="bulk_module_install_view_form" model="ir.ui.view">
+        <field name="name">bulk.module.install.view.form</field>
+        <field name="model">bulk.module.install</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>
+                        <field name="module_ids">
+                            <tree>
+                                <field name="name"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button string="Install Selected Modules" type="object" name="install_modules" class="btn-primary"/>
+                        <button string="Upgrade Selected Modules" type="object" name="upgrade_modules" class="btn-primary"/>
+                        <button string="Close" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

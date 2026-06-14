@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+    
+        <record id="view_account_cash_flow_wizard_form" model="ir.ui.view">
+        <field name="name">account.cash.flow.wizard.form</field>
+        <field name="model">account.cash.flow</field>
+        <field name="arch" type="xml">
+            <form string="Cash Flow Statement">
+                <sheet>
+                    <group>
+                        <field name="date_range" />
+                        <field name="date_from" attrs="{'invisible':[('date_range','!=',False)]}"/>
+                        <field name="date_to"  attrs="{'invisible':[('date_range','!=',False)]}"/>
+                        <field name="levels"/>
+                        <!-- TODO: maybe soon find a way to apply account_ids filtering through wizard -->
+                        <!-- <field name="account_ids" widget="many2many_tags"/> -->
+                    </group>
+                    <footer>
+                        <button string="View Report" type="object" name="generate_cash_flow"
+                                class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_account_cash_flow_wizard" model="ir.actions.act_window">
+        <field name="name">Cash Flow Statement</field>
+        <field name="res_model">account.cash.flow</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_account_cash_flow_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_account_cash_flow" name="Cash Flow Statement" parent="dyanmic_wizard_report_menu" 
+              action="action_account_cash_flow_wizard"/>
+    </data>
+    
+</odoo>

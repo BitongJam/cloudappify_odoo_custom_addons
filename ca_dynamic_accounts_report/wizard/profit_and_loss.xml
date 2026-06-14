@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+
+        <record id="view_dynamic_profit_and_loss_wizard_form" model="ir.ui.view">
+            <field name="name">dynamic.balance.sheet.report.form</field>
+            <field name="model">dynamic.balance.sheet.report</field>
+            <field name="arch" type="xml">
+                <form string="Profit and Loss" create="false" edit="true">
+
+                    <!-- Hidden -->
+                    <field name="company_id" invisible="1"/>
+
+                    <group>
+                        <!-- LEFT COLUMN -->
+                        <group>
+                            <field name="date_range" />
+                            <field name="date_from" attrs="{'invisible':[('date_range','!=',False)]}"/>
+                            <field name="date_to" attrs="{'invisible':[('date_range','!=',False)]}"/>
+                            <field name="target_move"/>
+                            <field name="display_account"/>
+                        </group>
+
+                        <!-- RIGHT COLUMN -->
+                        <group>
+                            <field name="journal_ids" widget="many2many_tags"/>
+                            <field name="account_ids" widget="many2many_tags"/>
+                            <field name="account_tag_ids" widget="many2many_tags"/>
+                            <field name="analytic_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+
+                    <!-- Footer -->
+                    <footer>
+                        <button name="generate_profit_and_loss" string="View" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_dynamic_profit_and_loss_wizard" model="ir.actions.act_window">
+            <field name="name">Profit and Loss</field>
+            <field name="res_model">dynamic.balance.sheet.report</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_dynamic_profit_and_loss_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_dynamic_profit_and_loss" name="Profit and Loss" parent="dyanmic_wizard_report_menu" action="action_dynamic_profit_and_loss_wizard" sequence="20"/>
+
+    </data>
+
+
+</odoo>
